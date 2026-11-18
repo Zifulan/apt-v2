@@ -19,7 +19,7 @@ $thisCat = get_queried_object();
 	?>
 		<div class="topic-head mt-4">
 			<div class="container mt-4">
-				<h2><?php echo($thisCat->name);?></h2>		
+				<h1><?php echo($thisCat->name);?></h1>		
 			</div>
 		</div>
 		<div class="container pt-4" id="category-7">

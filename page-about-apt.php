@@ -17,7 +17,7 @@ get_header();
 				<!--NEWS-->
 				<div class="topic-head mt-4" id="aboutapt">
 					<div class="container">
-						<h2>About APT</h2>
+						<h1>About APT</h1>
 					</div>
 				</div>
 				<div class="container pt-4">

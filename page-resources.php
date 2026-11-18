@@ -15,7 +15,7 @@ jQuery(function($) {
 <main id="main" class="site-main">	
 	<div class="topic-head mt-4">
 		<div class="container">
-			<h2>Resources</h2>
+			<h1>Resources</h1>
 		</div>
 	</div>
 	<div class="container pt-4" id="resourcesnew">

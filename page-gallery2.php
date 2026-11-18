@@ -17,7 +17,7 @@ get_header();
 				<!--GALLERY-->
 				<div class="topic-head mt-4" id="page-gallery2">
 					<div class="container">
-						<h2>Gallery</h2>
+						<h1>Gallery</h1>
 					</div>
 				</div>
 				<div class="container pt-4">

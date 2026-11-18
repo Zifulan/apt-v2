@@ -28,7 +28,7 @@ get_header();
 
 		<div class="container">
 
-			<h2>Agenda</h2>
+			<h1>Agenda</h1>
 
 		</div>
 

@@ -17,7 +17,7 @@ get_header();
 				<!--EVENTS-->
 				<div class="topic-head mt-4" id="page-events-2">
 					<div class="container">
-						<h2>Agenda</h2>
+						<h1>Agenda</h1>
 					</div>
 				</div>
 				<div class="container" id="agenda-content">				

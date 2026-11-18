@@ -23,7 +23,7 @@ get_header();
 				<!--MASONRY GALLERY-->
 				<div class="topic-head mt-4" id="page-gallery2">
 					<div class="container">
-						<h2>Photo Gallery</h2>
+						<h1>Photo Gallery</h1>
 					</div>
 				</div>
 				<div class="container pt-4">

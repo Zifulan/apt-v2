@@ -28,7 +28,7 @@ get_header();
 
 		<div class="container">
 
-			<h2>Yearly Archives</h2>
+			<h1>Yearly Archives</h1>
 
 		</div>
 
