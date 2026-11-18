@@ -1427,6 +1427,51 @@ main.site-single {
 /* reCAPTCHA keeps its own fixed size; just give it room */
 .site-main:not(.front-main) .entry-content form .g-recaptcha { margin-block-end: 1.25rem; }
 
+/* ---------- Contact page ----------------------------------------------- */
+/* Map + address side by side, stacked on narrow screens. Used by the
+   Contact page content: <div class="apt-contact"> <iframe> <address> */
+.apt-contact {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: clamp(20px, 3vw, 40px);
+	align-items: start;
+	margin-block: 8px 32px;
+}
+@media (min-width: 768px) { .apt-contact { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
+.apt-contact iframe { inline-size: 100%; min-block-size: 280px; border: 0; border-radius: var(--radius-tile); background: var(--paper-2); }
+.apt-contact address { font-style: normal; line-height: 1.7; margin: 0; }
+.apt-contact address strong { display: block; font-size: 1.25rem; font-weight: 700; margin-block-end: 6px; }
+.apt-contact address a { display: inline-flex; align-items: center; min-block-size: var(--target-size); color: var(--apt-blue); }
+.apt-contact address a:hover { color: var(--apt-red); }
+
+/* ---------- Contact Form 7 (plugin markup) ------------------------------ */
+.site-main:not(.front-main) .wpcf7 { max-width: 36rem; }
+.site-main:not(.front-main) .wpcf7 form { max-width: none; }
+.site-main:not(.front-main) .wpcf7-form-control-wrap { display: block; margin-block-start: 0.4rem; }
+.site-main:not(.front-main) .wpcf7 label br { display: none; }
+.site-main:not(.front-main) .entry-content form textarea { min-block-size: 9rem; resize: vertical; }
+/* Invalid state: only after the user has interacted (:user-invalid), or when CF7 flags it */
+.site-main:not(.front-main) .entry-content form :is(input, textarea, select):user-invalid,
+.site-main:not(.front-main) .wpcf7-not-valid { border-color: var(--apt-red) !important; border-width: 2px !important; }
+.site-main:not(.front-main) .wpcf7-not-valid-tip { display: block; margin-block-start: 6px; color: var(--apt-red); font-size: 0.875rem; font-weight: 500; }
+.site-main:not(.front-main) .wpcf7 form .wpcf7-response-output {
+	margin: 8px 0 0; padding: 12px 16px; border-radius: 12px;
+	border: 1px solid var(--rule-soft); background: var(--paper-2); color: var(--ink); font-size: 0.95rem;
+}
+.site-main:not(.front-main) .wpcf7 form.sent .wpcf7-response-output { border-color: #1f7a4d; background: rgba(31, 122, 77, 0.08); }
+.site-main:not(.front-main) .wpcf7 form:is(.invalid, .failed, .aborted, .spam, .unaccepted) .wpcf7-response-output { border-color: var(--apt-red); background: rgba(206, 17, 38, 0.06); }
+.site-main:not(.front-main) .wpcf7-acceptance .wpcf7-list-item { margin: 0; }
+.site-main:not(.front-main) .wpcf7-acceptance label { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 400; min-block-size: var(--target-size); }
+.site-main:not(.front-main) .wpcf7-acceptance input[type="checkbox"] { flex: none; margin: 0; }
+/* CF7's copy of each error for screen readers: visually hidden, still announced */
+.wpcf7 .screen-reader-response,
+.wpcf7 .wpcf7-form-control-wrap .screen-reader-response {
+	position: absolute !important; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; border: 0;
+	overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.wpcf7 .hidden-fields-container { display: none; }
+.site-main:not(.front-main) .wpcf7-spinner { margin-inline-start: 12px; }
+
 /* ---------- Footer (on gradient) ----------------------------------------- */
 
 .apt-footer {
