@@ -455,7 +455,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 #searchModal ul { list-style: none; padding: 0; margin: 0; }
 #searchModal li { margin-bottom: 12px; }
 #searchModal input[type="text"],
-#searchModal select { border-radius: 10px; border: 1px solid #c9ccd4; height: 46px; }
+#searchModal select { border-radius: 10px; border: 1px solid #767676; min-height: 48px; font: inherit; font-size: max(1rem, 1em); }
 
 /* ---------- Home: hero frame --------------------------------------------- */
 
@@ -1391,6 +1391,41 @@ main.site-single {
 .apt-agenda-page { padding: 0; }
 .apt-agenda-page .agenda-timeline { padding: 0; }
 .apt-agenda-archive-link { margin-top: 28px; }
+
+/* ---------- Forms in page content (e.g. Limited Access login) ----------- */
+/* Labels stacked above controls; controls at least 16px text (no iOS zoom),
+   48px tall (52px on touch), #767676 borders; ink pill submit. */
+.site-main:not(.front-main) .entry-content form { max-width: 28rem; margin-block: 8px 24px; }
+.site-main:not(.front-main) .entry-content form p { display: block; margin: 0 0 1.25rem; }
+/* style.css: "#post-4452 .login-password, .login-submit { display: table-cell }" squeezed the field */
+.site-main:not(.front-main) .entry-content form :is(.login-password, .login-submit) { display: block !important; }
+.site-main:not(.front-main) .entry-content form label { display: block; margin-block-end: 0.4rem; font-weight: 500; color: var(--ink); }
+.site-main:not(.front-main) .entry-content form :is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="tel"], input[type="url"], input[type="number"], textarea, select) {
+	display: block; inline-size: 100%; box-sizing: border-box;
+	font: inherit; font-size: max(1rem, 1em); line-height: 1.4;
+	min-block-size: 48px; padding: 0.75rem 0.9rem;
+	border: 1px solid #767676; border-radius: 10px;
+	background: var(--paper); color: var(--ink);
+}
+@media (pointer: coarse) {
+	.site-main:not(.front-main) .entry-content form :is(input[type="text"], input[type="password"], input[type="email"], input[type="search"], input[type="tel"], input[type="url"], input[type="number"], select) { min-block-size: 52px; }
+}
+.site-main:not(.front-main) .entry-content form :is(input[type="submit"], button[type="submit"], button:not([type])) {
+	appearance: none; font: inherit; font-weight: 600;
+	min-block-size: 48px; padding: 0 1.6rem;
+	border: 0; border-radius: var(--radius-pill);
+	background: var(--ink); color: var(--paper); cursor: pointer;
+	scale: 1; transition: background-color 150ms ease-out, scale 150ms ease-out;
+}
+.site-main:not(.front-main) .entry-content form :is(input[type="submit"], button[type="submit"], button:not([type])):hover { background: var(--apt-red); }
+.site-main:not(.front-main) .entry-content form :is(input[type="submit"], button[type="submit"], button:not([type])):active { scale: 0.97; }
+@media (prefers-reduced-motion: reduce) {
+	.site-main:not(.front-main) .entry-content form :is(input[type="submit"], button[type="submit"], button:not([type])):active { scale: 1; }
+}
+.site-main:not(.front-main) .entry-content form input[type="checkbox"] { accent-color: var(--ink); inline-size: 1.25rem; block-size: 1.25rem; }
+.site-main:not(.front-main) .entry-content form .login-remember label { display: inline-flex; align-items: center; gap: 0.5rem; min-block-size: var(--target-size); font-weight: 400; }
+/* reCAPTCHA keeps its own fixed size; just give it room */
+.site-main:not(.front-main) .entry-content form .g-recaptcha { margin-block-end: 1.25rem; }
 
 /* ---------- Footer (on gradient) ----------------------------------------- */
 
