@@ -952,6 +952,9 @@ main.site-single {
 	overflow: hidden;
 	min-height: 60vh;
 }
+/* style.css offset #avi-content by 120px for the old fixed navbar; the frame
+   above already clears the new header (index.php, search.php) */
+#avi-content { margin-top: 0; }
 .topic-head { border-bottom: 1px solid var(--rule) !important; padding-top: clamp(28px, 4vw, 48px) !important; margin-top: 0 !important; }
 .topic-head .container { margin-top: 0 !important; }
 .topic-head h1, .topic-head h2 { font-size: clamp(2rem, 1.4rem + 2vw, 3rem) !important; font-weight: 700 !important; }
@@ -970,6 +973,17 @@ main.site-single {
 .site-main:not(.front-main) .list-group-item { border-left: 0; border-right: 0; }
 .site-main:not(.front-main) .page-link { color: var(--ink); border-radius: 8px; margin: 0 3px; }
 .site-main:not(.front-main) .page-item.active .page-link { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+/* WordPress core pagination (the_posts_pagination) */
+.site-main .nav-links { display: flex; flex-wrap: wrap; gap: 6px; margin: 28px 0 0; }
+.site-main .nav-links .page-numbers {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-block-size: max(36px, var(--target-size)); min-inline-size: max(36px, var(--target-size));
+	padding: 0 12px; border: 1px solid var(--rule-soft); border-radius: 8px;
+	color: var(--ink); text-decoration: none;
+}
+.site-main .nav-links a.page-numbers:hover { border-color: var(--ink); }
+.site-main .nav-links .page-numbers.current { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.site-main .nav-links .page-numbers.dots { border-color: transparent; }
 .site-main:not(.front-main) .breadcrumb { background: none; padding-left: 0; font-size: 0.875rem; }
 .site-main:not(.front-main) .nav-tabs .nav-link.active { border-color: var(--rule) var(--rule) #fff; }
 .site-main:not(.front-main) table { font-size: 0.95rem; }
