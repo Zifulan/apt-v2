@@ -44,8 +44,11 @@ and its lockups, all with transparent backgrounds:
 | `asean-logo-tagline.webp` | With "one vision, one identity, one community" |
 
 The lockup text is ASEAN blue, so use the lockups on light backgrounds only.
-`img/flags/asean.svg` (shown for "Online Conference" meetings) wraps the same
-emblem.
+
+`asean-flag.webp` is the ASEAN flag (3:2) made from the same artwork: the
+emblem without its wordmark, stalks centred, on a field of the emblem blue.
+`img/flags/asean.svg` wraps a small copy of it and is shown as the round flag
+for "Online Conference" meetings.
 
 ## Palette
 
