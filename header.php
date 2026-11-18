@@ -33,7 +33,7 @@
 			<a class="screen-reader-text apt-skip" href="#main"><?php esc_html_e( 'Skip to content', 'akseki-vi' ); ?></a>
 			<div id="wrapper">
 
-				<header class="apt-header" id="navbar">
+				<header class="apt-header">
 					<a class="apt-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="ASEAN Plus Three - Home">
 						<?php echo load_logo_svg(); ?>
 						<span class="apt-brand-text" aria-hidden="true"><span>ASEAN</span><span>Plus</span><span>Three</span></span>
