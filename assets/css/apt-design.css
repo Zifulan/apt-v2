@@ -1464,11 +1464,10 @@ main.site-single {
 	display: flex; align-items: center; justify-content: space-between; gap: 20px;
 	padding-bottom: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--on-grad-rule);
 }
-.apt-footer-brand { display: inline-flex; align-items: center; gap: 12px; }
-.apt-footer-brand :is(svg, img) { width: 52px; height: 52px; flex: none; }
-/* White backing keeps the emblem's outer blue ring visible on the gradient */
-.apt-footer-brand img.apt-emblem { background: var(--paper); border-radius: 50%; padding: 2px; box-sizing: content-box; }
-.apt-footer-brand .apt-brand-text { font-size: 0.85rem; }
+/* Footer logo uses the header's .apt-brand pill (same size and look);
+   keep the footer's white/yellow link colours off it. */
+.apt-footer .apt-footer-brand,
+.apt-footer .apt-footer-brand:hover { color: var(--ink); }
 .apt-social { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0; }
 .apt-social a {
 	width: max(40px, var(--target-size)); height: max(40px, var(--target-size)); border-radius: 50%;

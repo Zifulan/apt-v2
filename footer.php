@@ -1,7 +1,7 @@
 				<footer class="apt-footer">
 					<div class="container">
 						<div class="apt-footer-top">
-							<a class="apt-footer-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="ASEAN Plus Three - Home">
+							<a class="apt-brand apt-footer-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="ASEAN Plus Three - Home">
 								<?php echo str_replace( 'id="logo"', 'id="logo-footer"', load_logo_svg() ); ?>
 								<span class="apt-brand-text" aria-hidden="true"><span>ASEAN</span><span>Plus</span><span>Three</span></span>
 							</a>
