@@ -903,11 +903,22 @@ details[open] > .agenda-month-summary::before { rotate: 0deg; }
 .mechanisms-wrapper .nav-tabs .nav-item { margin: 0 !important; }
 .mechanisms-wrapper .nav-tabs .nav-link {
 	display: flex; align-items: center; justify-content: center;
-	border: 1px solid var(--ink) !important; border-radius: var(--radius-pill);
+	border: 1px solid var(--ink) !important; border-radius: 12px;
 	background: transparent !important; color: var(--ink) !important;
 	font-size: 0.875rem; font-weight: 500; padding: 8px 14px;
 }
-.mechanisms-wrapper .nav-tabs .nav-link.active { background: var(--ink) !important; color: var(--paper) !important; }
+/* Selected tab: dark fill, same size as the others. Uses the #mechTab id
+   (wherever the template is used) to outrank style.css's
+   "#mechTab .nav-link.active { background-color: white !important }", which
+   left white text on a white tab. */
+.mechanisms-wrapper .nav-tabs .nav-link.active,
+#mechTab.nav-tabs .nav-link.active {
+	background: var(--ink) !important;
+	border-color: var(--ink) !important;
+	color: var(--paper) !important;
+	font-size: 0.875rem; /* style.css enlarged it to 110%, shifting the row */
+	font-weight: 500 !important;
+}
 .mechanisms-wrapper a { color: var(--ink); }
 .mechanisms-wrapper a:hover { color: var(--apt-red); }
 
