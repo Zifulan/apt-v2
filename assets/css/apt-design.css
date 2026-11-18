@@ -951,6 +951,10 @@ details[open] > .agenda-month-summary::before { rotate: 0deg; }
 .agenda-item-ministerial .agenda-date-badge { background: rgba(11, 61, 145, 0.08); color: var(--apt-blue); }
 .agenda-category { font-size: 0.8rem; color: var(--ink-3); }
 .apt-empty { color: var(--ink-2); margin: 0; }
+/* Fallback when nothing is upcoming: the 5 most recent meetings */
+.agenda-recent { list-style: none; margin: 16px 0 0; padding: 0; }
+.agenda-recent a.agenda-event-title { color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; min-block-size: var(--target-size); }
+.agenda-recent a.agenda-event-title:hover { color: var(--apt-red); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- Inner pages --------------------------------------------------- */
 

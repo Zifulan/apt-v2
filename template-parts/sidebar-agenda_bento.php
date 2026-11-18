@@ -144,6 +144,45 @@ if($SE_query->have_posts()):
 	}
 endif;
 wp_reset_postdata();
+
+// Nothing upcoming: show the 5 most recent meetings instead (published
+// statements in the same categories, dated today or earlier).
+$is_recent = '';
+if ( $is_dtd === '' && $is_tbd === '' ) {
+	$recent_query = new WP_Query( array(
+		'cat'            => $SE_cats,
+		'post_status'    => 'publish',
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'posts_per_page' => 5,
+		'no_found_rows'  => true,
+		'date_query'     => array( array( 'before' => 'tomorrow' ) ),
+	) );
+	while ( $recent_query->have_posts() ) {
+		$recent_query->the_post();
+		$r_cats  = array_intersect( wp_list_pluck( get_the_category(), 'term_id' ), $SE_cats );
+		$r_cat   = $r_cats ? get_category( reset( $r_cats ) ) : null;
+		$r_level = get_category( akseki_get_level_from_id( get_the_ID(), 'post', 'level' ) );
+		$r_class = '';
+		if ( $r_level && ! is_wp_error( $r_level ) ) {
+			if ( 'summit-level-statements' === $r_level->slug ) {
+				$r_class = ' agenda-item-summit';
+			} elseif ( 'ministerial-level-statements' === $r_level->slug ) {
+				$r_class = ' agenda-item-ministerial';
+			}
+		}
+		$r_loc  = akseki_get_mec_location( get_the_ID() );
+		$r_flag = ( empty( $r_loc ) || 'tbd' === $r_loc ) ? '' : akseki_get_the_flag( get_the_ID() );
+		$is_recent .= '<li class="agenda-event-item' . $r_class . '">'
+			. '<span class="agenda-event-content">'
+			. '<span class="agenda-date-badge agenda-badge-date">' . esc_html( get_the_date( 'j F Y' ) ) . '</span>' . $r_flag
+			. '<a class="agenda-event-title" href="' . esc_url( get_permalink() ) . '">' . akseki_get_shortname( get_the_title(), get_the_ID() ) . '</a>'
+			. '</span>'
+			. ( ( $r_cat && ! is_wp_error( $r_cat ) && $r_cat->description ) ? '<span class="agenda-category">' . $r_cat->description . '</span>' : '' )
+			. '</li>';
+	}
+	wp_reset_postdata();
+}
 ?>
 
 <?php
@@ -169,7 +208,10 @@ $apt_agenda_in_page = ! empty( $args['in_page'] );
 		<div class="agenda-timeline apt-panel">
 <?php endif; ?>
 			<?php if ( $is_dtd === '' && $is_tbd === '' ) : ?>
-			<p class="apt-empty">No upcoming meetings are scheduled at the moment.</p>
+			<p class="apt-empty">No upcoming meetings are scheduled at the moment.<?php echo $is_recent ? ' The most recent meetings:' : ''; ?></p>
+			<?php if ( $is_recent ) : ?>
+			<ol class="agenda-recent" aria-label="Most recent meetings"><?php echo $is_recent; ?></ol>
+			<?php endif; ?>
 			<?php endif; ?>
 			<?php echo($is_dtd);?>
 			
