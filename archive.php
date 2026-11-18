@@ -734,7 +734,7 @@ if($current_category == 'other-documents'){
 					wp_list_categories($wlc2_args);	
 					echo('</ul></div>');
 					echo("<script type='text/javascript'>
-							jQuery(document).ready(function(jQuery){
+							jQuery(document).ready(function($){
 								$('.ministerial-sidebar > .list-group > li').addClass('list-group-item');
 								$('.ministerial-sidebar > .list-group > li > a').addClass('btn btn-secondary');
 								var currentcat = $('.ministerial-sidebar .current-cat a').html();
@@ -793,7 +793,7 @@ if($current_category == 'other-documents'){
 					echo('</ul>');*/
 					echo("<script type='text/javascript'>
 						/*modifying the sidebar list*/
-						jQuery(document).ready(function(jQuery){
+						jQuery(document).ready(function($){
 							$('.ministerial-sidebar > .list-group > li').addClass('list-group-item');
 							$('.ministerial-sidebar > .list-group > li > a').addClass('btn btn-secondary');
 							var currentcat = $('.ministerial-sidebar .current-cat a').html();

@@ -17,7 +17,7 @@ get_header();
 				<!--NEWS-->
 				<div class="topic-head mt-4" id="page-news-2">
 					<div class="container">
-						<h2>APT Latest News & Activities</h2>
+						<h1>APT Latest News & Activities</h1>
 					</div>
 				</div>
 				<div class="container pt-4">
@@ -149,7 +149,7 @@ get_header();
 								?>
 
 								<script type="text/javascript">
-									jQuery(document).ready(function(jQuery){							
+									jQuery(document).ready(function($){							
 										$('nav#latest-news-nav > ul').removeClass().addClass('pagination mb-0');
 										$('nav#latest-news-nav > ul > li').removeClass().addClass('page-item');
 										$('nav#latest-news-nav > ul > li > a').removeClass().addClass('page-link');
