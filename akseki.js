@@ -12,7 +12,8 @@ jQuery(function($) {
 	   $('#imagemodal').modal('show'); // imagemodal is the id attribute assigned to the bootstrap modal, then i use the show function
 	});*/
 
-	$( ".popup-image" ).click(function() {
+	$( ".popup-image" ).click(function(e) {
+		e.preventDefault(); // href="#" would otherwise jump to the top
 		$imgsrc = $(this).find('> img').attr('src');
 		$imgsrc = ($imgsrc.replace(/-\d+?x\d+?\./,'.'));
 		$('#imagepreview').attr('src', $imgsrc);

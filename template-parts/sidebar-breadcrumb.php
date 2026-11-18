@@ -1,6 +1,6 @@
         <?php
 		//start breadcrumb		
-		echo('<div class="akseki_breadcrumb mb-4">');
+		echo('<nav class="akseki_breadcrumb mb-4" aria-label="Categories">');
 		$bc_separator = "";
 		//breadcrumb immidiate category
 		$categories = get_the_category();
@@ -35,7 +35,10 @@
     				//do nothing
     			}else{
     				echo('<div class="d-inline-block">');
-    				echo('<a class="ab-item btn btn-secondary mb-1 py-1 px-2 mr-1 text-left" href="'.get_category_link($cca).'" role="button" type="button" id="dropdownMenuLink'.$cca.'"><small>'.get_cat_name($cca).'</small></a>'.$bc_separator);
+    				// Pillar categories get the design system's pillar colour dot
+    				$pkey = apt_pillar_key(get_cat_name($cca));
+    				$pcls = ('other' !== $pkey) ? ' ab-pillar pillar-'.$pkey : '';
+    				echo('<a class="ab-item btn btn-secondary mb-1 py-1 px-2 mr-1 text-left'.$pcls.'" href="'.get_category_link($cca).'" id="dropdownMenuLink'.$cca.'"><small>'.get_cat_name($cca).'</small></a>'.$bc_separator);
     				/*echo('<div class="dropdown-menu" aria-labelledby="dropdownMenuLink'.$cca.'">');
     				//get their siblings
     				$child = get_category($cca);
@@ -64,13 +67,13 @@
 				$the_theme_id = akseki_get_theme_from_id($the_curcat,"category");
 				$the_theme_obj = get_post($the_theme_id);//print_r($the_theme_obj);
 				echo('<div class="dropdown d-inline-block">');
-				echo('<a class="ab-item btn btn-secondary mb-1 py-1 px-2 mr-1 text-left" href="'.get_permalink($the_theme_id).'" role="button" type="button" id="dropdownMenuLinkeded"><small>'.$the_theme_obj->post_title.'</small></a>'.$bc_separator);
+				echo('<a class="ab-item btn btn-secondary mb-1 py-1 px-2 mr-1 text-left" href="'.get_permalink($the_theme_id).'" id="dropdownMenuLinkeded"><small>'.$the_theme_obj->post_title.'</small></a>'.$bc_separator);
 				echo('</div>');
 			}
 		}
     		//breadcrumb current category
     		echo('<div class="dropdown d-inline-block">');
-    		echo('<a title="'.strip_tags(category_description($the_curcat)).'" class="ab-item btn btn-secondary mb-1 px-2 py-1" href="'.get_category_link($the_curcat).'" role="button" type="button" id="dropdownMenuLink'.$the_curcat.'"><small>'.get_cat_name($the_curcat).'</small></a>'.$bc_separator);
+    		echo('<a title="'.strip_tags(category_description($the_curcat)).'" class="ab-item btn btn-secondary mb-1 px-2 py-1" href="'.get_category_link($the_curcat).'" id="dropdownMenuLink'.$the_curcat.'"><small>'.get_cat_name($the_curcat).'</small></a>'.$bc_separator);
     		/*echo('<div class="dropdown-menu" aria-labelledby="dropdownMenuLink'.$the_curcat.'">');
     		//get the parent
     		$anc0_children=get_categories(
@@ -90,6 +93,6 @@
     		//breadcrumb last item
     		//echo('<span class="btn btn-secondary ab-item last-item">'.akseki_get_shortname(get_the_title(get_the_ID()),get_the_ID()).'</span>');
     		
-    		echo('</div>');
+    		echo('</nav>');
 		//}
 		?> 

@@ -1015,6 +1015,180 @@ main.site-single {
 .site-main:not(.front-main) table { font-size: 0.95rem; }
 .site-main:not(.front-main) .table thead th { border-bottom: 1px solid var(--rule); font-weight: 600; }
 
+/* ---------- Single post (template-parts/detail.php) ---------------------- */
+
+.apt-post { padding-top: clamp(28px, 4vw, 52px); }
+
+/* Header: title, subtitle, category tags, place and date */
+.apt-post-header {
+	padding-bottom: 24px;
+	margin-bottom: clamp(24px, 3vw, 40px);
+	border-bottom: 1px solid var(--rule);
+}
+.apt-post .fj-title {
+	font-size: clamp(2.25rem, 1.5rem + 2.6vw, 3.75rem);
+	font-weight: 700;
+	line-height: 1.05;
+	letter-spacing: -0.02em;
+	margin: 0 0 10px;
+	color: var(--ink);
+}
+/* "8<sup>th</sup>": keep the ordinal from opening a gap above the line */
+.apt-post .fj-title sup,
+.apt-post .fj-subtitle sup { font-size: 0.5em; line-height: 0; vertical-align: 0.75em; margin-left: 0.03em; }
+.apt-post .fj-subtitle {
+	font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.25rem);
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--ink-2);
+	max-width: 60ch;
+	margin: 0 0 18px;
+}
+
+/* Category tags (sidebar-breadcrumb.php): outline pills instead of skewed grey buttons */
+.apt-post .akseki_breadcrumb { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px !important; }
+.apt-post .akseki_breadcrumb > div { display: contents; }
+.apt-post .akseki_breadcrumb .ab-item {
+	transform: none;
+	display: inline-flex; align-items: center; gap: 6px;
+	min-block-size: max(32px, var(--target-size));
+	margin: 0 !important;
+	padding: 4px 14px !important;
+	border: 1px solid var(--rule-soft) !important;
+	border-radius: var(--radius-pill);
+	background: var(--paper) !important;
+	color: var(--ink-2) !important;
+	box-shadow: none !important;
+	font-size: 0.85rem; font-weight: 500;
+}
+.apt-post .akseki_breadcrumb .ab-item small { font-size: inherit; font-style: normal; font-weight: inherit; }
+.apt-post .akseki_breadcrumb .ab-item:hover { border-color: var(--ink) !important; color: var(--ink) !important; }
+/* the meeting itself (last tag) */
+.apt-post .akseki_breadcrumb > div:last-child .ab-item {
+	background: var(--ink) !important; border-color: var(--ink) !important; color: var(--paper) !important; font-weight: 600;
+}
+.apt-post .akseki_breadcrumb > div:last-child .ab-item:hover { background: var(--apt-red) !important; border-color: var(--apt-red) !important; }
+.apt-post .akseki_breadcrumb .ab-pillar::before {
+	content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--tag-c, var(--pillar-other));
+}
+
+/* Place and date */
+.apt-post .akseki-detail-style1.akseki-meta,
+.apt-post .akseki-meta {
+	display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px;
+	justify-content: flex-start;
+	margin: 0; padding: 0;
+	border: 0;
+	color: var(--ink-2);
+	font-size: 0.95rem;
+}
+.apt-post .akseki-meta .meta-location { display: inline; }
+.apt-post .akseki-meta .roundflag { margin-left: 4px; }
+.apt-post .akseki-meta .meta-date { display: inline-flex; align-items: center; }
+.apt-post .akseki-meta .meta-date::before {
+	content: ''; font-family: inherit;
+	width: 1.05em; height: 1.05em; margin-right: 8px;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M8 3v4M16 3v4M3 10h18'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M8 3v4M16 3v4M3 10h18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Body: image + content, with an aside for related meetings */
+.apt-post-body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: clamp(28px, 4vw, 56px);
+}
+@media (min-width: 992px) {
+	.apt-post-body { grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); }
+}
+.apt-post-figure { margin: 0 0 28px; }
+.apt-post-figure a { display: block; border-radius: var(--radius-tile); overflow: hidden; cursor: zoom-in; }
+.apt-post-figure img { display: block; width: 100%; height: auto; }
+.apt-post .entry-content { font-size: 1.05rem; line-height: 1.75; max-width: 72ch; border-bottom: 0; padding-bottom: 0; } /* style.css drew a dotted maroon line */
+.apt-post .entry-content > * + * { margin-top: 1.1em; }
+.apt-post .entry-content a { color: var(--apt-blue); text-underline-offset: 3px; }
+.apt-post .entry-content a:hover { color: var(--apt-red); }
+.apt-post .entry-content hr { border: 0; border-top: 1px solid var(--rule-soft); }
+/* "Click for the full statement" (core file block): an ink pill with an arrow */
+.apt-post .entry-content .wp-block-file { margin-top: 1.5em; }
+.apt-post .entry-content .wp-block-file a {
+	display: inline-flex; align-items: center;
+	min-block-size: max(44px, var(--target-size));
+	padding: 0 22px;
+	border-radius: var(--radius-pill);
+	background: var(--ink); color: var(--paper);
+	font-weight: 600; text-decoration: none;
+}
+.apt-post .entry-content .wp-block-file a::after {
+	content: ''; width: 1.15em; height: 1.15em; margin-left: 10px;
+	background-color: currentColor;
+	-webkit-mask: var(--icon-arrow) center / contain no-repeat;
+	mask: var(--icon-arrow) center / contain no-repeat;
+}
+.apt-post .entry-content .wp-block-file a:hover { background: var(--apt-red); color: var(--paper); }
+.apt-post .entry-content .wp-block-file .wp-block-file__button { display: none; } /* duplicate core button */
+
+/* Aside */
+.apt-post-aside { display: flex; flex-direction: column; gap: 16px; text-align: left; }
+.apt-post-aside .sidebar-left-item { margin: 0 !important; padding: 0 !important; text-align: left; }
+.apt-post-note {
+	margin: 0; padding: 12px 16px;
+	border: 1px dashed var(--rule-soft); border-radius: 12px;
+	background: var(--paper-2); color: var(--ink-2); font-size: 0.9rem;
+}
+
+/* Related-meeting dropdowns (sidebar-akseki_short-title / _same-theme) */
+.apt-post-aside .detail-sidebar { border: 1px solid var(--rule-soft); border-radius: var(--radius-tile); overflow: hidden; }
+.apt-post-aside .detail-sidebar .toggler-title {
+	display: block; width: 100%;
+	padding: 16px 18px !important;
+	border: 0 !important; border-radius: 0;
+	background: var(--paper-2) !important;
+	color: var(--ink) !important;
+	text-align: left !important;
+	box-shadow: none !important;
+	white-space: normal;
+}
+.apt-post-aside .detail-sidebar .toggler-title:hover { background: #eceef2 !important; }
+.apt-post-aside .detail-sidebar .toggler-title h3 {
+	display: flex; align-items: center; justify-content: space-between; gap: 12px;
+	margin: 0 0 4px; font-size: 1.15rem; font-weight: 700;
+}
+.apt-post-aside .detail-sidebar .toggler-title p { margin: 0; font-size: 0.85rem; color: var(--ink-2); }
+.apt-post-aside .detail-sidebar .more-less {
+	flex: none; width: 18px; height: 18px; font-size: 0; /* font-size 0 hides the old dashicon glyph */
+	background-color: currentColor;
+	-webkit-mask: var(--icon-chevron) center / contain no-repeat;
+	mask: var(--icon-chevron) center / contain no-repeat;
+	transition: rotate 0.2s;
+}
+.apt-post-aside .detail-sidebar .more-less::before { content: none; }
+.apt-post-aside .detail-sidebar .more-less.dashicons-arrow-up { rotate: 180deg; }
+@media (prefers-reduced-motion: reduce) { .apt-post-aside .detail-sidebar .more-less { transition: none; } }
+.apt-post-aside .detail-sidebar .list-group { margin: 0; padding: 4px 6px 8px; max-height: 420px; overflow-y: auto; overscroll-behavior: contain; }
+.apt-post-aside .detail-sidebar .list-group-item {
+	border: 0; border-bottom: 1px solid var(--rule-soft);
+	padding: 10px 12px !important; font-size: 0.9rem; background: transparent;
+}
+.apt-post-aside .detail-sidebar .list-group-item:last-child { border-bottom: 0; }
+.apt-post-aside .detail-sidebar .list-group-item-warning { background: rgba(255, 205, 0, 0.16); border-radius: 8px; font-weight: 600; color: var(--ink); }
+.apt-post-aside .detail-sidebar h5 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin: 14px 12px 4px !important; padding: 0 !important; }
+.apt-post-aside .related-link { color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; flex-wrap: wrap; min-block-size: var(--target-size); }
+.apt-post-aside .related-link:hover { color: var(--apt-red); padding-right: 0; }
+.apt-post-aside .related-link:hover::after { content: none; }
+.apt-post-aside .badge-secondary { background: var(--paper-2); color: var(--ink-2); font-weight: 500; border-radius: 999px; padding: 2px 8px; }
+
+/* Sources: editors only */
+.apt-post-sources { padding: 14px 16px; border-radius: 12px; background: var(--paper-2); font-size: 0.85rem; }
+.apt-post-sources h2 { font-size: 0.95rem; font-weight: 600; margin: 0 0 6px; color: var(--ink); }
+.apt-post-sources h2 span { display: block; font-size: 0.75rem; font-weight: 400; color: var(--ink-3); }
+.apt-post-sources ul { margin: 0; padding-left: 1.1em; }
+.apt-post-sources li + li { margin-top: 6px; }
+.apt-post-sources a { color: var(--ink-2); overflow-wrap: anywhere; display: inline-block; min-block-size: var(--target-size); }
+.apt-post-sources a:hover { color: var(--apt-red); }
+.apt-post-sources p { margin: 0; color: var(--ink-3); }
+
 /* ---------- Footer (on gradient) ----------------------------------------- */
 
 .apt-footer {
