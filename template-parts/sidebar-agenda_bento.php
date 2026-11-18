@@ -146,6 +146,16 @@ endif;
 wp_reset_postdata();
 ?>
 
+<?php
+// On the home page this is a gradient section with its own heading; on the
+// Agenda page (in_page) the page already has a title and a white frame.
+$apt_agenda_in_page = ! empty( $args['in_page'] );
+?>
+<?php if ( $apt_agenda_in_page ) : ?>
+<section class="modern-agenda-section apt-agenda-page" id="front-events" aria-label="Upcoming meetings">
+	<div class="container">
+		<div class="agenda-timeline">
+<?php else : ?>
 <section class="modern-agenda-section apt-section" id="front-events">
 	<div class="container">
 		<div class="apt-section-head">
@@ -157,6 +167,7 @@ wp_reset_postdata();
 		</div>
 
 		<div class="agenda-timeline apt-panel">
+<?php endif; ?>
 			<?php if ( $is_dtd === '' && $is_tbd === '' ) : ?>
 			<p class="apt-empty">No upcoming meetings are scheduled at the moment.</p>
 			<?php endif; ?>
