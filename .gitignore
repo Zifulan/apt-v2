@@ -1,0 +1,10 @@
+# Server and editor leftovers that must never be committed
+error_log
+*.log
+~*
+*~
+*.backup
+*.bak
+.DS_Store
+Thumbs.db
+node_modules/

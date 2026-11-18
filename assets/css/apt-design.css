@@ -1,0 +1,1039 @@
+/* ==========================================================================
+   APT design system
+   Layout language modelled on the AKCF site (white rounded frames over an
+   animated gradient, Outfit type, thin rules, circled-arrow links,
+   off-canvas mega menu), recoloured with the APT / ASEAN palette.
+   ========================================================================== */
+
+:root {
+	/* Brand: ASEAN emblem colours + legacy APT colours */
+	--apt-blue: #0b3d91;        /* ASEAN blue (emblem)            */
+	--apt-blue-light: #2c63c4;
+	--apt-red: #ce1126;         /* ASEAN red (emblem)             */
+	--apt-crimson: #c9234a;     /* previous APT navbar crimson    */
+	--apt-maroon: #98294b;      /* original APT theme colour      */
+	--apt-yellow: #ffcd00;      /* ASEAN yellow, softened for UI  */
+
+	/* Pillar colours (used like AKCF's sector colours) */
+	--pillar-ps: var(--apt-blue);      /* Political-Security */
+	--pillar-ec: #b57f00;              /* Economic           */
+	--pillar-sc: var(--apt-red);       /* Socio-Cultural     */
+	--pillar-other: var(--apt-maroon);
+
+	/* Neutrals */
+	--ink: #111318;
+	--ink-2: #4a4f5c;
+	--ink-3: #6b7080;
+	--rule: #111318;
+	--rule-soft: #e3e5ea;
+	--paper: #ffffff;
+	--paper-2: #f5f6f8;
+	--on-grad: #ffffff;
+	--on-grad-2: rgba(255, 255, 255, 0.82);
+	--on-grad-rule: rgba(255, 255, 255, 0.45);
+
+	/* Shape + space */
+	--frame-gap: 15px;
+	--radius-frame: 20px;
+	--radius-tile: 14px;
+	--radius-pill: 999px;
+	--header-h: 52px;
+	--header-offset: calc(var(--header-h) + var(--frame-gap) * 2 + 8px);
+
+	--font: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
+
+	/* Minimum hit area: 24px (WCAG 2.5.8), 44px where the pointer is a finger */
+	--target-size: 24px;
+
+	/* Circled-arrow icon, painted with currentColor through a mask */
+	--icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M8 12h8M12.5 8.5 16 12l-3.5 3.5'/%3E%3C/svg%3E");
+	--icon-ext: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M9 15l6-6M10 9h5v5'/%3E%3C/svg%3E");
+	--icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 8v8M8 12h8'/%3E%3C/svg%3E");
+	--icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	--icon-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E");
+}
+
+@media (pointer: coarse) {
+	:root { --target-size: 44px; }
+}
+
+/* ---------- Base ---------------------------------------------------------- */
+
+html { font-family: var(--font); font-size: 16px; scroll-padding-top: var(--header-offset); }
+/* Native smooth anchor scrolling, only when motion is welcome */
+@media (prefers-reduced-motion: no-preference) {
+	html { scroll-behavior: smooth; }
+}
+
+body {
+	font-family: var(--font);
+	font-weight: 300;
+	color: var(--ink);
+	margin: 0 !important;
+	min-height: 100vh;
+	min-height: 100dvh;
+	background: var(--apt-blue);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+/* Gradient on a fixed, oversized layer (background-attachment: fixed is
+   ignored on iOS). It drifts with transform only, so the compositor moves it
+   without repainting the page every frame. */
+body::before {
+	content: '';
+	position: fixed;
+	inset: -30vmax;
+	z-index: -1;
+	pointer-events: none;
+	background-image:
+		radial-gradient(45vmax 35vmax at 70% 30%, rgba(255, 205, 0, 0.26), transparent 60%),
+		linear-gradient(120deg, var(--apt-blue) 20%, #3a3a9a 40%, var(--apt-maroon) 62%, var(--apt-crimson) 80%);
+}
+@media (prefers-reduced-motion: no-preference) {
+	body::before { animation: apt-grad 28s ease-in-out infinite alternate; }
+}
+@keyframes apt-grad {
+	from { transform: translate3d(-12vmax, -4vmax, 0); }
+	to   { transform: translate3d(12vmax, 4vmax, 0); }
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+	font-family: var(--font);
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	line-height: 1.15;
+}
+strong, b { font-weight: 600; }
+
+a { color: var(--apt-blue); }
+a:hover { color: var(--apt-red); }
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+	/* Two-tone ring: the dark outline contrasts with white panels, the white
+	   halo with the dark gradient, so one of them is always >= 3:1. */
+	outline: 2px solid var(--ink);
+	outline-offset: 2px;
+	box-shadow: 0 0 0 2px var(--paper), 0 0 0 6px var(--paper);
+}
+/* Press feedback, distinct from hover (colour/fill) and focus (ring) */
+:where(.apt-pill, .apt-header-btn, .apt-menu-close, .apt-carousel-btn, .apt-carousel-marker, .resource-accordion-summary, .agenda-month-summary) {
+	transition: background-color 150ms ease-out, color 150ms ease-out, scale 150ms ease-out, box-shadow 150ms ease-out;
+}
+:where(.apt-pill, .apt-header-btn, .apt-menu-close, .apt-carousel-btn):active { scale: 0.96; }
+@media (prefers-reduced-motion: reduce) {
+	:where(.apt-pill, .apt-header-btn, .apt-menu-close, .apt-carousel-btn):active { scale: 1; }
+}
+
+.screen-reader-text {
+	position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px); white-space: nowrap;
+}
+.apt-skip:focus {
+	position: fixed; top: 10px; left: 10px; z-index: 3000; width: auto; height: auto; clip: auto;
+	background: var(--paper); color: var(--ink); padding: 10px 16px; border-radius: 10px;
+}
+
+#wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+#wrapper > main { flex: 1 0 auto; }
+
+/* The old theme forced every section to 100vh with scroll-snap */
+#main { scroll-snap-type: none !important; margin-bottom: 0 !important; }
+#main section { min-height: 0 !important; scroll-snap-align: none !important; }
+
+/* ---------- Shared pieces ------------------------------------------------- */
+
+/* Target sizes: grow the hit area with min-size (never a fixed size, so
+   content can still make it bigger). Links inside sentences are exempt. */
+:where(
+	.apt-menu-list a, .apt-footer-cols a, .apt-social a, .apt-quicklinks a,
+	.apt-pill, .apt-tag, .news-meta-item a, .news-cta-btn,
+	.apt-carousel-btn, .apt-carousel-marker,
+	.site-main .page-link, .site-main .btn
+) {
+	min-block-size: var(--target-size);
+	min-inline-size: var(--target-size);
+}
+:where(.apt-footer-cols a, .apt-quicklinks a, .news-meta-item a, .news-cta-btn, .site-main .page-link, .site-main .btn) {
+	display: inline-flex;
+	align-items: center;
+}
+
+/* Circled arrow, placed after a link label */
+.apt-arrow::after,
+.apt-ext::after {
+	content: '';
+	display: inline-block;
+	flex: none;
+	width: 1.15em;
+	height: 1.15em;
+	margin-left: 0.5em;
+	vertical-align: -0.2em;
+	background-color: currentColor;
+	-webkit-mask: var(--icon-arrow) center / contain no-repeat;
+	mask: var(--icon-arrow) center / contain no-repeat;
+	transition: transform 0.2s ease;
+}
+.apt-ext::after { -webkit-mask-image: var(--icon-ext); mask-image: var(--icon-ext); }
+.apt-arrow:hover::after,
+.apt-arrow:focus-visible::after { transform: translateX(3px); }
+
+/* Pill buttons ("see all", "see detail") */
+.apt-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	padding: 0.45em 1.1em;
+	border: 1px solid currentColor;
+	border-radius: var(--radius-pill);
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1.3;
+	text-decoration: none !important;
+	background: transparent;
+	transition: background 0.2s ease, color 0.2s ease;
+}
+.apt-pill--light { color: var(--on-grad); }
+.apt-pill--light:hover { background: var(--on-grad); color: var(--apt-blue); }
+.apt-pill--dark { color: var(--ink); }
+.apt-pill--dark:hover { background: var(--ink); color: var(--paper); }
+
+/* Section headings that sit on the gradient */
+.apt-section { padding: clamp(48px, 6vw, 88px) 0 0; position: relative; }
+.apt-section-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px 32px;
+	margin-bottom: clamp(24px, 4vw, 44px);
+}
+.apt-section-title {
+	color: var(--on-grad);
+	font-size: clamp(2rem, 1.3rem + 2.4vw, 3.25rem);
+	font-weight: 700;
+	line-height: 1.05;
+	margin: 0;
+	max-width: 16ch;
+}
+.apt-section-lede { color: var(--on-grad-2); font-size: 1.05rem; margin: 10px 0 0; max-width: 44ch; }
+
+/* White panel used for dense content on the gradient */
+.apt-panel {
+	background: var(--paper);
+	border-radius: var(--radius-frame);
+	padding: clamp(20px, 3.5vw, 44px);
+	box-shadow: 0 20px 50px rgba(10, 14, 40, 0.18);
+}
+
+/* Pillar tag (AKCF sector tag equivalent) */
+.apt-tag {
+	text-decoration: none !important;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.8rem;
+	font-weight: 500;
+	color: var(--ink-2);
+}
+.apt-tag::before {
+	content: '';
+	width: 9px; height: 9px;
+	border-radius: 50%;
+	background: var(--tag-c, var(--pillar-other));
+}
+.pillar-ps { --tag-c: var(--pillar-ps); }
+.pillar-ec { --tag-c: var(--pillar-ec); }
+.pillar-sc { --tag-c: var(--pillar-sc); }
+.pillar-other { --tag-c: var(--pillar-other); }
+
+/* Round flags coming from akseki_get_the_meta() */
+.roundflag { display: inline-flex; width: 1.1em; height: 1.1em; vertical-align: -0.2em; border-radius: 50%; overflow: hidden; }
+.roundflag svg { width: 100%; height: 100%; }
+
+/* ---------- Header -------------------------------------------------------- */
+
+.apt-header {
+	position: fixed;
+	top: 0; left: 0; right: 0;
+	z-index: 1030;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: var(--frame-gap) calc(var(--frame-gap) + 12px);
+	pointer-events: none; /* only the pills are interactive */
+}
+.apt-header > * { pointer-events: auto; }
+
+.apt-brand,
+.apt-header-btn {
+	height: var(--header-h);
+	background: var(--paper);
+	border-radius: 14px;
+	box-shadow: 0 6px 22px rgba(10, 14, 40, 0.14);
+	color: var(--ink);
+}
+.apt-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 0 16px 0 8px;
+	text-decoration: none !important;
+}
+.apt-brand:hover { color: var(--ink); }
+.apt-brand svg { width: 38px; height: 38px; flex: none; }
+.apt-brand-text {
+	display: flex;
+	flex-direction: column;
+	font-size: 0.68rem;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+.apt-header-actions { display: flex; gap: 10px; }
+.apt-header-btn {
+	width: var(--header-h);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+	transition: transform 0.15s ease;
+}
+.apt-header-btn:hover { transform: translateY(-1px); }
+.apt-header-btn svg { width: 24px; height: 24px; }
+
+/* ---------- Off-canvas mega menu ----------------------------------------- */
+
+.apt-menu {
+	/* Panel width; on phones a strip of page stays visible as the tap-to-close area */
+	--menu-w: min(700px, 92dvw);
+	--menu-backdrop: 0;
+	/* Reset UA dialog styles so the swipe surface spans the viewport */
+	inset: 0;
+	width: auto;
+	height: auto;
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	overflow: visible;
+	color: var(--ink);
+}
+.apt-menu::backdrop {
+	background: rgb(15 18 40);
+	opacity: calc(var(--menu-backdrop) * 0.55);
+}
+html:has(.apt-menu[open]) { overflow: hidden; }
+
+/* Spacer on the left = closed stop, sheet on the right = open stop */
+.apt-menu-scroller {
+	display: grid;
+	grid-template-columns: 100% var(--menu-w);
+	height: 100%;
+	overflow-x: scroll;
+	overscroll-behavior: none;
+	scrollbar-width: none;
+	scroll-snap-type: x mandatory;
+}
+.apt-menu-scroller::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+	.apt-menu-scroller { scroll-behavior: smooth; }
+}
+.apt-menu-scroller::before {
+	content: '';
+	scroll-snap-align: start;
+	scroll-initial-target: nearest;
+}
+.apt-menu-sheet {
+	scroll-snap-align: end;
+	height: 100svh;
+	padding: var(--frame-gap);
+	display: flex;
+}
+.apt-menu-panel {
+	flex: 1;
+	min-width: 0;
+	background: var(--paper);
+	border-radius: var(--radius-frame);
+	padding: 28px clamp(24px, 4vw, 44px) 40px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+/* Backdrop fades with the drag. Gated: without support the keyframes would
+   pin the backdrop fully visible. */
+@supports (animation-timeline: scroll()) {
+	.apt-menu {
+		timeline-scope: --apt-menu-fade;
+		animation: apt-menu-fade linear both;
+		animation-timeline: --apt-menu-fade;
+	}
+	.apt-menu-scroller { scroll-timeline: --apt-menu-fade x; }
+	@property --menu-backdrop {
+		syntax: '<number>';
+		inherits: true;
+		initial-value: 0;
+	}
+	@keyframes apt-menu-fade {
+		0% { --menu-backdrop: 0; }
+		100% { --menu-backdrop: 1; }
+	}
+}
+
+.apt-menu-top { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.apt-menu-close {
+	width: 44px; height: 44px; border: 0; background: none; padding: 0; border-radius: 50%;
+	display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink);
+}
+.apt-menu-close svg { width: 26px; height: 26px; }
+
+.apt-menu-list, .apt-menu-list ul { list-style: none; margin: 0; padding: 0; }
+.apt-menu-list > li { padding: 22px 0; border-bottom: 1px solid var(--rule); }
+.apt-menu-list > li:first-child { padding-top: 0; }
+.apt-menu-list > li:last-child { border-bottom: 0; }
+.apt-menu-list > li > a {
+	display: inline-flex;
+	align-items: center;
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--ink);
+	text-decoration: none;
+}
+.apt-menu-list > li > a::after {
+	content: ''; width: 0.8em; height: 0.8em; margin-left: 0.45em;
+	background-color: currentColor;
+	-webkit-mask: var(--icon-arrow) center / contain no-repeat;
+	mask: var(--icon-arrow) center / contain no-repeat;
+}
+.apt-menu-list > li > .sub-menu {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 4px 28px; /* links are now >= the target size tall */
+	margin-top: 12px;
+}
+.apt-menu-list .sub-menu a {
+	display: inline-flex;
+	align-items: center;
+	color: var(--ink);
+	font-size: 1rem;
+	font-weight: 400;
+	text-decoration: none;
+}
+.apt-menu-list .sub-menu a::after {
+	content: ''; flex: none; width: 1.1em; height: 1.1em; margin-left: 0.5em;
+	background-color: currentColor;
+	-webkit-mask: var(--icon-arrow) center / contain no-repeat;
+	mask: var(--icon-arrow) center / contain no-repeat;
+}
+.apt-menu-list a:hover { color: var(--apt-red); }
+.apt-menu-list .current-menu-item > a { color: var(--apt-red); font-weight: 600; }
+/* third level: indented, smaller, no icon */
+.apt-menu-list .sub-menu .sub-menu { margin: 8px 0 0 2px; padding-left: 12px; border-left: 2px solid var(--rule-soft); }
+.apt-menu-list .sub-menu .sub-menu li + li { margin-top: 0; }
+.apt-menu-list .sub-menu .sub-menu a { font-size: 0.9rem; color: var(--ink-2); }
+.apt-menu-list .sub-menu .sub-menu a::after { display: none; }
+
+.apt-menu-search { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--rule); }
+
+@media (max-width: 575.98px) {
+	.apt-menu-list > li > .sub-menu { grid-template-columns: 1fr; }
+	.apt-menu-list > li > a { font-size: 1.3rem; }
+}
+
+/* ---------- Search modal -------------------------------------------------- */
+
+#searchModal .modal-content { border: 0; border-radius: var(--radius-frame); padding: 8px; }
+#searchModal .modal-header { border-bottom: 1px solid var(--rule); }
+#searchModal .modal-title { font-weight: 700; font-size: 1.5rem; }
+#searchModal ul { list-style: none; padding: 0; margin: 0; }
+#searchModal li { margin-bottom: 12px; }
+#searchModal input[type="text"],
+#searchModal select { border-radius: 10px; border: 1px solid #c9ccd4; height: 46px; }
+
+/* ---------- Home: hero frame --------------------------------------------- */
+
+.apt-hero {
+	position: relative;
+	margin: var(--frame-gap);
+	background: var(--paper);
+	border-radius: var(--radius-frame);
+	padding: calc(var(--header-offset) - var(--frame-gap)) clamp(20px, 3vw, 48px) clamp(20px, 2.5vw, 32px);
+	min-height: calc(100vh - var(--frame-gap) * 2);
+	min-height: calc(100svh - var(--frame-gap) * 2);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+.apt-hero-main {
+	flex: 1 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: clamp(24px, 4vw, 64px);
+	align-items: center;
+	padding-bottom: clamp(20px, 3vw, 36px);
+}
+.apt-hero-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	color: var(--ink-2);
+	margin-bottom: 18px;
+}
+.apt-hero-eyebrow::before {
+	content: ''; width: 28px; height: 3px; border-radius: 3px;
+	background: linear-gradient(90deg, var(--apt-blue), var(--apt-red), var(--apt-yellow));
+}
+.apt-hero-title {
+	font-size: clamp(2.75rem, 1.6rem + 4.4vw, 5.5rem);
+	font-weight: 700;
+	line-height: 0.98;
+	letter-spacing: -0.025em;
+	margin: 0 0 20px;
+	color: var(--ink);
+}
+.apt-hero-title span { display: block; color: var(--apt-red); }
+.apt-hero-lede { font-size: 1.1rem; line-height: 1.55; color: var(--ink-2); max-width: 40ch; margin: 0; }
+
+.apt-hero-feature {
+	position: relative;
+	display: block;
+	border-radius: var(--radius-tile);
+	overflow: hidden;
+	aspect-ratio: 16 / 10;
+	background: var(--paper-2);
+	color: var(--paper);
+	text-decoration: none !important;
+}
+.apt-hero-feature img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.apt-hero-feature:hover img { transform: scale(1.03); }
+.apt-hero-feature-cap {
+	position: absolute; left: 0; right: 0; bottom: 0;
+	padding: 60px 22px 18px;
+	background: linear-gradient(180deg, transparent, rgba(8, 12, 30, 0.82));
+	display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+}
+.apt-hero-feature-title {
+	display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+	font-size: clamp(1.05rem, 0.8rem + 0.8vw, 1.5rem); font-weight: 700; line-height: 1.2; margin: 0; color: var(--paper);
+}
+@media (max-width: 575.98px) {
+	.apt-hero-feature { aspect-ratio: 4 / 3; }
+	.apt-hero-feature-cap { padding: 48px 16px 14px; }
+}
+.apt-hero-feature .apt-arrow::after { width: 2rem; height: 2rem; margin: 0; }
+.apt-hero-feature-label {
+	position: absolute; top: 14px; left: 14px;
+	background: var(--paper); color: var(--ink);
+	font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+	padding: 5px 10px; border-radius: var(--radius-pill);
+}
+
+.apt-highlights-title { font-size: clamp(1.5rem, 1.15rem + 1vw, 2rem); font-weight: 700; margin: 0 0 12px; }
+.apt-highlights {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	border-top: 1px solid var(--rule);
+	border-bottom: 1px solid var(--rule);
+}
+.apt-highlight {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 18px 24px 18px 0;
+	color: var(--ink);
+	text-decoration: none !important;
+}
+.apt-highlight + .apt-highlight { padding-left: 24px; border-left: 1px solid var(--rule); }
+.apt-highlight:hover { color: var(--apt-red); }
+.apt-highlight-title {
+	font-size: 1.05rem; font-weight: 600; line-height: 1.3; margin: 0 0 8px;
+	display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.apt-highlight-meta { display: block; font-size: 0.85rem; color: var(--ink-2); }
+.apt-highlight-meta .meta-location { margin-right: 6px; }
+.apt-highlight .apt-arrow::after { width: 2rem; height: 2rem; margin: 0; }
+
+.apt-quicklinks {
+	display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px;
+	padding: 16px 0 0;
+}
+.apt-quicklinks-label { font-weight: 600; margin-right: auto; }
+.apt-quicklinks a { color: var(--ink); font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; }
+.apt-quicklinks a:hover { color: var(--apt-red); }
+
+@media (max-width: 991.98px) {
+	.apt-hero-main { grid-template-columns: 1fr; align-items: start; }
+	.apt-highlights { grid-template-columns: 1fr; border-bottom: 0; }
+	.apt-highlight { padding: 16px 0 !important; border-left: 0 !important; border-bottom: 1px solid var(--rule); }
+	.apt-quicklinks-label { width: 100%; }
+}
+
+/* ---------- Home: news (sits on gradient) -------------------------------- */
+
+.modern-news-section .apt-news-layout {
+	display: grid;
+	grid-template-columns: minmax(200px, 3fr) minmax(0, 9fr);
+	gap: clamp(24px, 3vw, 48px);
+	align-items: start;
+}
+.modern-news-section .apt-news-layout > * { min-width: 0; }
+.modern-news-section .apt-news-intro .apt-pill { margin-top: 22px; }
+@media (max-width: 1199.98px) {
+	.modern-news-section .apt-news-layout { grid-template-columns: 1fr; }
+}
+
+.news-card {
+	position: relative;
+	background: var(--paper);
+	border-radius: var(--radius-tile);
+	overflow: hidden;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	color: var(--ink);
+	box-shadow: 0 14px 34px rgba(10, 14, 40, 0.16);
+}
+/* Media fills a fixed ratio itself: no wrapper needed */
+.news-card > img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 16 / 10;
+	object-fit: cover;
+	background: var(--paper-2);
+	transition: scale 0.5s ease;
+}
+.news-card > :not(img) { padding-inline: 20px; }
+.news-card-header { padding-top: 18px; }
+.news-card-tag { margin-bottom: 4px; }
+.news-card-title { font-size: 1.15rem; font-weight: 700; line-height: 1.25; margin: 0 0 6px; }
+.news-card-title a { color: inherit; text-decoration: none; }
+.news-card-subtitle {
+	font-size: 0.875rem; color: var(--ink-2); line-height: 1.45; margin: 0 0 10px;
+	display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.news-card-date { font-size: 0.85rem; color: var(--ink-2); margin: 0 0 12px; }
+.news-meta-grid { border-top: 1px solid var(--rule-soft); padding-top: 10px; margin: 0 0 14px; }
+.news-meta-item { font-size: 0.8rem; line-height: 1.45; color: var(--ink-3); margin-bottom: 0; display: flex; flex-wrap: wrap; align-items: center; column-gap: 4px; }
+.news-meta-item dt, .news-meta-item dd { display: inline; margin: 0; }
+.news-meta-item .meta-label { color: var(--ink-2); font-weight: 500; }
+.news-meta-item a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule-soft); text-underline-offset: 2px; }
+.news-meta-item a:hover { color: var(--apt-red); }
+.news-card-cta { margin-top: auto; padding-bottom: 20px; }
+.news-cta-btn { display: inline-flex; align-items: center; color: var(--ink); font-weight: 600; text-decoration: none !important; }
+.news-card-summit { box-shadow: inset 0 4px 0 var(--apt-red), 0 14px 34px rgba(10, 14, 40, 0.16); }
+.news-card-ministerial { box-shadow: inset 0 4px 0 var(--apt-blue), 0 14px 34px rgba(10, 14, 40, 0.16); }
+
+/* Whole card is clickable through the heading link; other links stay on top */
+.news-card a.card-link::after { content: ''; position: absolute; inset: 0; }
+.news-card:has(a.card-link) :is(a:not(.card-link), button) { position: relative; z-index: 1; }
+.news-card a.card-link:focus-visible { outline: none; box-shadow: none; }
+.news-card:has(a.card-link:focus-visible) {
+	outline: 2px solid var(--ink);
+	outline-offset: 2px;
+	box-shadow: 0 0 0 2px var(--paper), 0 0 0 6px var(--paper);
+}
+.news-card:has(a.card-link:hover) .news-card-title,
+.news-card:has(a.card-link:hover) .news-cta-btn { color: var(--apt-red); }
+.news-card:has(a.card-link:hover) > img { scale: 1.03; }
+@media (prefers-reduced-motion: reduce) {
+	.news-card:has(a.card-link:hover) > img { scale: 1; }
+}
+
+/* Layout follows the card's own width, not the viewport */
+.apt-slide { container-type: inline-size; }
+@container (min-width: 540px) {
+	.news-card:has(> img) {
+		display: grid;
+		grid-template-columns: 42% minmax(0, 1fr);
+		grid-template-rows: auto auto 1fr;
+		column-gap: 4px;
+	}
+	.news-card:has(> img) > img { grid-column: 1; grid-row: 1 / -1; height: 100%; aspect-ratio: auto; min-height: 260px; }
+	.news-card:has(> img) > :not(img) { grid-column: 2; padding-inline: 20px 24px; }
+	.news-card:has(> img) > .news-card-cta { align-self: end; }
+}
+
+.apt-carousel { display: grid; grid-template-columns: minmax(0, 1fr); }
+.apt-carousel-track {
+	grid-row: 1;
+	--gap: 20px;
+	display: flex;
+	gap: var(--gap);
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	overscroll-behavior-x: contain;
+	scrollbar-width: none;
+	touch-action: manipulation;
+	padding: 4px 0 24px; /* room for card shadows */
+	border-radius: var(--radius-tile);
+}
+.apt-carousel-track::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+	.apt-carousel-track { scroll-behavior: smooth; }
+}
+.apt-carousel-track > * {
+	flex: 0 0 84%;
+	scroll-snap-align: center;
+	display: flex;
+}
+/* One main card per view with a sliver of each neighbour. Slides stay wider
+   than half the track: the looping technique parks one end slide at a time,
+   and an end slide resting at the track edge must still be the one nearest
+   the centre. */
+@media (min-width: 640px) {
+	.apt-carousel-track > * { flex-basis: 72%; }
+}
+@media (min-width: 992px) {
+	.apt-carousel-track > * { flex-basis: 66%; }
+}
+.apt-slide .news-card { width: 100%; }
+
+/* Looping: park an end slide beside the current one (set by apt-carousel.js).
+   --children-count is only set where sibling-count() is unsupported. */
+.apt-carousel-track > :first-child {
+	order: clamp(0, var(--current) - (var(--children-count, sibling-count()) - 3), 1);
+}
+.apt-carousel-track > :last-child {
+	order: calc(-1 * clamp(0, 2 - var(--current), 1));
+}
+
+.apt-carousel-controls {
+	grid-row: 2;
+	grid-column: 1; /* share row 2 with the markers instead of creating a second column */
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+.apt-carousel-markers {
+	grid-row: 2;
+	grid-column: 1;
+	justify-self: end;
+	align-self: center;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 2px;
+	padding-left: 120px; /* clear of the previous/next buttons on the same row */
+}
+.apt-carousel-btn {
+	width: 44px; height: 44px; padding: 0;
+	display: inline-flex; align-items: center; justify-content: center;
+	border-radius: 50%;
+	border: 1px solid var(--on-grad);
+	background: transparent;
+	color: var(--on-grad);
+	cursor: pointer;
+	touch-action: manipulation;
+}
+.apt-carousel-btn svg { width: 22px; height: 22px; }
+.apt-carousel-btn:hover { background: var(--on-grad); color: var(--apt-blue); }
+.apt-carousel-btn:disabled { opacity: 0.4; cursor: default; background: transparent; color: var(--on-grad); }
+/* 24px hit target around a small dot; active = wider pill, not colour alone */
+.apt-carousel-marker {
+	width: 24px; height: 24px; padding: 0;
+	border: 0; background: none; cursor: pointer;
+	display: inline-flex; align-items: center; justify-content: center;
+	touch-action: manipulation;
+}
+.apt-carousel-marker::before {
+	content: '';
+	width: 8px; height: 8px; border-radius: 999px;
+	background: rgba(255, 255, 255, 0.55);
+	transition: width 150ms ease-out, background-color 150ms ease-out;
+}
+.apt-carousel-marker:hover::before { background: var(--on-grad); }
+.apt-carousel-marker[aria-current="true"] { width: 34px; }
+.apt-carousel-marker[aria-current="true"]::before { width: 24px; background: var(--on-grad); }
+@media (max-width: 575.98px) {
+	.apt-carousel-markers { display: none; } /* swipe + buttons on phones; 12 dots don't fit */
+}
+
+/* ---------- Home: about / at a glance (on gradient) --------------------- */
+
+.modern-about-section { color: var(--on-grad); }
+.modern-about-section .apt-about-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: clamp(28px, 4vw, 72px);
+	align-items: start;
+}
+.about-card-text { color: var(--on-grad-2); font-size: 1.05rem; line-height: 1.7; margin: 0 0 24px; }
+.about-links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.stats-grid {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 0 14px;
+}
+.stat-card { grid-column: span 2; padding: 4px 0 20px; border-bottom: 1px solid var(--on-grad-rule); margin-bottom: 20px; }
+.stat-number { font-size: clamp(2.25rem, 1.6rem + 2vw, 3.25rem); font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.stat-label { font-size: 0.9rem; color: var(--on-grad-2); }
+.stat-card-blue .stat-number::after,
+.stat-card-yellow .stat-number::after,
+.stat-card-red .stat-number::after {
+	content: ''; display: block; width: 28px; height: 4px; border-radius: 4px; margin-top: 10px;
+}
+.stat-card-blue .stat-number::after { background: #7fb0ff; }
+.stat-card-yellow .stat-number::after { background: var(--apt-yellow); }
+.stat-card-red .stat-number::after { background: #ff7a8c; }
+
+.stat-card.stat-card-detail {
+	grid-column: span 3;
+	display: flex; gap: 14px; align-items: flex-start;
+	padding: 18px 20px; margin-bottom: 14px;
+	border: 1px solid var(--on-grad-rule);
+	border-radius: var(--radius-tile);
+	background: rgba(255, 255, 255, 0.08);
+}
+.stat-icon { color: var(--apt-yellow); flex: none; }
+.stat-icon svg { width: 28px; height: 28px; }
+.stat-value { font-size: 1.35rem; font-weight: 700; line-height: 1.15; }
+.stat-desc { font-size: 0.85rem; line-height: 1.4; color: var(--on-grad-2); margin-top: 4px; }
+.stat-desc em { opacity: 0.85; }
+
+@media (max-width: 991.98px) {
+	.modern-about-section .apt-about-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 575.98px) {
+	.stats-grid { grid-template-columns: 1fr 1fr; column-gap: 20px; }
+	.stat-card { grid-column: span 1; }
+	.stat-card.stat-card-detail { grid-column: 1 / -1; }
+}
+
+/* ---------- Home: resources (white panel) -------------------------------- */
+
+.resources-accordion { padding-top: 6px; padding-bottom: 6px; }
+.resource-accordion-item { border-bottom: 1px solid var(--rule); }
+.resource-accordion-item:last-child { border-bottom: 0; }
+
+/* Native <details>: marker sits right before the label, rotates open/closed */
+.resource-accordion-summary,
+.agenda-month-summary {
+	list-style: none;
+	display: flex;
+	align-items: center;
+	gap: 0.6ch;
+	padding: 20px 0;
+	color: var(--ink);
+	cursor: pointer;
+	border-radius: 6px;
+}
+.resource-accordion-summary::-webkit-details-marker,
+.agenda-month-summary::-webkit-details-marker { display: none; }
+.resource-accordion-summary::before,
+.agenda-month-summary::before {
+	content: '';
+	flex: none;
+	inline-size: 1.1em;
+	block-size: 1.1em;
+	background-color: currentColor;
+	-webkit-mask: var(--icon-chevron) no-repeat center / contain;
+	mask: var(--icon-chevron) no-repeat center / contain;
+	rotate: -90deg;
+}
+.resource-accordion-summary:dir(rtl)::before,
+.agenda-month-summary:dir(rtl)::before { rotate: 90deg; }
+details[open] > .resource-accordion-summary::before,
+details[open] > .agenda-month-summary::before { rotate: 0deg; }
+.resource-accordion-summary:hover,
+.agenda-month-summary:hover { color: var(--apt-red); }
+.resource-accordion-summary { font-size: clamp(1.15rem, 0.95rem + 0.7vw, 1.5rem); font-weight: 700; }
+
+/* Open/close slide; content stays findable with find-in-page */
+.resource-accordion-item::details-content,
+.agenda-month::details-content {
+	interpolate-size: allow-keywords;
+	overflow: clip;
+	contain: layout;
+}
+.resource-accordion-item:not([open])::details-content,
+.agenda-month:not([open])::details-content { block-size: 0; }
+@media (prefers-reduced-motion: no-preference) {
+	.resource-accordion-summary::before,
+	.agenda-month-summary::before { transition: rotate 0.2s; }
+	.resource-accordion-item::details-content,
+	.agenda-month::details-content {
+		transition: block-size, content-visibility;
+		transition-duration: 0.3s;
+		transition-timing-function: ease-in-out;
+		transition-behavior: allow-discrete;
+	}
+}
+
+.resource-accordion-content { padding-bottom: 24px; }
+.resource-cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+@media (max-width: 991.98px) { .resource-cards-grid { grid-template-columns: 1fr; gap: 20px; } }
+.resource-content-title {
+	font-family: var(--font);
+	font-size: 1rem; font-weight: 600; color: var(--apt-blue);
+	padding-bottom: 10px; margin: 0 0 6px; border-bottom: 2px solid var(--apt-blue);
+}
+.resource-content-card:nth-child(2) .resource-content-title { color: var(--apt-red); border-color: var(--apt-red); }
+.resource-content-card:nth-child(3) .resource-content-title { color: var(--apt-maroon); border-color: var(--apt-maroon); }
+.resource-content-body ul { list-style: none; padding: 0; margin: 0; }
+.resource-content-body li { border-bottom: 1px solid var(--rule-soft); }
+.resource-content-body li a,
+.resource-link {
+	display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+	padding: 11px 0;
+	font-size: 0.92rem; font-weight: 400; line-height: 1.4;
+	color: var(--ink); text-decoration: none;
+}
+.resource-content-body li a::after {
+	content: ''; flex: none; width: 1.15em; height: 1.15em; margin-top: 0.1em;
+	background-color: currentColor;
+	-webkit-mask: var(--icon-arrow) center / contain no-repeat;
+	mask: var(--icon-arrow) center / contain no-repeat;
+}
+.resource-content-body li a:hover { color: var(--apt-red); }
+
+/* Mechanisms tabs (template-parts/sidebar-mechanisms.php) */
+.mechanisms-wrapper .container { padding: 0; max-width: none; }
+.mechanisms-wrapper .nav-tabs { border: 0; gap: 8px; margin-bottom: 20px !important; }
+.mechanisms-wrapper .nav-tabs .nav-item { margin: 0 !important; }
+.mechanisms-wrapper .nav-tabs .nav-link {
+	display: flex; align-items: center; justify-content: center;
+	border: 1px solid var(--ink) !important; border-radius: var(--radius-pill);
+	background: transparent !important; color: var(--ink) !important;
+	font-size: 0.875rem; font-weight: 500; padding: 8px 14px;
+}
+.mechanisms-wrapper .nav-tabs .nav-link.active { background: var(--ink) !important; color: var(--paper) !important; }
+.mechanisms-wrapper a { color: var(--ink); }
+.mechanisms-wrapper a:hover { color: var(--apt-red); }
+
+/* ---------- Home: agenda (white panel) ----------------------------------- */
+
+.agenda-year-section + .agenda-year-section { margin-top: 28px; }
+.agenda-year-title {
+	font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem); font-weight: 700;
+	padding-bottom: 10px; margin: 0; border-bottom: 1px solid var(--rule);
+}
+.agenda-month { border-bottom: 1px solid var(--rule-soft); }
+.agenda-month-summary { font-size: 1.15rem; font-weight: 600; }
+.agenda-month-body { padding-bottom: 12px; }
+.agenda-event-item {
+	display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px;
+	padding: 14px 0 14px 16px; margin: 6px 0;
+	border-left: 3px solid var(--rule-soft);
+}
+.agenda-item-summit { border-left-color: var(--apt-red); }
+.agenda-item-ministerial { border-left-color: var(--apt-blue); }
+.agenda-event-content { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.agenda-event-title { font-weight: 500; }
+.agenda-event-marker { width: 8px; height: 8px; border-radius: 50%; background: var(--apt-maroon); }
+.agenda-date-badge {
+	display: inline-block; padding: 4px 10px; border-radius: var(--radius-pill);
+	background: var(--paper-2); font-size: 0.8rem; font-weight: 500; color: var(--ink-2); white-space: nowrap;
+}
+.agenda-item-summit .agenda-date-badge { background: rgba(206, 17, 38, 0.08); color: var(--apt-red); }
+.agenda-item-ministerial .agenda-date-badge { background: rgba(11, 61, 145, 0.08); color: var(--apt-blue); }
+.agenda-category { font-size: 0.8rem; color: var(--ink-3); }
+.apt-empty { color: var(--ink-2); margin: 0; }
+
+/* ---------- Inner pages --------------------------------------------------- */
+
+/* Non-home templates render inside one white frame, like AKCF's content area */
+.site-main:not(.front-main),
+main.site-single {
+	margin: var(--header-offset) var(--frame-gap) var(--frame-gap) !important;
+	background: var(--paper);
+	border-radius: var(--radius-frame);
+	padding-bottom: clamp(32px, 5vw, 64px);
+	overflow: hidden;
+	min-height: 60vh;
+}
+.topic-head { border-bottom: 1px solid var(--rule) !important; padding-top: clamp(28px, 4vw, 48px) !important; margin-top: 0 !important; }
+.topic-head .container { margin-top: 0 !important; }
+.topic-head h1, .topic-head h2 { font-size: clamp(2rem, 1.4rem + 2vw, 3rem) !important; font-weight: 700 !important; }
+
+.site-main:not(.front-main) .btn-primary,
+.site-single .btn-primary {
+	background: var(--ink) !important; border-color: var(--ink) !important; color: var(--paper) !important;
+	border-radius: var(--radius-pill); padding: 0.45rem 1.2rem; font-weight: 500;
+}
+.site-main:not(.front-main) .btn-primary:hover,
+.site-single .btn-primary:hover { background: var(--apt-red) !important; border-color: var(--apt-red) !important; }
+.site-main:not(.front-main) .btn-outline-primary { border-radius: var(--radius-pill); color: var(--ink); border-color: var(--ink); }
+.site-main:not(.front-main) .btn-outline-primary:hover { background: var(--ink); color: var(--paper); }
+
+.site-main:not(.front-main) .card { border: 1px solid var(--rule-soft); border-radius: var(--radius-tile); overflow: hidden; }
+.site-main:not(.front-main) .list-group-item { border-left: 0; border-right: 0; }
+.site-main:not(.front-main) .page-link { color: var(--ink); border-radius: 8px; margin: 0 3px; }
+.site-main:not(.front-main) .page-item.active .page-link { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.site-main:not(.front-main) .breadcrumb { background: none; padding-left: 0; font-size: 0.875rem; }
+.site-main:not(.front-main) .nav-tabs .nav-link.active { border-color: var(--rule) var(--rule) #fff; }
+.site-main:not(.front-main) table { font-size: 0.95rem; }
+.site-main:not(.front-main) .table thead th { border-bottom: 1px solid var(--rule); font-weight: 600; }
+
+/* ---------- Footer (on gradient) ----------------------------------------- */
+
+.apt-footer {
+	color: var(--on-grad);
+	padding: clamp(40px, 6vw, 72px) 0 28px;
+	border-top: 0;
+}
+.apt-footer a { color: var(--on-grad); text-decoration: none; }
+.apt-footer a:hover { color: var(--apt-yellow); }
+.apt-footer-top {
+	display: flex; align-items: center; justify-content: space-between; gap: 20px;
+	padding-bottom: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--on-grad-rule);
+}
+.apt-footer-brand { display: inline-flex; align-items: center; gap: 12px; }
+.apt-footer-brand svg { width: 52px; height: 52px; flex: none; }
+.apt-footer-brand .apt-brand-text { font-size: 0.85rem; }
+.apt-social { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.apt-social a {
+	width: max(40px, var(--target-size)); height: max(40px, var(--target-size)); border-radius: 50%;
+	display: inline-flex; align-items: center; justify-content: center;
+	background: var(--on-grad); color: var(--apt-blue);
+	transition: transform 0.15s ease, background 0.15s ease;
+}
+.apt-social a:hover { background: var(--apt-yellow); color: var(--ink); transform: translateY(-2px); }
+
+.apt-footer-cols {
+	display: grid;
+	grid-template-columns: minmax(0, 4fr) minmax(0, 1.4fr) minmax(0, 1.2fr);
+	gap: 32px 40px;
+}
+.apt-footer-heading { font-size: 1.05rem; font-weight: 600; margin: 0 0 14px; color: var(--on-grad); }
+.apt-footer-cols ul { list-style: none; margin: 0; padding: 0; }
+.apt-footer-cols li { margin-bottom: 2px; font-size: 0.9rem; }
+.apt-footer-cols li a { display: inline-flex; align-items: center; color: var(--on-grad-2); }
+.apt-footer-cols li a:hover { color: var(--on-grad); }
+/* footer menu: one column per top-level item, first level of children below */
+.apt-footer-menu {
+	display: grid !important;
+	grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+	gap: 24px 28px;
+}
+.apt-footer-menu > li { margin: 0; }
+.apt-footer-menu > li > a { font-size: 1.05rem; font-weight: 600; color: var(--on-grad) !important; margin-bottom: 8px; }
+.apt-footer-menu .sub-menu .sub-menu { display: none; }
+@media (max-width: 991.98px) {
+	.apt-footer-cols { grid-template-columns: 1fr 1fr; }
+	.apt-footer-menu { grid-column: 1 / -1; }
+}
+@media (max-width: 575.98px) {
+	.apt-footer-cols { grid-template-columns: 1fr; }
+	.apt-footer-menu { grid-template-columns: 1fr 1fr; }
+}
+.apt-footer-address { font-style: normal; font-size: 0.9rem; line-height: 1.7; color: var(--on-grad-2); margin: 0; }
+
+.apt-footer-bottom {
+	display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px;
+	margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--on-grad-rule);
+	font-size: 0.85rem; color: var(--on-grad-2);
+}
+@media (max-width: 575.98px) {
+	.apt-footer-top { flex-direction: column; align-items: flex-start; }
+}
