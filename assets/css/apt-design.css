@@ -610,7 +610,6 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	aspect-ratio: 16 / 10;
 	object-fit: cover;
 	background: var(--paper-2);
-	transition: scale 0.5s ease;
 }
 .news-card > :not(img) { padding-inline: 20px; }
 .news-card-header { padding-top: 18px; }
@@ -630,12 +629,12 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 .news-meta-item a:hover { color: var(--apt-red); }
 .news-card-cta { margin-top: auto; padding-bottom: 20px; }
 .news-cta-btn { display: inline-flex; align-items: center; color: var(--ink); font-weight: 600; text-decoration: none !important; }
-.news-card-summit { box-shadow: inset 0 4px 0 var(--apt-red), 0 14px 34px rgba(10, 14, 40, 0.16); }
-.news-card-ministerial { box-shadow: inset 0 4px 0 var(--apt-blue), 0 14px 34px rgba(10, 14, 40, 0.16); }
+.news-card-summit { border-top: 4px solid var(--apt-red); }
+.news-card-ministerial { border-top: 4px solid var(--apt-blue); }
 
 /* Whole card is clickable through the heading link; other links stay on top */
-.news-card a.card-link::after { content: ''; position: absolute; inset: 0; }
-.news-card:has(a.card-link) :is(a:not(.card-link), button) { position: relative; z-index: 1; }
+.news-card a.card-link::after { content: ''; position: absolute; inset: 0; z-index: 2; }
+.news-card:has(a.card-link) :is(a:not(.card-link), button) { position: relative; z-index: 3; }
 .news-card a.card-link:focus-visible { outline: none; box-shadow: none; }
 .news-card:has(a.card-link:focus-visible) {
 	outline: 2px solid var(--ink);
@@ -644,10 +643,6 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 }
 .news-card:has(a.card-link:hover) .news-card-title,
 .news-card:has(a.card-link:hover) .news-cta-btn { color: var(--apt-red); }
-.news-card:has(a.card-link:hover) > img { scale: 1.03; }
-@media (prefers-reduced-motion: reduce) {
-	.news-card:has(a.card-link:hover) > img { scale: 1; }
-}
 
 /* Layout follows the card's own width, not the viewport */
 .apt-slide { container-type: inline-size; }
@@ -658,7 +653,27 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 		grid-template-rows: auto auto 1fr;
 		column-gap: 4px;
 	}
-	.news-card:has(> img) > img { grid-column: 1; grid-row: 1 / -1; height: 100%; aspect-ratio: auto; min-height: 260px; }
+	/* Show the whole image (many are text graphics that must not be cropped)
+	   and fill the rest of the column with a blurred copy of it. The backdrop
+	   is painted 30px larger than its cell and clipped back (clip-path applies
+	   after filter), so the blur has no soft edges. */
+	.news-card:has(> img)::before {
+		content: '';
+		grid-column: 1;
+		grid-row: 1 / -1;
+		margin: -30px;
+		clip-path: inset(30px);
+		background: var(--card-img, var(--paper-2)) center / cover no-repeat;
+		filter: blur(18px) saturate(1.1) brightness(0.9);
+	}
+	.news-card:has(> img) > img {
+		grid-column: 1; grid-row: 1 / -1;
+		position: relative; z-index: 1;
+		height: 100%; min-height: 260px;
+		aspect-ratio: auto;
+		object-fit: contain;
+		background: transparent;
+	}
 	.news-card:has(> img) > :not(img) { grid-column: 2; padding-inline: 20px 24px; }
 	.news-card:has(> img) > .news-card-cta { align-self: end; }
 }

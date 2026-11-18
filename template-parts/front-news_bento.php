@@ -104,7 +104,7 @@
 					
 					$latest_card = '
 						<div class="apt-slide" role="group" aria-roledescription="slide" aria-label="'.$key.' of '.$total.'" data-marker-name="'.esc_attr('Go to slide '.$key.': '.wp_strip_all_tags($latest['shortname'])).'">
-							<article class="news-card '.$cardClass.'" id="card_com-'.get_the_id().'">
+							<article class="news-card '.$cardClass.'" id="card_com-'.get_the_id().'"'.($thethumb ? ' style="--card-img: url(&quot;'.esc_url($thethumb).'&quot;)"' : '').'>
 								'.($thethumb ? '<img src="'.esc_url($thethumb).'" class="news-card-image" alt="" loading="lazy"/>' : '').'
 								<header class="news-card-header">
 									'.$lp.'
