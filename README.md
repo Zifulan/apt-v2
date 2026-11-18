@@ -31,6 +31,22 @@ The theme expects the live site's content: specific category IDs
 page, posts tagged `front` for the hero, and the List Category Posts and
 Search & Filter plugins.
 
+## ASEAN emblem
+
+`img/asean/` holds the updated emblem (11 stalks, after Timor-Leste joined)
+and its lockups, all with transparent backgrounds:
+
+| File | Use |
+|---|---|
+| `asean-emblem-128.webp`, `asean-emblem-256.webp` | Header and footer (via `load_logo_svg()`) |
+| `asean-emblem.webp` | Emblem master (1906px) |
+| `asean-logo-horizontal.webp`, `asean-logo-vertical.webp` | With "Association of Southeast Asian Nations" |
+| `asean-logo-tagline.webp` | With "one vision, one identity, one community" |
+
+The lockup text is ASEAN blue, so use the lockups on light backgrounds only.
+`img/flags/asean.svg` (shown for "Online Conference" meetings) wraps the same
+emblem.
+
 ## Palette
 
 | Token | Colour | Source |

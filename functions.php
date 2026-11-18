@@ -239,15 +239,16 @@ function load_flags_svg( $filename ) {
 		return '';
     }	    
 }
+/**
+ * ASEAN emblem (updated 11-stalk version after Timor-Leste joined) for the
+ * header and footer. Supplied artwork, so it ships as sized WebP rather than a
+ * redrawn SVG. The name is kept because header.php and footer.php call it.
+ */
 function load_logo_svg() {
-    $svg_path = "/img/aptlogo3.svg";	
-    if ( file_exists( get_stylesheet_directory() . $svg_path ) ) {       
-		//echo("found");
-		return file_get_contents( get_stylesheet_directory() . $svg_path );
-    }else{
-		//echo("ng");
-		return '';
-    }	    
+	$dir = get_stylesheet_directory_uri() . '/img/asean/';
+	return '<img class="apt-emblem" src="' . esc_url( $dir . 'asean-emblem-128.webp' ) . '" srcset="'
+		. esc_url( $dir . 'asean-emblem-128.webp' ) . ' 128w, ' . esc_url( $dir . 'asean-emblem-256.webp' ) . ' 256w"'
+		. ' sizes="52px" width="128" height="128" alt="">';
 }
 
 //display country name and flag
