@@ -47,7 +47,7 @@ function gcc2($catid){
 				</div>
 			</details>
 
-			<details class="resource-accordion-item">
+			<details class="resource-accordion-item" open>
 				<summary class="resource-accordion-summary">Mechanisms</summary>
 				<div class="resource-accordion-content">
 					<div class="mechanisms-wrapper">

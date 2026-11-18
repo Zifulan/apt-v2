@@ -60,9 +60,7 @@
 <section class="apt-hero" aria-labelledby="apt-hero-title">
 	<div class="apt-hero-main">
 		<div class="apt-hero-intro">
-			<div class="apt-hero-eyebrow">Since 1997 &middot; ASEAN with China, Japan &amp; Korea</div>
 			<h1 class="apt-hero-title" id="apt-hero-title">ASEAN <span>Plus Three</span></h1>
-			<p class="apt-hero-lede">Cooperation between the ASEAN Member States and the People&rsquo;s Republic of China, Japan and the Republic of Korea, working towards an East Asian community.</p>
 		</div>
 
 		<?php if ( $ftn_feature ) : ?>
