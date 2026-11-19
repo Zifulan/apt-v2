@@ -27,7 +27,7 @@ $apt_mechanisms = array(
 	),
 	array(
 		'name' => 'ASEAN+3 Macroeconomic Research Office (AMRO)',
-		'text' => 'Mission: To contribute to the macroeconomic and financial resilience and stability of the region through surveillance, supporting regional financing arrangements, providing technical assistance, serving as a regional knowledge hub and facilitating ASEAN+3 financial cooperation.',
+		'text' => 'To contribute to the macroeconomic and financial resilience and stability of the region through surveillance, supporting regional financing arrangements, providing technical assistance, serving as a regional knowledge hub and facilitating ASEAN+3 financial cooperation.',
 		'url'  => '/about-amro-working-committee/',
 		'label' => 'About AMRO',
 		'ext'  => 'https://amro-asia.org/',
