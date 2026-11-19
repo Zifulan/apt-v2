@@ -4,6 +4,11 @@ Lets the site search find statements by the text **inside their attached
 PDFs**. Results are still the statement pages; when the match is only in the
 PDF, the theme shows the passage under "Found in the attached PDF:".
 
+For searches of several words, results containing the **whole phrase** come
+first (in the title, then in the page or its PDF), ahead of results that only
+contain the words separately; WordPress's own order applies within each group.
+The passage shown is the one with the whole phrase when there is one.
+
 It is a separate plugin, not part of the theme, so search keeps working if the
 theme changes.
 

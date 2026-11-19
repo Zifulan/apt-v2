@@ -34,6 +34,50 @@ add_filter( 'posts_search', function ( $search, $query ) {
 }, 10, 2 );
 
 /**
+ * The whole search as one phrase ("welcome constructive engagement"), or ''
+ * when it is a single word. Quotes and excluded "-words" are dropped.
+ */
+function apt_pdf_search_phrase( $s ) {
+	$words = preg_split( '/\s+/u', trim( str_replace( array( '"', '“', '”' ), ' ', (string) $s ) ) );
+	$words = array_values( array_filter( $words, function ( $w ) {
+		return '' !== $w && '-' !== $w[0];
+	} ) );
+	return count( $words ) > 1 ? implode( ' ', $words ) : '';
+}
+
+/**
+ * Ranking: when the search has several words, put results that contain the
+ * whole phrase first: in the title, then in the page text or its PDF. Within
+ * each group WordPress's own relevance order still applies.
+ */
+add_filter( 'posts_search_orderby', function ( $orderby, $query ) {
+	$forced = (bool) $query->get( 'apt_pdf_search' );
+	if ( '' === (string) $query->get( 's' ) || ( is_admin() && ! $forced ) ) {
+		return $orderby;
+	}
+	$phrase = apt_pdf_search_phrase( $query->get( 's' ) );
+	if ( '' === $phrase ) {
+		return $orderby;
+	}
+	global $wpdb;
+	$like = '%' . $wpdb->esc_like( $phrase ) . '%';
+	$case = $wpdb->prepare(
+		"(CASE WHEN {$wpdb->posts}.post_title LIKE %s THEN 0
+		      WHEN {$wpdb->posts}.post_content LIKE %s
+		        OR EXISTS ( SELECT 1 FROM {$wpdb->postmeta} apt_pdf_o
+		                    WHERE apt_pdf_o.post_id = {$wpdb->posts}.ID
+		                      AND apt_pdf_o.meta_key = %s
+		                      AND apt_pdf_o.meta_value LIKE %s ) THEN 1
+		      ELSE 2 END) ASC",
+		$like,
+		$like,
+		APT_PDF_SEARCH_TEXT,
+		$like
+	);
+	return '' === trim( (string) $orderby ) ? $case : $case . ', ' . $orderby;
+}, 10, 2 );
+
+/**
  * For the current search: a short passage from the post's PDF text around the
  * first search term, but only when the term is NOT already in the post's title,
  * excerpt or content (so it explains a match the page itself doesn't show).
@@ -58,7 +102,19 @@ function apt_pdf_search_snippet( $post = null, $radius = 120 ) {
 	$page = $post->post_title . ' ' . $post->post_excerpt . ' ' . wp_strip_all_tags( $post->post_content );
 	$pos  = false;
 	$hit  = '';
-	foreach ( $terms as $term ) {
+
+	// Prefer the whole phrase when the PDF contains it (and the page doesn't).
+	$phrase = apt_pdf_search_phrase( get_query_var( 's' ) );
+	if ( '' !== $phrase && false === mb_stripos( $page, $phrase ) ) {
+		$p = mb_stripos( $text, $phrase );
+		if ( false !== $p ) {
+			$pos   = $p;
+			$hit   = $phrase;
+			$terms = array( $phrase );
+		}
+	}
+
+	foreach ( false === $pos ? $terms : array() as $term ) {
 		if ( false !== mb_stripos( $page, $term ) ) {
 			continue; // visible on the page already
 		}
