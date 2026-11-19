@@ -22,25 +22,37 @@ $apt_mechanisms = array(
 		'name' => 'Chiang Mai Initiative Multilateralisation (CMIM)',
 		'meta' => 'Financial stability &middot; since 2010',
 		'text' => 'A regional financial safety net of <strong>US$240 billion</strong>. Participants commit to support one another through currency swaps if a member faces balance-of-payments or short-term liquidity needs. A Rapid Financing Facility for urgent needs took effect in 2026.',
-		'url'  => '/category/statements-and-declarations/working-expert-group/economic-cooperations-working-expert-group/wg-cmim/',
+		'url'  => '/about-cmim/',
+		'label' => 'About the CMIM',
+		'ext'  => 'https://amro-asia.org/about-amro/amro-and-the-cmim/',
+		'ext_label' => 'CMIM on amro-asia.org',
 	),
 	array(
 		'name' => 'ASEAN+3 Macroeconomic Research Office (AMRO)',
 		'meta' => 'Economic surveillance &middot; since 2011',
 		'text' => 'Monitors and analyses regional economies and supports the CMIM, contributing to the economic and financial resilience of the region. AMRO became an international organisation in 2016.',
-		'url'  => '/category/statements-and-declarations/working-expert-group/economic-cooperations-working-expert-group/amro-working-committee/',
+		'url'  => '/about-amro-working-committee/',
+		'label' => 'About AMRO',
+		'ext'  => 'https://amro-asia.org/',
+		'ext_label' => 'amro-asia.org',
 	),
 	array(
 		'name' => 'ASEAN Plus Three Emergency Rice Reserve (APTERR)',
 		'meta' => 'Food security &middot; since 2012',
 		'text' => '<strong>787,000 tonnes</strong> of rice earmarked by APT countries to respond to emergencies such as natural disasters. Among other uses, rice from the reserve was distributed in the Philippines after Typhoon Haiyan (Yolanda) in 2013.',
 		'url'  => '/category/statements-and-declarations/director-general-level/economic-cooperations-director-general-level/apterr/',
+		'label' => 'APTERR documents',
+		'ext'  => 'https://www.apterr.org/',
+		'ext_label' => 'apterr.org',
 	),
 	array(
 		'name' => 'Asian Bond Markets Initiative (ABMI)',
 		'meta' => 'Capital markets &middot; since 2003',
 		'text' => 'Supports the development of local-currency bond markets in the region, enabling better use of Asian savings for Asian investment.',
 		'url'  => '/chairmans-press-releaseon-the-asian-bond-markets-initiative/',
+		'label' => 'ABMI press release',
+		'ext'  => 'https://asianbondsonline.adb.org/abmi.php',
+		'ext_label' => 'AsianBondsOnline (ADB)',
 	),
 );
 ?>?>
@@ -57,13 +69,16 @@ $apt_mechanisms = array(
 		<ul class="apt-coop-list">
 			<?php foreach ( $apt_mechanisms as $m ) : ?>
 			<li class="apt-coop-item">
-				<h3 class="apt-coop-name"><a href="<?php echo esc_url( home_url( $m['url'] ) ); ?>"><?php echo esc_html( $m['name'] ); ?></a></h3>
+				<h3 class="apt-coop-name"><?php echo esc_html( $m['name'] ); ?></h3>
 				<p class="apt-coop-meta"><?php echo wp_kses_post( $m['meta'] ); ?></p>
 				<p class="apt-coop-text"><?php echo wp_kses_post( $m['text'] ); ?></p>
+				<p class="apt-coop-links">
+					<a class="apt-arrow" href="<?php echo esc_url( home_url( $m['url'] ) ); ?>"><?php echo esc_html( $m['label'] ); ?></a>
+					<a class="apt-ext" href="<?php echo esc_url( $m['ext'] ); ?>" rel="external"><?php echo esc_html( $m['ext_label'] ); ?><span class="sr-only"> (external site)</span></a>
+				</p>
 			</li>
 			<?php endforeach; ?>
 		</ul>
 
-		<p class="apt-stats-source apt-coop-source">Sources: the APT pages linked above; <a href="https://amro-asia.org/about-amro/amro-and-the-cmim/">AMRO</a> (CMIM and AMRO); <a href="https://www.asean.org/wp-content/uploads/images/2015/October/outreach-document/Edited%20APTERR-2.pdf">ASEAN Secretariat</a> (APTERR reserve and its use in 2013); <a href="https://cil.nus.edu.sg/databasecil/2011-asean-plus-three-emergency-rice-reserve-agreement/">NUS Centre for International Law</a> (APTERR entry into force); <a href="https://www.mof.go.jp/english/policy/international_policy/financial_cooperation_in_asia/index.html">Ministry of Finance, Japan</a> (ABMI).</p>
 	</div>
 </section>

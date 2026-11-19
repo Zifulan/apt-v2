@@ -845,12 +845,15 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	color: var(--on-grad-2);
 }
 .apt-coop-name { font-size: clamp(1.15rem, 1.05rem + 0.35vw, 1.35rem); font-weight: 700; line-height: 1.3; margin: 0 0 10px; }
-.apt-coop-name a { color: inherit; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; transition: text-decoration-color 0.2s ease; }
-.apt-coop-name a:hover { text-decoration-color: currentColor; }
 .apt-coop-text { margin: 0; max-width: 60ch; font-size: 0.95rem; line-height: 1.6; color: var(--on-grad-2); }
-.apt-coop-source { margin-top: 8px; max-width: 90ch; }
 .apt-coop-text strong { color: var(--on-grad); font-weight: 700; }
-@media (prefers-reduced-motion: reduce) { .apt-coop-name a { transition: none; } }
+.apt-coop-links { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 12px 0 0; }
+.apt-coop-links a {
+	display: inline-flex; align-items: center; min-height: var(--target-size);
+	font-size: 0.9rem; font-weight: 600; color: var(--on-grad);
+	text-decoration: underline; text-decoration-color: var(--on-grad-rule); text-underline-offset: 4px;
+}
+.apt-coop-links a:hover { text-decoration-color: currentColor; }
 
 /* ---------- Home: resources (white panel) -------------------------------- */
 
