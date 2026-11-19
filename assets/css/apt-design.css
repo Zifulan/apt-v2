@@ -929,6 +929,9 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 .stat-value { font-size: 1.35rem; font-weight: 700; line-height: 1.15; }
 .stat-desc { font-size: 0.85rem; line-height: 1.4; color: var(--on-grad-2); margin-top: 4px; }
 .stat-desc em { font-style: italic; }
+.stat-source { margin: 8px 0 0; font-size: 0.75rem; line-height: 1.4; color: var(--on-grad-2); }
+.stat-source a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.stat-source a:hover { color: var(--on-grad); }
 .apt-stats-source {
 	grid-column: 1 / -1;
 	margin: 4px 0 0;

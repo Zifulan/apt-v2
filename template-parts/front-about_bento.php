@@ -64,6 +64,7 @@
 						<div class="stat-content">
 							<div class="stat-value">US$44.4 billion</div>
 							<div class="stat-desc">of foreign direct investment into ASEAN came from China, Japan and the Republic of Korea <em>(2024, preliminary)</em></div>
+							<p class="stat-source">Source: ASEAN Secretariat, <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">APT Cooperation Overview</a> (Nov 2025)</p>
 						</div>
 					</div>
 
@@ -77,6 +78,7 @@
 						<div class="stat-content">
 							<div class="stat-value">US$1.2 trillion</div>
 							<div class="stat-desc">two-way trade in goods between ASEAN and China, Japan and the Republic of Korea <em>(2024, preliminary)</em></div>
+							<p class="stat-source">Source: ASEAN Secretariat, <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">APT Cooperation Overview</a> (Nov 2025)</p>
 						</div>
 					</div>
 
@@ -89,6 +91,7 @@
 						<div class="stat-content">
 							<div class="stat-value">2,277.5 million</div>
 							<div class="stat-desc">people live in the ASEAN Plus Three countries, 28.1% of the world&rsquo;s population <em>(2024)</em></div>
+							<p class="stat-source">Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">Statistical Highlights 2025</a></p>
 						</div>
 					</div>
 
@@ -102,6 +105,7 @@
 						<div class="stat-content">
 							<div class="stat-value">US$28.6 trillion</div>
 							<div class="stat-desc">combined GDP of the ASEAN Plus Three countries, 25.9% of the world economy <em>(2024)</em></div>
+							<p class="stat-source">Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">Statistical Highlights 2025</a></p>
 						</div>
 					</div>
 
@@ -114,10 +118,9 @@
 						<div class="stat-content">
 							<div class="stat-value">26.7%</div>
 							<div class="stat-desc">of the 127.1 million visitor arrivals in ASEAN came from China, Japan and the Republic of Korea <em>(2024)</em></div>
+							<p class="stat-source">Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">Statistical Highlights 2025</a></p>
 						</div>
 					</div>
-
-					<p class="apt-stats-source">Sources: ASEAN Secretariat, <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025), for trade and FDI; ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">ASEAN Statistical Highlights 2025</a>, for population, GDP and visitor arrivals.</p>
 				</div>
 			</div>
 		</div>
