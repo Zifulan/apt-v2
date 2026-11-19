@@ -43,8 +43,9 @@
 					
 					<?php
 					/*
-					 * Every label below is quoted word for word from its source; do not
-					 * paraphrase. Update when new editions come out.
+					 * The figures are exactly as published (nothing is calculated); the
+					 * sentences around them are written for readers. Update when new
+					 * editions come out.
 					 * - Trade and FDI: ASEAN Secretariat, "Overview of ASEAN Plus Three
 					 *   Cooperation" (as of 14 November 2025), para 8.
 					 * - Population, GDP, visitor arrivals (127.1 million; 26.7% from +3
@@ -62,7 +63,7 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">US$44.4 billion</div>
-							<div class="stat-desc">FDI from the Plus Three countries <em>(preliminary ASEAN statistics for 2024)</em></div>
+							<div class="stat-desc">of foreign direct investment into ASEAN came from China, Japan and the Republic of Korea <em>(2024, preliminary)</em></div>
 						</div>
 					</div>
 
@@ -75,7 +76,7 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">US$1.2 trillion</div>
-							<div class="stat-desc">ASEAN and the Plus Three countries: two-way merchandise trade <em>(preliminary ASEAN statistics for 2024)</em></div>
+							<div class="stat-desc">two-way trade in goods between ASEAN and China, Japan and the Republic of Korea <em>(2024, preliminary)</em></div>
 						</div>
 					</div>
 
@@ -87,7 +88,7 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">2,277.5 million</div>
-							<div class="stat-desc">ASEAN+3 population <em>(ASEAN+3 population as % world population: 28.1%)</em></div>
+							<div class="stat-desc">people live in the ASEAN Plus Three countries, 28.1% of the world&rsquo;s population <em>(2024)</em></div>
 						</div>
 					</div>
 
@@ -100,7 +101,7 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">US$28.6 trillion</div>
-							<div class="stat-desc">ASEAN+3 GDP <em>(ASEAN+3 GDP as % of world GDP (Nominal): 25.9%)</em></div>
+							<div class="stat-desc">combined GDP of the ASEAN Plus Three countries, 25.9% of the world economy <em>(2024)</em></div>
 						</div>
 					</div>
 
