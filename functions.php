@@ -96,6 +96,36 @@ function apt_ordinal_pattern() {
 	return '(\\d{1,3}\\s?(?:st|nd|rd|th)\\b|(?:(?:twenty|thirty|forty|fifty)[\\s-]+)?(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth)|twentieth|thirtieth|fortieth|fiftieth)';
 }
 
+/** 1 -> "1st", 2 -> "2nd", 11 -> "11th", 23 -> "23rd". */
+function apt_ordinal_suffix( $n ) {
+	$n = (int) $n;
+	if ( in_array( $n % 100, array( 11, 12, 13 ), true ) ) {
+		return $n . 'th';
+	}
+	$ends = array( 1 => 'st', 2 => 'nd', 3 => 'rd' );
+	return $n . ( isset( $ends[ $n % 10 ] ) ? $ends[ $n % 10 ] : 'th' );
+}
+
+/**
+ * Label of a summit tab on the Summit Level Statements page: the year plus
+ * the summit number from its short name ("2007 · 10th"), "Special" for a
+ * special summit, or just the year when neither is in the name.
+ */
+function apt_summit_tab_label( $year, $shortname ) {
+	$plain = html_entity_decode( wp_strip_all_tags( (string) $shortname ), ENT_QUOTES, 'UTF-8' );
+	$plain = preg_replace( '/\s+/u', ' ', $plain );
+	if ( preg_match( '/\b' . apt_ordinal_pattern() . '/i', $plain, $m ) ) {
+		$n = apt_ordinal_to_int( preg_replace( '/(\d)\s+(?=st|nd|rd|th)/i', '$1', $m[1] ) );
+		if ( $n ) {
+			return $year . ' · ' . apt_ordinal_suffix( $n );
+		}
+	}
+	if ( false !== stripos( $plain, 'special' ) ) {
+		return $year . ' · Special';
+	}
+	return (string) $year;
+}
+
 function apt_get_summit_count() {
 	$cached = get_transient( 'apt_summit_count' );
 	if ( false !== $cached ) {

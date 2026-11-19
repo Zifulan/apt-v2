@@ -583,7 +583,9 @@ if($current_category == 'other-documents'){
 								echo('</div>');
 								$ngcounter++;
 								$ngyear = substr($key,0,4);
-								$buttons .= '<a title="'.strip_tags($ngshortname).'" type="button" class="btn btn-light m-1 nav-link border-bottom-0'.$active.'" id="pills-'.$key.'-tab" data-toggle="pill" href="#pills-'.$key.'" role="tab" aria-controls="pills-'.$key.'" aria-selected="true">'.($futurearticle?"<small class='text-muted'><em>upcoming</em></small>":$ngyear).'</a>';
+								// "2007 · 10th": the summit number keeps two summits in one year apart.
+								$nglabel = esc_html( apt_summit_tab_label( $ngyear, $ngshortname ) );
+								$buttons .= '<a title="'.strip_tags($ngshortname).'" type="button" class="btn btn-light m-1 nav-link border-bottom-0'.$active.'" id="pills-'.$key.'-tab" data-toggle="pill" href="#pills-'.$key.'" role="tab" aria-controls="pills-'.$key.'" aria-selected="true">'.($futurearticle?"<small class='text-muted'><em>upcoming</em></small>":$nglabel).'</a>';
 							}
 							echo('</div>');
 							
