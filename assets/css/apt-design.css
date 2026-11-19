@@ -216,6 +216,7 @@ a:hover { color: var(--apt-red); }
 	line-height: 1.05;
 	margin: 0;
 	max-width: 16ch;
+	text-wrap: balance;
 }
 .apt-section-lede { color: var(--on-grad-2); font-size: 1.05rem; margin: 10px 0 0; max-width: 44ch; }
 
@@ -770,7 +771,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	gap: clamp(28px, 4vw, 72px);
 	align-items: start;
 }
-.about-card-text { color: var(--on-grad-2); font-size: 1.05rem; line-height: 1.7; margin: 0 0 24px; }
+.about-card-text { color: var(--on-grad-2); font-size: 1.05rem; line-height: 1.7; margin: 10px 0 24px; }
 .about-links { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .stats-grid {
@@ -817,7 +818,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	.modern-about-section .apt-about-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 575.98px) {
-	.stats-grid { grid-template-columns: 1fr 1fr; column-gap: 20px; }
+	.stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 16px; }
 	.stat-card { grid-column: span 1; }
 	.stat-card.stat-card-detail { grid-column: 1 / -1; }
 }
@@ -865,9 +866,9 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 }
 .apt-pillar-name {
 	display: flex; align-items: center; gap: 10px;
-	margin: 0 0 14px;
-	font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-	color: var(--on-grad-2);
+	margin: 0 0 12px;
+	font-size: clamp(1.15rem, 1.05rem + 0.35vw, 1.35rem); font-weight: 700; line-height: 1.3;
+	color: var(--on-grad);
 }
 .apt-pillar-name::before { /* pillar colour, as on news tags */
 	content: ''; flex: none; width: 10px; height: 10px; border-radius: 50%;
@@ -876,7 +877,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 }
 .apt-pillar-quote { margin: 0 0 16px; flex: 1; }
 .apt-pillar-quote blockquote { margin: 0 0 12px; }
-.apt-pillar-quote blockquote p { margin: 0; font-size: 1.05rem; line-height: 1.6; }
+.apt-pillar-quote blockquote p { margin: 0; font-size: 0.95rem; line-height: 1.6; color: var(--on-grad-2); }
 .apt-pillar-quote figcaption { font-size: 0.85rem; line-height: 1.5; color: var(--on-grad-2); }
 .apt-pillar-quote cite { font-style: normal; }
 .apt-pillar-quote cite a { color: inherit; text-decoration: underline; text-decoration-color: var(--on-grad-rule); text-underline-offset: 3px; }

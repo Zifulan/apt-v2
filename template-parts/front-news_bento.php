@@ -4,7 +4,7 @@
 		<div class="apt-news-intro">
 			<h2 class="apt-section-title">Latest News &amp; Activities</h2>
 			<p class="apt-section-lede">Statements and outcomes from ASEAN Plus Three meetings.</p>
-			<a class="apt-pill apt-pill--light apt-arrow" href="<?php echo esc_url( get_category_link( 7 ) ); ?>">See all</a>
+			<a class="apt-pill apt-pill--light apt-arrow" href="<?php echo esc_url( get_category_link( 7 ) ); ?>">All news</a>
 		</div>
 		<div class="apt-carousel" role="region" aria-roledescription="carousel" aria-label="Latest news and activities">
 			<div class="apt-carousel-controls">

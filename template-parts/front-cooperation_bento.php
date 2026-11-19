@@ -58,7 +58,7 @@ $apt_mechanisms = array(
 				<h2 class="apt-section-title" id="front-cooperation-title">Cooperation in Practice</h2>
 				<p class="apt-section-lede apt-coop-lede">The APT framework has become a cornerstone of East Asian regionalism, fostering cooperation in political-security, economic, and socio-cultural areas. The APT process has also developed into a full-fledged cooperation framework with 59 mechanisms coordinating various initiatives.</p>
 			</div>
-			<a class="apt-pill apt-pill--light apt-arrow" href="<?php echo esc_url( home_url( '/about-apt/areas-of-cooperation/' ) ); ?>">Areas of Cooperation</a>
+			<a class="apt-pill apt-pill--light apt-arrow" href="<?php echo esc_url( home_url( '/overview-of-asean-plus-three-cooperation/' ) ); ?>">Read the full Overview</a>
 		</div>
 
 		<ul class="apt-coop-list">

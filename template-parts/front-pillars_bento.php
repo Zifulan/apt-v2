@@ -20,6 +20,7 @@ if ( ! $apt_pillar_quotes ) {
 				<h2 class="apt-section-title" id="front-pillars-title">Latest from Each Pillar</h2>
 				<p class="apt-section-lede">The most recent statement under each pillar, quoted from the statement itself.</p>
 			</div>
+			<a class="apt-pill apt-pill--light apt-arrow" href="<?php echo esc_url( home_url( '/category/statements-and-declarations/' ) ); ?>">All statements</a>
 		</div>
 
 		<ul class="apt-pillar-list">
