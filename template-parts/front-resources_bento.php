@@ -47,6 +47,42 @@ function gcc2($catid){
 				</div>
 			</details>
 
+			<?php
+			/*
+			 * Latest statement in each pillar, quoted word for word and cited:
+			 * the post's Excerpt when it is word for word in the statement,
+			 * otherwise its opening sentences (apt_statement_quote() in
+			 * functions.php). Pillar names follow the ASEC Overview headings.
+			 */
+			$apt_pillar_quotes = apt_pillar_quotes();
+			if ( $apt_pillar_quotes ) :
+				?>
+			<details class="resource-accordion-item" open>
+				<summary class="resource-accordion-summary">Latest Statements by Pillar</summary>
+				<div class="resource-accordion-content">
+					<ul class="resource-cards-grid apt-pillar-cards">
+						<?php foreach ( $apt_pillar_quotes as $key => $item ) : ?>
+						<li class="resource-content-card apt-pillar-card pillar-<?php echo esc_attr( $key ); ?>">
+							<h3 class="resource-content-title apt-pillar-name"><?php echo esc_html( $item['pillar'] ); ?></h3>
+							<figure class="apt-pillar-quote">
+								<blockquote cite="<?php echo esc_url( $item['url'] ); ?>">
+									<p>&ldquo;<?php echo esc_html( $item['quote'] ); ?>&rdquo;</p>
+								</blockquote>
+								<figcaption>
+									<cite><a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['title'] ); ?></a></cite>,
+									<?php echo esc_html( $item['date'] ); ?>
+								</figcaption>
+							</figure>
+							<?php if ( $item['more'] ) : ?>
+							<a class="apt-arrow apt-pillar-more" href="<?php echo esc_url( $item['more'] ); ?>">More statements<span class="sr-only"> on <?php echo esc_html( $item['pillar'] ); ?></span></a>
+							<?php endif; ?>
+						</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			</details>
+			<?php endif; ?>
+
 			<details class="resource-accordion-item" open>
 				<summary class="resource-accordion-summary">Mechanisms</summary>
 				<div class="resource-accordion-content">
