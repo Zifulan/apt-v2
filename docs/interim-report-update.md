@@ -141,7 +141,62 @@ The flags are not labelled twice. "Plus Three" is in white.
 - **News page:** the old card design was replaced with the homepage's cards,
   so both pages use one shared component (5297f23, d1c8135).
 
-## 4. Security
+## 4. Accessibility: full contrast check (19 November)
+
+The first draft said every point of the gradient gave at least 5.5:1 for white
+text. That figure was for the old gradient. With the official colours (B4) the
+lowest measured is **4.5:1 on a 1920px-wide screen and 4.8:1 on standard
+desktop and phone**. That still passes the 4.5:1 minimum; the report should use
+these figures.
+
+**What was checked**
+- **Coverage:** 29 page types, each at desktop (1360px) and phone (390px)
+  width, plus the open menu and the search box. That came to **10,730 pieces
+  of text**.
+- **Page types:**
+  - home, news, statements lists, single statement, search results (with and
+    without results), Agenda, 404;
+  - 18 real inner pages: About, History, Overview, Key Documents, Resources,
+    each statements category, Gallery, Contact, Limited Access and others.
+- **Method:** each piece of text was compared with the actual pixels behind
+  it on the rendered page, not with the colour the stylesheet intends. Text
+  over the gradient, photos and tinted panels is therefore measured as people
+  see it.
+- **Standard:** WCAG 2.2 level AA. Normal text needs 4.5:1; large text (24px,
+  or 18.7px bold) needs 3:1.
+- **Worst case for photos:** text over photos (the homepage's latest-meeting
+  photo, gallery captions) was also measured with every photo replaced by a
+  plain white image.
+
+**What failed, and the fixes**
+
+| Problem | Before | After |
+|---|---|---|
+| Homepage latest-meeting photo: title's first line sat where the dark shading had barely started; over a bright photo it was unreadable | as low as 2.3:1 | at least 5.9:1, even on a white photo |
+| Gallery captions: same problem, white text over the photo | as low as 1.6:1 on bright photos | caption band always dark; readable on a white photo |
+| Grey dates and locations ("text-muted") on light grey panels, e.g. the Overview page | 4.3:1 | about 8:1 (theme's secondary text colour) |
+
+**Result:** after the fixes, every text item on every page type passes, on
+desktop and on phone. The only readings still flagged were measurement
+artefacts, checked by eye:
+- a saved copy of the live site lacked the current header styles;
+- gallery photo tiles moved while being measured.
+
+**Earlier measurements, still valid**
+- **Hero text:** small hero text was made solid white; it went from 4.3:1 to
+  6.4:1.
+- **Secondary text on the gradient:** it was 92% white, which dropped to
+  4.07:1 in the warm corner; it is now solid white.
+- **Stat cards:** given a slight dark tint, fixing 4.02:1.
+- **Tap targets:** 92 too-small targets brought to 0 across all audited pages
+  (first draft).
+
+**Limits:** this is a contrast check, not a full WCAG audit. Screen reader use,
+form labels and link wording were reviewed during the redesign but not audited
+page by page. A full audit would need a specialist or assistive-technology
+testing.
+
+## 5. Security
 
 - **Limited Access login (d650750):**
   - a dead login handler was removed;
@@ -157,7 +212,7 @@ The flags are not labelled twice. "Plus Three" is in white.
   batches, because fast bursts tripped the hosting firewall (GoDaddy/Sucuri)
   and blocked the server (7932a2b).
 
-## 5. Maintainability
+## 6. Maintainability
 
 - **Theme identity:** the theme is now named **apt-v2**, version 2.1.0, with a
   fresh screenshot (63e4ed6).

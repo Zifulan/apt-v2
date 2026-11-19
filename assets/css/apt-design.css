@@ -642,7 +642,8 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 .apt-hero-feature-cap {
 	position: absolute; left: 0; right: 0; bottom: 0;
 	padding: 60px 22px 18px;
-	background: linear-gradient(180deg, transparent, rgba(8, 12, 30, 0.82));
+	/* Dark enough wherever the title sits, even over a white photo (≥5:1) */
+	background: linear-gradient(180deg, rgba(8, 12, 30, 0) 0, rgba(8, 12, 30, 0.62) 44px, rgba(8, 12, 30, 0.88));
 	display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
 }
 .apt-hero-feature-title {
@@ -1553,7 +1554,7 @@ main.site-single {
 .site-main:not(.front-main) .masonryContainer a .innerText {
 	left: 0; text-align: left !important;
 	padding: 28px 12px 10px !important;
-	background: linear-gradient(180deg, transparent, rgba(8, 12, 30, 0.82)) !important;
+	background: linear-gradient(180deg, rgba(8, 12, 30, 0.62), rgba(8, 12, 30, 0.88)) !important;
 }
 .site-main:not(.front-main) .masonryImg { scale: 1; transition: scale 0.6s ease !important; } /* identity at rest; scales on hover */
 .site-main:not(.front-main) .masonryImg:hover { transform: none !important; scale: 1.05; }
@@ -1723,3 +1724,7 @@ main.site-single {
 .apt-news-grid > li { display: flex; margin: 0; }
 .apt-news-grid .news-card { width: 100%; }
 .apt-news-grid .news-card-title { font-size: 1.15rem; }
+
+/* Bootstrap's .text-muted (#6c757d) drops to 4.3:1 on the light grey panels;
+   use the theme's secondary ink, which passes on white and grey. */
+.site-main .text-muted { color: var(--ink-2) !important; }
