@@ -6,17 +6,21 @@
    ========================================================================== */
 
 :root {
-	/* Brand: ASEAN emblem colours + legacy APT colours */
-	--apt-blue: #0b3d91;        /* ASEAN blue (emblem)            */
+	/* Brand: official ASEAN colours. Pantone values from the Guidelines on
+	   the Use of the ASEAN Emblem (Annex); web (RGB) values from the ASEAN
+	   Secretariat's ASEAN Day 57 Branding Guideline (2024). */
+	--apt-blue: #2c59a7;        /* Pantone 286, RGB 44/89/167       */
+	--apt-dark-blue: #574da1;   /* Pantone 2725, RGB 87/77/161 (ASEAN 57 additional colour) */
 	--apt-blue-light: #2c63c4;
-	--apt-red: #ce1126;         /* ASEAN red (emblem)             */
+	--apt-red: #c73935;         /* Pantone Red 032, RGB 199/57/53   */
 	--apt-crimson: #c9234a;     /* previous APT navbar crimson    */
 	--apt-maroon: #98294b;      /* original APT theme colour      */
-	--apt-yellow: #ffcd00;      /* ASEAN yellow, softened for UI  */
+	--apt-yellow: #fbf315;      /* Pantone Process Yellow, RGB 251/243/21 */
 
-	/* Pillar colours (used like AKCF's sector colours) */
+	/* Pillar colours: the three official ASEAN colours. ASEAN does not assign
+	   them to pillars; this mapping is the site's own. */
 	--pillar-ps: var(--apt-blue);      /* Political-Security */
-	--pillar-ec: #b57f00;              /* Economic           */
+	--pillar-ec: var(--apt-yellow);    /* Economic           */
 	--pillar-sc: var(--apt-red);       /* Socio-Cultural     */
 	--pillar-other: var(--apt-maroon);
 
@@ -29,7 +33,7 @@
 	--paper: #ffffff;
 	--paper-2: #f5f6f8;
 	--on-grad: #ffffff;
-	--on-grad-2: rgba(255, 255, 255, 0.82);
+	--on-grad-2: rgba(255, 255, 255, 0.92); /* >= 4.5:1 on the official red */
 	--on-grad-rule: rgba(255, 255, 255, 0.45);
 
 	/* Shape + space */
@@ -41,6 +45,11 @@
 	--header-offset: calc(var(--header-h) + var(--frame-gap) * 2 + 8px);
 
 	--font: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
+
+	/* Page width and side margin, shared by .container and the frameless hero
+	   so every section lines up on the same left edge at every width. */
+	--page-max: 1280px;
+	--page-gutter: clamp(16px, 4vw, 48px);
 
 	/* Minimum hit area: 24px (WCAG 2.5.8), 44px where the pointer is a finger */
 	--target-size: 24px;
@@ -86,8 +95,9 @@ body::before {
 	z-index: -1;
 	pointer-events: none;
 	background-image:
-		radial-gradient(45vmax 35vmax at 70% 30%, rgba(255, 205, 0, 0.26), transparent 60%),
-		linear-gradient(120deg, var(--apt-blue) 20%, #3a3a9a 40%, var(--apt-maroon) 62%, var(--apt-crimson) 80%);
+		/* Yellow glow kept over the blue side: over the red it would drop text contrast below 4.5:1 */
+		radial-gradient(45vmax 35vmax at 22% 18%, rgba(251, 243, 21, 0.12), transparent 60%),
+		linear-gradient(120deg, var(--apt-blue) 20%, var(--apt-dark-blue) 45%, var(--apt-red) 80%);
 }
 @media (prefers-reduced-motion: no-preference) {
 	body::before { animation: apt-grad 28s ease-in-out infinite alternate; }
@@ -243,6 +253,7 @@ a:hover { color: var(--apt-red); }
 	width: 9px; height: 9px;
 	border-radius: 50%;
 	background: var(--tag-c, var(--pillar-other));
+	box-shadow: inset 0 0 0 1px rgba(17, 19, 24, 0.3); /* keeps the yellow dot visible on white */
 }
 .pillar-ps { --tag-c: var(--pillar-ps); }
 .pillar-ec { --tag-c: var(--pillar-ec); }
@@ -458,12 +469,23 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 #searchModal input[type="text"],
 #searchModal select { border-radius: 10px; border: 1px solid #767676; min-height: 48px; font: inherit; font-size: max(1rem, 1em); }
 
+/* ---------- Layout container ---------------------------------------------- */
+
+/* One fluid container instead of Bootstrap's stepped widths (540/720/960/
+   1140px, 1280px in style.css), matching the hero's edges. */
+.container {
+	width: 100%;
+	max-width: var(--page-max);
+	padding-inline: var(--page-gutter);
+}
+
 /* ---------- Home: hero (frameless, on the gradient) ------------------------- */
 
 .apt-hero {
 	position: relative;
 	color: var(--on-grad);
-	padding: calc(var(--header-offset) + 8px) clamp(20px, 4vw, 64px) clamp(32px, 4vw, 56px);
+	padding-block: calc(var(--header-offset) + 8px) clamp(32px, 4vw, 56px);
+	padding-inline: max(var(--page-gutter), calc((100% - var(--page-max)) / 2 + var(--page-gutter)));
 	min-height: 100vh;
 	min-height: 100svh;
 	display: flex;
@@ -942,11 +964,12 @@ details[open] > .agenda-month-summary::before { rotate: 0deg; }
 .apt-pillar-card { display: flex; flex-direction: column; }
 .resource-content-card.apt-pillar-card .apt-pillar-name {
 	display: flex; align-items: center; gap: 8px;
-	color: var(--ink); border-color: var(--tag-c, var(--pillar-other));
+	color: var(--ink); border-bottom-width: 3px; border-color: var(--tag-c, var(--pillar-other));
 }
 .apt-pillar-name::before { /* pillar colour, as on news tags */
 	content: ''; flex: none; width: 10px; height: 10px; border-radius: 50%;
 	background: var(--tag-c, var(--pillar-other));
+	box-shadow: inset 0 0 0 1px rgba(17, 19, 24, 0.3);
 }
 .apt-pillar-quote { margin: 8px 0 14px; flex: 1; }
 .apt-pillar-quote blockquote { margin: 0 0 10px; }
