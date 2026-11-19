@@ -2130,7 +2130,6 @@ function add_apt_structured_data() {
 }
 add_action('wp_head', 'add_apt_structured_data');
 
-?>
 /**
  * One news card for the current post in the loop: image, pillar tag, short
  * name (linked; the link covers the card), full title, place and date, level,
