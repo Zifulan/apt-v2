@@ -1,4 +1,4 @@
-# AKSEKI APT theme
+# apt-v2
 
 WordPress theme for the ASEAN Plus Three website (aseanplusthree.asean.org).
 Version 2 restyles the site with a design system inspired by the
@@ -7,7 +7,10 @@ ASEAN-Korea Cooperation Fund site, in the official ASEAN colours.
 ## Install / preview
 
 1. Zip this folder (or upload it with your host's file manager) into
-   `wp-content/themes/`.
+   `wp-content/themes/apt-v2/`. WordPress identifies a theme by its folder,
+   not its name: if this theme is already active under another folder name,
+   keep that folder, because a new folder counts as a new theme and the menu
+   locations would need setting again.
 2. In WordPress go to **Appearance → Themes** and use **Live Preview** before
    activating. Menu locations are saved per theme, so set **Primary Menu**
    under *Menus → View All Locations* in the Customizer.
