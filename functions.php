@@ -1489,32 +1489,14 @@ function akseki_get_recent_posts($atts){
 }
 add_shortcode('akseki_get_recent_posts', 'akseki_get_recent_posts');
 
-//akseki limited access
-function akseki_limited_access(){
-	$alanonce = wp_create_nonce( 'alanonce' );
-	$return = '<form name="alaform" id="alaform" action="'.esc_url( admin_url( 'admin-post.php' ) ).'?action=handle_limited_access" method="post">
-					<input type="hidden" name="alanonce" value="'.$alanonce.'" hidden>
-					<input type="hidden" name="alaname" id="alaname" class="input" value="LimitedAccess" hidden>
-					<label for="alapass">Password:</label>
-					<input type="password" name="alapass" id="alapass" spellcheck="false" class="input" value="" size="20">
-					<input type="submit" name="submit" id="submit" class="button btn-primary" value="Enter">
-				</form>';
-	return($return);
-}
-add_shortcode('akseki_limited_access', 'akseki_limited_access');
-
-function akseki_handle_alaform(){
-	$alapass=$_REQUEST['alapass'];
-	//if not logged in
-	$creds = array(
-		'user_login'    => 'LimitedAccess',
-		'user_password' => $alapass,
-		'remember'      => false
-	);
-	echo('$alapass');
-}
-
-add_action( 'admin_post_nopriv_handle_limited_access', 'akseki_handle_alaform');
+/*
+ * [akseki_limited_access]: the old password form posted to a handler that
+ * never logged anyone in (it only printed "$alapass"). The form and handler
+ * are removed; the shortcode now renders nothing so a page that still
+ * contains it doesn't show the raw shortcode. Limited Access uses the page
+ * password and the WordPress login form instead.
+ */
+add_shortcode( 'akseki_limited_access', '__return_empty_string' );
 
 //check if user already logged in or not
 function add_login_check_limited_access()
@@ -1530,21 +1512,21 @@ function add_login_check_limited_access()
 }
 add_shortcode('logincheck', 'add_login_check_limited_access');
 
-//on limited access page on failed login redirect to its original/referer page
-add_action( 'wp_login_failed', 'my_front_end_login_fail' );  // hook failed login
+/*
+ * On a failed front-end login (the Limited Access login form), go back to
+ * the page the form was on with ?loginf=failed, so it can say "Failed
+ * password". Only pages on this site: wp_get_referer() and
+ * wp_safe_redirect() refuse other hosts, so the referrer can't be used to
+ * send people to another website (open redirect).
+ */
+add_action( 'wp_login_failed', 'my_front_end_login_fail' );
 function my_front_end_login_fail( $username ) {
-   $referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
-   // if there's a valid referrer, and it's not the default log-in screen
-   if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
-      //does referrer url has ? sign
-	  if(!strstr($referrer,"?")){
-		  $loginf = "?loginf=failed";
-	  }else{
-		  $loginf = "&loginf=failed";
-	  }
-      wp_redirect( $referrer . $loginf );  // let's append some information (login=failed) to the URL for the theme to use
-      exit;
-   }
+	$referrer = wp_get_referer(); // false unless it is a URL on this site
+	if ( ! $referrer || false !== strpos( $referrer, 'wp-login' ) || false !== strpos( $referrer, 'wp-admin' ) ) {
+		return;
+	}
+	wp_safe_redirect( add_query_arg( 'loginf', 'failed', $referrer ) );
+	exit;
 }
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
