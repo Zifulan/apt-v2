@@ -612,6 +612,18 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 }
 /* ASEAN yellow: the brand red is unreadable on the red end of the gradient */
 .apt-hero-title span { display: block; color: var(--apt-yellow); }
+/* Flag line-up under the title: ASEAN group, then the Plus Three group */
+.apt-hero-flags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: clamp(20px, 2.5vw, 30px); }
+.apt-flag-group { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.apt-flag-group img {
+	display: block; width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+.apt-flag-group .is-asean img { box-shadow: 0 0 0 2px var(--apt-yellow); }
+@media (max-width: 575.98px) {
+	.apt-flag-group { gap: 5px; }
+	.apt-flag-group img { width: 22px; height: 22px; }
+}
 
 .apt-hero-feature {
 	position: relative;

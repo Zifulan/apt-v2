@@ -61,6 +61,33 @@
 	<div class="apt-hero-main">
 		<div class="apt-hero-intro">
 			<h1 class="apt-hero-title" id="apt-hero-title">ASEAN <span>Plus Three</span></h1>
+			<?php
+			/*
+			 * Flag line-up: ASEAN Member States in alphabetical order with the
+			 * ASEAN flag on the right (ASEAN Flag Guidelines, para 16), then
+			 * China, Japan and the Republic of Korea. Names are in alt/title only.
+			 * Flags: flag-icons (MIT, img/flags/1x1/LICENSE-flag-icons); ASEAN
+			 * flag: img/flags/asean.svg.
+			 */
+			$apt_flag_dir    = get_stylesheet_directory_uri() . '/img/flags/';
+			$apt_flag_groups = array(
+				'ASEAN'      => array(
+					'bn' => 'Brunei Darussalam', 'kh' => 'Cambodia', 'id' => 'Indonesia', 'la' => 'Lao PDR',
+					'my' => 'Malaysia', 'mm' => 'Myanmar', 'ph' => 'Philippines', 'sg' => 'Singapore',
+					'th' => 'Thailand', 'tl' => 'Timor-Leste', 'vn' => 'Viet Nam', 'asean' => 'ASEAN',
+				),
+				'Plus Three' => array( 'cn' => 'China', 'jp' => 'Japan', 'kr' => 'Republic of Korea' ),
+			);
+			?>
+			<div class="apt-hero-flags" role="group" aria-label="<?php esc_attr_e( 'ASEAN Member States, ASEAN, and China, Japan and the Republic of Korea', 'akseki-vi' ); ?>">
+				<?php foreach ( $apt_flag_groups as $apt_group => $apt_flags ) : ?>
+				<ul class="apt-flag-group">
+					<?php foreach ( $apt_flags as $apt_code => $apt_name ) : ?>
+					<li<?php echo 'asean' === $apt_code ? ' class="is-asean"' : ''; ?>><img src="<?php echo esc_url( $apt_flag_dir . ( 'asean' === $apt_code ? 'asean.svg' : '1x1/' . $apt_code . '.svg' ) ); ?>" alt="<?php echo esc_attr( $apt_name ); ?>" title="<?php echo esc_attr( $apt_name ); ?>" width="26" height="26" decoding="async"></li>
+					<?php endforeach; ?>
+				</ul>
+				<?php endforeach; ?>
+			</div>
 		</div>
 
 		<?php if ( $ftn_feature ) : ?>
