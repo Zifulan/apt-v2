@@ -10,7 +10,6 @@
 	   the Use of the ASEAN Emblem (Annex); web (RGB) values from the ASEAN
 	   Secretariat's ASEAN Day 57 Branding Guideline (2024). */
 	--apt-blue: #2c59a7;        /* Pantone 286, RGB 44/89/167       */
-	--apt-dark-blue: #574da1;   /* Pantone 2725, RGB 87/77/161 (ASEAN 57 additional colour) */
 	--apt-blue-light: #2c63c4;
 	--apt-red: #c73935;         /* Pantone Red 032, RGB 199/57/53   */
 	--apt-crimson: #c9234a;     /* previous APT navbar crimson    */
@@ -33,7 +32,7 @@
 	--paper: #ffffff;
 	--paper-2: #f5f6f8;
 	--on-grad: #ffffff;
-	--on-grad-2: rgba(255, 255, 255, 0.92); /* >= 4.5:1 on the official red */
+	--on-grad-2: #ffffff; /* full white: 92% white dropped to 4.07:1 in the warm red corner */
 	--on-grad-rule: rgba(255, 255, 255, 0.45);
 
 	/* Shape + space */
@@ -95,9 +94,16 @@ body::before {
 	z-index: -1;
 	pointer-events: none;
 	background-image:
-		/* Yellow glow kept over the blue side: over the red it would drop text contrast below 4.5:1 */
-		radial-gradient(45vmax 35vmax at 22% 18%, rgba(251, 243, 21, 0.12), transparent 60%),
-		linear-gradient(120deg, var(--apt-blue) 20%, var(--apt-dark-blue) 45%, var(--apt-red) 80%);
+		radial-gradient(30vmax 24vmax at 80% 76%, rgba(251, 243, 21, 0.1), transparent 70%),
+		linear-gradient(120deg, var(--apt-blue) 45%, var(--apt-red) 75%);
+	/* Official blue to official red with a short blend, mixed in Oklab so the
+	   middle stays muted rather than purple; a faint yellow warms the bottom-
+	   right corner. Yellow is kept at 10%: any stronger and white text on the
+	   red drops below 4.5:1 (measured worst case 4.52:1). Browsers without
+	   "in oklab" keep the plain gradient above. */
+	background-image:
+		radial-gradient(30vmax 24vmax at 80% 76%, rgba(251, 243, 21, 0.1), transparent 70%),
+		linear-gradient(120deg in oklab, var(--apt-blue) 45%, var(--apt-red) 75%);
 }
 @media (prefers-reduced-motion: no-preference) {
 	body::before { animation: apt-grad 28s ease-in-out infinite alternate; }
@@ -819,14 +825,14 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	padding: 18px 20px; margin-bottom: 14px;
 	border: 1px solid var(--on-grad-rule);
 	border-radius: var(--radius-tile);
-	background: rgba(255, 255, 255, 0.08);
+	background: rgba(17, 19, 24, 0.12); /* a dark tint raises text contrast; a white one lowered it */
 }
 .stat-card.stat-card-wide { grid-column: 1 / -1; }
 .stat-icon { color: var(--apt-yellow); flex: none; }
 .stat-icon svg { width: 28px; height: 28px; }
 .stat-value { font-size: 1.35rem; font-weight: 700; line-height: 1.15; }
 .stat-desc { font-size: 0.85rem; line-height: 1.4; color: var(--on-grad-2); margin-top: 4px; }
-.stat-desc em { opacity: 0.85; }
+.stat-desc em { font-style: italic; }
 .apt-stats-source {
 	grid-column: 1 / -1;
 	margin: 4px 0 0;
