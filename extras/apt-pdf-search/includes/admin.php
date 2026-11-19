@@ -38,10 +38,7 @@ function apt_pdf_search_stats() {
 			}
 		}
 	}
-	$candidates = (int) $wpdb->get_var( $wpdb->prepare(
-		"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type NOT IN ('attachment','revision','nav_menu_item') AND post_status IN ('publish','private','future','draft','pending') AND post_content LIKE %s",
-		'%' . $wpdb->esc_like( '.pdf' ) . '%'
-	) );
+	$candidates = apt_pdf_search_candidate_count();
 	return compact( 'indexed', 'pdfs', 'failed', 'candidates' );
 }
 

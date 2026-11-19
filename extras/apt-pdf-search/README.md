@@ -31,8 +31,11 @@ doesn't show it, clear the site's cache (Sucuri, caching plugins).
 
 ## What is (and isn't) indexed
 
-- Only PDFs stored in this site's uploads folder and linked from the post's
-  content. PDFs on other sites are ignored.
+- Only PDFs stored in this site's uploads folder that the post refers to,
+  however they are attached: plain links, shortcodes such as
+  `[pdf-embedder url="…"]`, PDF/file blocks (by address or attachment ID),
+  and PDFs uploaded to the post in the Media Library. PDFs on other sites are
+  ignored.
 - Only **published** posts and pages **without a password**. Private, draft
   and password-protected content, children of protected pages, and anything
   whose slug, title, category, parent page or PDF path contains "limited" are

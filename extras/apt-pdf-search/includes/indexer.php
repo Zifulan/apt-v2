@@ -118,39 +118,81 @@ function apt_pdf_search_why_not_indexable( $post ) {
  * "Check a statement" tool: URL => reason it is skipped ('' when used).
  */
 function apt_pdf_search_explain_links( $post ) {
-	$post    = get_post( $post );
-	$content = (string) apply_filters( 'apt_pdf_search_source_html', $post ? $post->post_content : '', $post );
-	$used    = $post ? apt_pdf_search_find_pdfs( $post ) : array();
-	$out     = array();
-	if ( preg_match_all( '#["\'(=]\s*([^"\'\s<>()]+?\.pdf)#i', $content, $m ) ) {
-		$uploads = wp_upload_dir( null, false );
-		foreach ( array_unique( $m[1] ) as $raw ) {
-			$url = html_entity_decode( $raw, ENT_QUOTES, 'UTF-8' );
-			if ( isset( $used[ $url ] ) ) {
-				$out[ $url ] = '';
-				continue;
-			}
-			$host = wp_parse_url( $url, PHP_URL_HOST );
-			$path = rawurldecode( (string) wp_parse_url( $url, PHP_URL_PATH ) );
-			$base = (string) wp_parse_url( $uploads['baseurl'], PHP_URL_PATH );
-			if ( ! preg_match( '#(?:href|src)\s*=\s*["\']' . preg_quote( $raw, '#' ) . '#i', $content ) ) {
-				$out[ $url ] = 'Not in an href/src attribute (e.g. a shortcode or embed); not read.';
-			} elseif ( $host && strcasecmp( preg_replace( '/^www\./i', '', $host ), preg_replace( '/^www\./i', '', (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) ) !== 0 ) {
-				$out[ $url ] = 'On another website (' . $host . ').';
-			} elseif ( apt_pdf_search_has_excluded_keyword( $path ) ) {
-				$out[ $url ] = 'Path is marked as restricted.';
-			} elseif ( '' === $base || 0 !== strpos( $path, $base . '/' ) ) {
-				$out[ $url ] = 'Not under the uploads URL (' . $uploads['baseurl'] . ').';
-			} else {
-				$out[ $url ] = 'File not found on the server at ' . $uploads['basedir'] . substr( $path, strlen( $base ) ) . '.';
-			}
+	$post = get_post( $post );
+	$used = $post ? apt_pdf_search_find_pdfs( $post ) : array();
+	$out  = array();
+	if ( ! $post ) {
+		return $out;
+	}
+	$uploads = wp_upload_dir( null, false );
+	$base    = (string) wp_parse_url( $uploads['baseurl'], PHP_URL_PATH );
+	foreach ( apt_pdf_search_candidate_urls( $post ) as $url ) {
+		if ( isset( $used[ $url ] ) ) {
+			$out[ $url ] = '';
+			continue;
+		}
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+		$path = rawurldecode( (string) wp_parse_url( $url, PHP_URL_PATH ) );
+		if ( $host && strcasecmp( preg_replace( '/^www\./i', '', $host ), preg_replace( '/^www\./i', '', (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) ) !== 0 ) {
+			$out[ $url ] = 'On another website (' . $host . ').';
+		} elseif ( apt_pdf_search_has_excluded_keyword( $path ) ) {
+			$out[ $url ] = 'Path is marked as restricted.';
+		} elseif ( '' === $base || 0 !== strpos( $path, $base . '/' ) ) {
+			$out[ $url ] = 'Not under the uploads URL (' . $uploads['baseurl'] . ').';
+		} else {
+			$out[ $url ] = 'File not found on the server at ' . $uploads['basedir'] . substr( $path, strlen( $base ) ) . '.';
 		}
 	}
 	return $out;
 }
 
 /**
- * The PDFs a post links to that live in this site's uploads folder.
+ * Every PDF address a post refers to, however it is attached: plain links,
+ * shortcode attributes (e.g. [pdf-embedder url="…"]), block settings (saved
+ * as https:\/\/…), file blocks by attachment ID, and PDFs uploaded to the post.
+ *
+ * @return string[] URLs (absolute or site-relative), unique.
+ */
+function apt_pdf_search_candidate_urls( $post ) {
+	$post = get_post( $post );
+	if ( ! $post ) {
+		return array();
+	}
+	$content = (string) apply_filters( 'apt_pdf_search_source_html', $post->post_content, $post );
+	$content = html_entity_decode( str_replace( '\\/', '/', $content ), ENT_QUOTES, 'UTF-8' );
+	$urls    = array();
+
+	// Absolute or protocol-relative addresses ending in .pdf.
+	if ( preg_match_all( '#(?:https?:)?//[^\s"\'<>\[\]()]+?\.pdf(?=[\s"\'<>\[\]()?\#&]|$)#i', $content, $m ) ) {
+		$urls = array_merge( $urls, $m[0] );
+	}
+	// Site-relative addresses (/wp-content/uploads/…pdf) after a quote, = or space.
+	if ( preg_match_all( '#(?<=["\'=\s(])/(?!/)[^\s"\'<>\[\]()]+?\.pdf(?=[\s"\'<>\[\]()?\#&]|$)#i', $content, $m ) ) {
+		$urls = array_merge( $urls, $m[0] );
+	}
+	// File / PDF blocks that store the attachment ID.
+	if ( preg_match_all( '#<!-- wp:[\w/-]*(?:file|pdf)[\w/-]* (\{.*?\}) #i', $content, $m ) ) {
+		foreach ( $m[1] as $json ) {
+			$attrs = json_decode( $json, true );
+			if ( ! empty( $attrs['id'] ) && 'application/pdf' === get_post_mime_type( (int) $attrs['id'] ) ) {
+				$urls[] = wp_get_attachment_url( (int) $attrs['id'] );
+			}
+		}
+	}
+	// PDFs uploaded to this post (Media "Uploaded to" this post).
+	foreach ( get_attached_media( 'application/pdf', $post->ID ) as $attachment ) {
+		$urls[] = wp_get_attachment_url( $attachment->ID );
+	}
+
+	$urls = array_values( array_unique( array_filter( array_map( function ( $u ) {
+		$u = (string) $u;
+		return 0 === strpos( $u, '//' ) ? 'https:' . $u : $u;
+	}, $urls ) ) ) );
+	return (array) apply_filters( 'apt_pdf_search_candidate_urls', $urls, $post );
+}
+
+/**
+ * The PDFs a post refers to that live in this site's uploads folder.
  *
  * @return array URL => absolute file path.
  */
@@ -159,8 +201,8 @@ function apt_pdf_search_find_pdfs( $post ) {
 	if ( ! $post ) {
 		return array();
 	}
-	$content = (string) apply_filters( 'apt_pdf_search_source_html', $post->post_content, $post );
-	if ( ! preg_match_all( '#(?:href|src)\s*=\s*["\']([^"\']+?\.pdf)(?:[?\#][^"\']*)?["\']#i', $content, $m ) ) {
+	$m = array( 1 => apt_pdf_search_candidate_urls( $post ) );
+	if ( ! $m[1] ) {
 		return array();
 	}
 
@@ -170,8 +212,7 @@ function apt_pdf_search_find_pdfs( $post ) {
 	$base_dir  = realpath( $uploads['basedir'] );
 	$found     = array();
 
-	foreach ( array_unique( $m[1] ) as $raw ) {
-		$url  = html_entity_decode( $raw, ENT_QUOTES, 'UTF-8' );
+	foreach ( $m[1] as $url ) {
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 		$path = wp_parse_url( $url, PHP_URL_PATH );
 		if ( ! $path || ( $host && strcasecmp( preg_replace( '/^www\./i', '', $host ), preg_replace( '/^www\./i', '', (string) $site_host ) ) !== 0 ) ) {
@@ -331,21 +372,37 @@ function apt_pdf_search_clear_post( $post_id ) {
 /** Posts and pages whose content links to a PDF, newest first (batchable). */
 function apt_pdf_search_candidate_ids( $offset = 0, $limit = 10 ) {
 	global $wpdb;
-	return array_map(
-		'intval',
-		$wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT ID FROM {$wpdb->posts}
-				 WHERE post_type NOT IN ('attachment','revision','nav_menu_item')
-				   AND post_status IN ('publish','private','future','draft','pending')
-				   AND post_content LIKE %s
-				 ORDER BY ID DESC LIMIT %d OFFSET %d",
-				'%' . $wpdb->esc_like( '.pdf' ) . '%',
-				$limit,
-				$offset
-			)
-		)
-	);
+	return array_map( 'intval', $wpdb->get_col( $wpdb->prepare(
+		apt_pdf_search_candidate_sql( 'p.ID' ) . ' ORDER BY p.ID DESC LIMIT %d OFFSET %d',
+		'%' . $wpdb->esc_like( '.pdf' ) . '%',
+		'%' . $wpdb->esc_like( 'wp:file' ) . '%',
+		$limit,
+		$offset
+	) ) );
+}
+
+/** Number of posts and pages the indexer looks at. */
+function apt_pdf_search_candidate_count() {
+	global $wpdb;
+	return (int) $wpdb->get_var( $wpdb->prepare(
+		'SELECT COUNT(*) FROM (' . apt_pdf_search_candidate_sql( 'p.ID' ) . ') c',
+		'%' . $wpdb->esc_like( '.pdf' ) . '%',
+		'%' . $wpdb->esc_like( 'wp:file' ) . '%'
+	) );
+}
+
+/**
+ * Posts and pages that may refer to a PDF: ".pdf" or a file block in their
+ * content, or a PDF uploaded to them. Placeholders: two LIKE patterns.
+ */
+function apt_pdf_search_candidate_sql( $select ) {
+	global $wpdb;
+	return "SELECT DISTINCT {$select} FROM {$wpdb->posts} p
+		WHERE p.post_type NOT IN ('attachment','revision','nav_menu_item','wp_block','wp_template','wp_template_part','wp_navigation')
+		  AND p.post_status IN ('publish','private','future','draft','pending')
+		  AND ( p.post_content LIKE %s OR p.post_content LIKE %s
+		        OR EXISTS ( SELECT 1 FROM {$wpdb->posts} a
+		                    WHERE a.post_parent = p.ID AND a.post_type = 'attachment' AND a.post_mime_type = 'application/pdf' ) )";
 }
 
 // Re-index whenever a post is saved; clears it if it is now restricted.

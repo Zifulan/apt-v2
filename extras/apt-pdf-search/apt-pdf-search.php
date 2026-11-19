@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       APT PDF Search
  * Description:       Lets the site search find statements by the text inside their attached PDFs. Reads PDFs on this server only; skips password-protected, private and limited-access content.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 5.5
  * Requires PHP:      7.4
  * Author:            ASEAN Plus Three website
