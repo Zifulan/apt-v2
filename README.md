@@ -23,6 +23,7 @@ ASEAN-Korea Cooperation Fund site, in the official ASEAN colours.
 | `assets/js/apt-carousel.js` | News carousel (scroll snap, looping, markers) |
 | `page-frontpage.php`, `template-parts/front-*_bento.php`, `template-parts/front-topnew4.php`, `template-parts/sidebar-agenda_bento.php` | Home page sections (see below) |
 | `functions.php` | Enqueues, helpers, summit count (`apt_get_summit_count`), pillar quotes (`apt_pillar_quotes`, `apt_statement_quote`) |
+| `extras/apt-pdf-search/` | Separate plugin (install on its own, not with the theme): search inside statement PDFs. See its README |
 | `docs/content-setup.md` | Changes made in WordPress, not the theme: Contact page, pages to unpublish, how editors choose the homepage quote |
 | `list-category-posts/` | Templates for the List Category Posts plugin |
 | `img/flags/`, `img/summitlogo/` | Loaded by name at run time (country flags, summit logos by year) |

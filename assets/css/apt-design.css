@@ -552,6 +552,13 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 .apt-result-title a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
 .apt-result-excerpt p { margin: 0 0 8px; font-size: 0.95rem; line-height: 1.6; color: var(--ink-2); }
 .site-main:not(.front-main) .apt-result-meta { margin: 0 0 6px; font-size: 0.85rem; }
+.apt-result-pdf {
+	margin: 0 0 10px; padding-left: 12px;
+	border-left: 3px solid var(--rule-soft);
+	font-size: 0.9rem; line-height: 1.6; color: var(--ink-2);
+}
+.apt-result-pdf-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+.apt-result-pdf mark { padding: 0 2px; border-radius: 2px; background: rgba(251, 243, 21, 0.6); color: var(--ink); }
 .apt-result-cats { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 18px; }
 .apt-result-cats a { min-height: var(--target-size); }
 .apt-result-cats a:hover { color: var(--ink); text-decoration: underline; }

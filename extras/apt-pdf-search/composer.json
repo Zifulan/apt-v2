@@ -1,0 +1,7 @@
+{
+  "name": "apt/pdf-search",
+  "description": "Search the text of PDF statements on the ASEAN Plus Three site.",
+  "license": "GPL-2.0-or-later",
+  "require": { "php": ">=7.4", "smalot/pdfparser": "^2.11" },
+  "config": { "platform": { "php": "7.4.33" }, "optimize-autoloader": true }
+}

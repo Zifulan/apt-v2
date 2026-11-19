@@ -16,6 +16,14 @@ $apt_short = akseki_get_shortname( $apt_title, get_the_ID() );
 		<?php endif; ?>
 		<h2 class="apt-result-title"><a href="<?php the_permalink(); ?>"><?php echo esc_html( wp_strip_all_tags( $apt_title ) ); ?></a></h2>
 		<div class="apt-result-excerpt"><?php the_excerpt(); ?></div>
+		<?php
+		// APT PDF Search plugin: when the match is only inside the attached PDF,
+		// show the passage it came from (quoted word for word, terms marked).
+		$apt_pdf_snippet = function_exists( 'apt_pdf_search_snippet_html' ) ? apt_pdf_search_snippet_html() : '';
+		if ( $apt_pdf_snippet ) :
+			?>
+		<p class="apt-result-pdf"><span class="apt-result-pdf-label"><?php esc_html_e( 'Found in the attached PDF:', 'akseki-vi' ); ?></span> &ldquo;<?php echo $apt_pdf_snippet; // phpcs:ignore WordPress.Security.EscapeOutput -- escaped in apt_pdf_search_snippet_html() ?>&rdquo;</p>
+		<?php endif; ?>
 		<p class="apt-result-meta akseki-meta"><?php echo akseki_get_the_meta( get_the_ID() ); ?></p>
 		<?php $apt_cats = get_the_category(); ?>
 		<?php if ( $apt_cats ) : ?>
