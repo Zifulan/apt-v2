@@ -19,19 +19,58 @@ ASEAN-Korea Cooperation Fund site, in the official ASEAN colours.
 | Path | What |
 |---|---|
 | `assets/css/apt-design.css` | Design system: tokens, components, layout |
-| `assets/js/apt-nav.js` | Menu drawer (native `<dialog>`, swipe to close) |
+| `assets/js/apt-nav.js` | Menu drawer (native `<dialog>`, swipe to close); fallbacks for the search dialog |
 | `assets/js/apt-carousel.js` | News carousel (scroll snap, looping, markers) |
 | `page-frontpage.php`, `template-parts/front-*_bento.php`, `template-parts/front-topnew4.php`, `template-parts/sidebar-agenda_bento.php` | Home page sections (see below) |
 | `functions.php` | Enqueues, helpers, summit count (`apt_get_summit_count`), pillar quotes (`apt_pillar_quotes`, `apt_statement_quote`) |
-| `extras/apt-pdf-search/` | Separate plugin (install on its own, not with the theme): search inside statement PDFs. See its README |
+| `header.php`, `template-parts/search-form.php` | Search dialog (native `<dialog>`) and the shared search form |
+| `search.php`, `template-parts/search-result.php` | Search results page |
+| `extras/apt-pdf-search/` | Separate plugin: search inside statement PDFs (see **Search** below) |
 | `docs/content-setup.md` | Changes made in WordPress, not the theme: Contact page, pages to unpublish, how editors choose the homepage quote |
 | `list-category-posts/` | Templates for the List Category Posts plugin |
 | `img/flags/`, `img/summitlogo/` | Loaded by name at run time (country flags, summit logos by year) |
 
 The theme expects the live site's content: specific category IDs
 (7, 8, 9, 40, 41, 45), a page with the slug `frontpage` as the static front
-page, posts tagged `front` for the hero, and the List Category Posts and
-Search & Filter plugins.
+page, posts tagged `front` for the hero, and the List Category Posts plugin.
+The Search & Filter plugin is no longer used by the theme.
+
+## Search
+
+**Search dialog.** The search button in the header (and "Search the site" on
+the 404 and empty pages) opens a native modal `<dialog>` with a keywords field
+and a category list. It is a plain WordPress search (`?s=…&cat=…`): no plugin.
+Esc, the close button or a click outside closes it.
+
+**Results page.** The same form sits at the top, pre-filled. Each result shows
+the short meeting name, title, excerpt, place and date, and categories
+(pillar categories with their colour dot).
+
+**Searching inside PDFs: the APT PDF Search plugin** (`extras/apt-pdf-search/`).
+WordPress search only reads a post's title, excerpt and content, so text that
+appears only in a statement's PDF isn't found. The plugin fixes that:
+
+- It is a **separate plugin**, installed on its own (zip the folder, then
+  Plugins → Add New → Upload Plugin), so search keeps working if the theme
+  changes. It is not uploaded with the theme.
+- After activating, run **Tools → PDF search → Index PDFs** once. Statements
+  are then indexed automatically whenever they are saved. WP-CLI:
+  `wp apt-pdf-search index [--force]`.
+- It reads PDFs **stored on this site** that a post links to, on this server
+  (bundled smalot/pdfparser, with `pdftotext` as a fallback where allowed),
+  and adds their text to the search. Results are still the statement pages.
+- **Limited Access Documents stay out of search:** only published content
+  without a password is read; private and protected pages, their child pages,
+  and anything with "limited" in its slug, title, category, parent page or PDF
+  path are skipped, and their stored text is removed.
+- When a match is only inside the PDF, the theme shows it under the result as
+  **"Found in the attached PDF:"** with the passage quoted and the search terms
+  highlighted (`apt_pdf_search_snippet_html()`; the theme checks the plugin is
+  active, so it works without it).
+- Tested on the 203 public statement PDFs on the live site (November 2026):
+  193 readable, 8 scanned images (would need OCR), 2 broken links on the site.
+  Details, the broken links and uninstall notes are in
+  `extras/apt-pdf-search/README.md`.
 
 ## Home page
 
