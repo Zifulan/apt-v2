@@ -47,14 +47,14 @@
 					 * ASEAN Statistical Highlights (ASH) and ASEAN Key Figures (AKF),
 					 * https://www.aseanstats.org/publication/
 					 *
-					 * Trade with China, Japan and Korea is not published as one total.
+					 * Trade with China, Japan and the Republic of Korea is not published as one total.
 					 * It is worked out from ASH2025: exports/imports shares by partner
 					 * x total exports (1,952.9) / imports (1,891.4), with the missing
 					 * side from each published trade balance. ~US$1,219B = 31.7% of
 					 * total goods trade (3,844.3).
- *
- * Visitors from China, Japan and Korea: ASH2025 total arrivals (127.1M)
- * x share from +3 countries (26.7%).
+					 *
+					 * Visitors from China, Japan and the Republic of Korea: ASH2025 total arrivals (127.1M)
+					 * x share from +3 countries (26.7%).
 					 */
 					?>
 					<div class="stat-card stat-card-detail">
@@ -79,7 +79,7 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">US$ 1.22 trillion</div>
-							<div class="stat-desc">ASEAN trade in goods with China, Japan and Korea in 2024 <em>(almost a third of all ASEAN trade)</em></div>
+							<div class="stat-desc">ASEAN trade in goods with China, Japan and the Republic of Korea in 2024 <em>(almost a third of all ASEAN trade)</em></div>
 						</div>
 					</div>
 
@@ -116,11 +116,11 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">33.9 million</div>
-							<div class="stat-desc">Visitors to ASEAN from China, Japan and Korea in 2024 <em>(about 1 in 4 of all 127.1 million visitors)</em></div>
+							<div class="stat-desc">Visitors to ASEAN from China, Japan and the Republic of Korea in 2024 <em>(about 1 in 4 of all 127.1 million visitors)</em></div>
 						</div>
 					</div>
 
-					<p class="apt-stats-source">2024 figures. Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">ASEAN Statistical Highlights 2025</a> and <a href="https://www.aseanstats.org/publication/akf2025/">ASEAN Key Figures 2025</a>. Trade and visitor totals for China, Japan and Korea are worked out from the published shares.</p>
+					<p class="apt-stats-source">2024 figures. Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">ASEAN Statistical Highlights 2025</a> and <a href="https://www.aseanstats.org/publication/akf2025/">ASEAN Key Figures 2025</a>. Trade and visitor totals for China, Japan and the Republic of Korea are worked out from the published shares.</p>
 				</div>
 			</div>
 		</div>
