@@ -83,24 +83,5 @@
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
 		</button>
 	</div>
-	<form class="apt-search-form" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-		<div class="apt-search-field">
-			<label for="apt-search-q"><?php esc_html_e( 'Keywords', 'akseki-vi' ); ?></label>
-			<input type="search" id="apt-search-q" name="s" value="<?php echo esc_attr( get_search_query() ); ?>" enterkeyhint="search" autocomplete="off" autofocus>
-		</div>
-		<div class="apt-search-field">
-			<label for="apt-search-cat"><?php esc_html_e( 'Category', 'akseki-vi' ); ?></label>
-			<?php
-			wp_dropdown_categories( array(
-				'show_option_all' => __( 'All categories', 'akseki-vi' ),
-				'hierarchical'    => 1,
-				'orderby'         => 'name',
-				'name'            => 'cat',
-				'id'              => 'apt-search-cat',
-				'selected'        => (int) get_query_var( 'cat' ),
-			) );
-			?>
-		</div>
-		<button type="submit" class="apt-search-submit"><?php esc_html_e( 'Search', 'akseki-vi' ); ?></button>
-	</form>
+	<?php get_template_part( 'template-parts/search-form', null, array( 'id' => 'apt-search', 'autofocus' => true ) ); ?>
 </dialog>

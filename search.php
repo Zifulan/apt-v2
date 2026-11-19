@@ -1,6 +1,5 @@
 <?php get_header(); ?>
 
-
 	<main id="main" class="site-main search-listing">
 		<div class="container" id="avi-content">
 		<header class="apt-page-head">
@@ -15,25 +14,29 @@
 				);
 			?></p>
 		</header>
-		<?php
-		if ( have_posts() ) {
 
-			// Load posts loop.
+		<?php get_template_part( 'template-parts/search-form', null, array( 'id' => 'apt-search-page', 'class' => 'apt-search-form--page' ) ); ?>
+
+		<?php if ( have_posts() ) : ?>
+		<div class="apt-results">
+			<?php
 			while ( have_posts() ) {
-				the_post();		
-				get_template_part( 'template-parts/listings' );
+				the_post();
+				get_template_part( 'template-parts/search-result' );
 			}
-			the_posts_pagination( array( 'mid_size' => 2 ) );
-
-		} else {
-
-			// If no content, include the "No posts found" template.
-			get_template_part( 'template-parts/notfound' );
-
-		}
-		?>
-		</div>	
+			?>
+		</div>
+			<?php the_posts_pagination( array( 'mid_size' => 2 ) ); ?>
+		<?php else : ?>
+		<div class="apt-search-empty">
+			<h2><?php
+				/* translators: %s: search terms */
+				printf( esc_html__( 'No results for “%s”', 'akseki-vi' ), esc_html( get_search_query() ) );
+			?></h2>
+			<p><?php esc_html_e( 'Check the spelling or try fewer or different keywords, such as a meeting name (AMAF+3) or a city. Choosing “All categories” searches everything.', 'akseki-vi' ); ?></p>
+		</div>
+		<?php endif; ?>
+		</div>
 	</main><!-- .site-main -->
-
 
 <?php get_footer(); ?>
