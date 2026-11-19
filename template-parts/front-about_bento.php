@@ -15,13 +15,7 @@
 			<div class="apt-about-stats">
 				<?php
 				$years = floor((strtotime("today")-strtotime("1997-12-15"))/31556952);
-				$min2 = akseki_get_ministrial_categories();
-				$totmincount = 0;
-				foreach($min2 as $min){			
-					$catObj = get_category_by_slug($min); 
-					$catcount = $catObj->category_count;
-					$totmincount += $catcount;
-				}
+				$totmincount = apt_get_ministerial_meeting_count(); // meetings, not posts
 				?>
 				
 				<div class="stats-grid">
@@ -38,7 +32,7 @@
 					
 					<div class="stat-card stat-card-red">
 						<div class="stat-number"><?php echo $totmincount; ?></div>
-						<div class="stat-label">Ministerial Level Activities</div>
+						<div class="stat-label">Ministerial Level Meetings</div>
 					</div>
 					
 					<?php

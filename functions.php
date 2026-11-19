@@ -91,6 +91,11 @@ function apt_ordinal_to_int( $ordinal ) {
  * entries are not published, so upcoming summits are not counted.
  * Cached for 12 hours and refreshed whenever a post is saved.
  */
+/** Regex fragment for a meeting ordinal: "29th", "29 th", "Twenty-Ninth", "fiftieth". */
+function apt_ordinal_pattern() {
+	return '(\\d{1,3}\\s?(?:st|nd|rd|th)\\b|(?:(?:twenty|thirty|forty|fifty)[\\s-]+)?(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth)|twentieth|thirtieth|fortieth|fiftieth)';
+}
+
 function apt_get_summit_count() {
 	$cached = get_transient( 'apt_summit_count' );
 	if ( false !== $cached ) {
@@ -127,8 +132,68 @@ function apt_get_summit_count() {
 	set_transient( 'apt_summit_count', $max, 12 * HOUR_IN_SECONDS );
 	return $max;
 }
+/**
+ * Ministerial body categories: the grandchildren of "Ministerial-level
+ * Statements" (category 43), e.g. Economic Cooperations > AMAF+3.
+ *
+ * @return int[]
+ */
+function apt_ministerial_body_ids() {
+	$ids = array();
+	foreach ( get_categories( array( 'parent' => 43, 'hide_empty' => false ) ) as $pillar ) {
+		foreach ( get_categories( array( 'parent' => $pillar->term_id, 'hide_empty' => false ) ) as $body ) {
+			$ids[] = (int) $body->term_id;
+		}
+	}
+	return $ids;
+}
+
+/**
+ * Number of ministerial-level MEETINGS held (not posts): posts are grouped by
+ * ministerial body and by the meeting number in the title or short name
+ * ("26th AMAF Plus Three", "Twenty-Sixth Meeting"), so a joint statement and
+ * a press release of the same meeting count once. Posts with no meeting
+ * number are grouped by body and month. Only meetings dated today or earlier.
+ * Cached for 12 hours and refreshed whenever a post is saved.
+ */
+function apt_get_ministerial_meeting_count() {
+	$cached = get_transient( 'apt_ministerial_count' );
+	if ( false !== $cached ) {
+		return (int) $cached;
+	}
+	$bodies = apt_ministerial_body_ids();
+	if ( ! $bodies ) {
+		return 0;
+	}
+	$ids = get_posts( array(
+		'post_type'        => 'post',
+		'post_status'      => 'publish',
+		'category__in'     => $bodies,
+		'fields'           => 'ids',
+		'posts_per_page'   => -1,
+		'no_found_rows'    => true,
+		'suppress_filters' => true,
+		'date_query'       => array( array( 'before' => 'tomorrow', 'inclusive' => false ) ),
+	) );
+
+	$meetings = array();
+	foreach ( $ids as $id ) {
+		$text = html_entity_decode( wp_strip_all_tags( get_the_title( $id ) . ' ' . akseki_get_sm( $id ) ), ENT_QUOTES, 'UTF-8' );
+		$key  = preg_match( '/\\b' . apt_ordinal_pattern() . '/i', $text, $m )
+			? 'n' . apt_ordinal_to_int( preg_replace( '/(\\d)\\s+(?=st|nd|rd|th)/i', '$1', $m[1] ) )
+			: 'm' . get_the_date( 'Y-m', $id );
+		foreach ( array_intersect( wp_get_post_categories( $id ), $bodies ) as $body ) {
+			$meetings[ $body . '|' . $key ] = true;
+		}
+	}
+	$count = count( $meetings );
+	set_transient( 'apt_ministerial_count', $count, 12 * HOUR_IN_SECONDS );
+	return $count;
+}
+
 add_action( 'save_post', function () {
 	delete_transient( 'apt_summit_count' );
+	delete_transient( 'apt_ministerial_count' );
 	delete_transient( 'apt_pillar_quotes' );
 } );
 
