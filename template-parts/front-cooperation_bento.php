@@ -8,7 +8,9 @@
  *   https://amro-asia.org/about-amro/amro-and-the-cmim/ ,
  *   https://www.mof.go.jp/english/policy/international_policy/financial_cooperation_in_asia/cmi/20261110211148.html
  * - CMIM Agreement in force 24 March 2010 (US$120 billion, doubled in 2014): amro-asia.org.
- * - APTERR Agreement signed October 2011: asean.org factsheet (below).
+ * - APTERR Agreement signed 7 October 2011, in force 12 July 2012 (year shown):
+ *   https://cil.nus.edu.sg/databasecil/2011-asean-plus-three-emergency-rice-reserve-agreement/ ,
+ *   https://www.mofa.go.jp/mofaj/press/release/24/7/0710_05.html
  * - AMRO established 2011, international organisation 2016: amro-asia.org (same page).
  * - APTERR 787,000 tonnes earmarked; Typhoon Haiyan 2013: asean.org APTERR factsheet,
  *   https://www.asean.org/wp-content/uploads/images/2015/October/outreach-document/Edited%20APTERR-2.pdf
@@ -30,7 +32,7 @@ $apt_mechanisms = array(
 	),
 	array(
 		'name' => 'ASEAN Plus Three Emergency Rice Reserve (APTERR)',
-		'meta' => 'Food security &middot; since 2011',
+		'meta' => 'Food security &middot; since 2012',
 		'text' => '<strong>787,000 tonnes</strong> of rice earmarked by APT countries to respond to emergencies such as natural disasters. Among other uses, rice from the reserve was distributed in the Philippines after Typhoon Haiyan (Yolanda) in 2013.',
 		'url'  => '/category/statements-and-declarations/director-general-level/economic-cooperations-director-general-level/apterr/',
 	),
