@@ -49,6 +49,19 @@ Esc, the close button or a click outside closes it.
 the short meeting name, title, excerpt, place and date, and categories
 (pillar categories with their colour dot).
 
+**How results are ordered.** WordPress matches each word separately, so a
+search for `WELCOME constructive engagement` finds every statement that
+contains all three words anywhere. With the APT PDF Search plugin active,
+multi-word searches are ranked in three groups:
+
+1. the whole phrase in the **title**;
+2. the whole phrase in the **page text or its PDF**;
+3. the words found separately.
+
+Within each group WordPress's own order applies. Single-word searches are
+unchanged. To match only the exact phrase, put it in quotation marks:
+`"WELCOME constructive engagement"`.
+
 **Searching inside PDFs: the APT PDF Search plugin** (`extras/apt-pdf-search/`).
 WordPress search only reads a post's title, excerpt and content, so text that
 appears only in a statement's PDF isn't found. The plugin fixes that:
@@ -56,20 +69,29 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
 - It is a **separate plugin**, installed on its own (zip the folder, then
   Plugins → Add New → Upload Plugin), so search keeps working if the theme
   changes. It is not uploaded with the theme.
-- After activating, run **Tools → PDF search → Index PDFs** once. Statements
-  are then indexed automatically whenever they are saved. WP-CLI:
+- After activating, run **Tools → PDF search → Index PDFs** once (newest
+  posts first; the page warns if a run stopped early). Statements are then
+  indexed automatically whenever they are saved. WP-CLI:
   `wp apt-pdf-search index [--force]`.
-- It reads PDFs **stored on this site** that a post links to, on this server
-  (bundled smalot/pdfparser, with `pdftotext` as a fallback where allowed),
-  and adds their text to the search. Results are still the statement pages.
+- It reads PDFs **stored on this site** that a post refers to, however they
+  are attached (links, shortcodes such as `[pdf-embedder url="…"]`, PDF/file
+  blocks, or PDFs uploaded to the post), on this server (bundled
+  smalot/pdfparser, with `pdftotext` as a fallback where allowed), and adds
+  their text to the search. Results are still the statement pages.
 - **Limited Access Documents stay out of search:** only published content
   without a password is read; private and protected pages, their child pages,
   and anything with "limited" in its slug, title, category, parent page or PDF
   path are skipped, and their stored text is removed.
 - When a match is only inside the PDF, the theme shows it under the result as
-  **"Found in the attached PDF:"** with the passage quoted and the search terms
-  highlighted (`apt_pdf_search_snippet_html()`; the theme checks the plugin is
+  **"Found in the attached PDF:"** with the passage quoted and highlighted:
+  the whole phrase when the PDF contains it, otherwise the first matching
+  word (`apt_pdf_search_snippet_html()`; the theme checks the plugin is
   active, so it works without it).
+- **A statement isn't found?** Tools → PDF search → **Check a statement**:
+  paste its address and a phrase to see, step by step, whether it can be
+  indexed, which PDFs were read, whether the text is stored, and whether a
+  real search returns it. If it is found there but not on the site, clear the
+  cache (Sucuri or a caching plugin).
 - Tested on the 203 public statement PDFs on the live site (November 2026):
   193 readable, 8 scanned images (would need OCR), 2 broken links on the site.
   Details, the broken links and uninstall notes are in
