@@ -12,7 +12,10 @@ defined( 'ABSPATH' ) || exit;
  * Excluded terms ("-word", NOT LIKE) are left alone.
  */
 add_filter( 'posts_search', function ( $search, $query ) {
-	if ( '' === $search || is_admin() || ! $query->is_search() || ! $query->is_main_query() ) {
+	// Any front-end search query (not only the main one: themes and search
+	// plugins sometimes run their own), plus the admin "Check a statement" test.
+	$forced = (bool) $query->get( 'apt_pdf_search' );
+	if ( '' === $search || '' === (string) $query->get( 's' ) || ( is_admin() && ! $forced ) ) {
 		return $search;
 	}
 	global $wpdb;

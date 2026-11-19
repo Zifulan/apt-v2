@@ -15,9 +15,19 @@ theme changes.
    small batches and continues by itself; keep the tab open until "Done").
    With WP-CLI instead: `wp apt-pdf-search index`.
 
-After that, posts are indexed automatically whenever they are saved. Use
+After that, posts are indexed automatically whenever they are saved. The
+newest posts are indexed first, and the page warns you if a run stopped early. Use
 **Re-read all PDFs** (or `wp apt-pdf-search index --force`) after replacing
 PDF files under the same name.
+
+## A statement isn't found?
+
+**Tools → PDF search → Check a statement**: paste the statement's address and
+a phrase from its PDF. It shows, step by step, whether the post can be indexed
+(and why not), each PDF link and whether it was read, the stored text, whether
+the phrase is in it, and whether a real search returns the post, with a button
+to re-index that post. If the check says the post *is* found but the site
+doesn't show it, clear the site's cache (Sucuri, caching plugins).
 
 ## What is (and isn't) indexed
 

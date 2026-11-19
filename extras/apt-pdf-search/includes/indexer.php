@@ -75,6 +75,81 @@ function apt_pdf_search_is_indexable( $post ) {
 }
 
 /**
+ * Why a post is not indexable, in plain words, or '' when it is.
+ */
+function apt_pdf_search_why_not_indexable( $post ) {
+	$post = get_post( $post );
+	if ( ! $post ) {
+		return 'Post not found.';
+	}
+	if ( 'publish' !== $post->post_status ) {
+		return 'Not published (status: ' . $post->post_status . ').';
+	}
+	if ( '' !== $post->post_password ) {
+		return 'Password-protected.';
+	}
+	if ( 'attachment' === $post->post_type || ! is_post_type_viewable( $post->post_type ) ) {
+		return 'Post type "' . $post->post_type . '" is not public.';
+	}
+	foreach ( get_post_ancestors( $post ) as $ancestor_id ) {
+		$ancestor = get_post( $ancestor_id );
+		if ( $ancestor && ( '' !== $ancestor->post_password || 'publish' !== $ancestor->post_status ) ) {
+			return 'Inside a protected or unpublished parent page ("' . $ancestor->post_title . '").';
+		}
+		if ( $ancestor && ( apt_pdf_search_has_excluded_keyword( $ancestor->post_name ) || apt_pdf_search_has_excluded_keyword( $ancestor->post_title ) ) ) {
+			return 'Parent page "' . $ancestor->post_title . '" is marked as restricted.';
+		}
+	}
+	if ( apt_pdf_search_has_excluded_keyword( $post->post_name ) || apt_pdf_search_has_excluded_keyword( $post->post_title ) ) {
+		return 'Slug or title is marked as restricted (' . implode( ', ', apt_pdf_search_excluded_keywords() ) . ').';
+	}
+	if ( is_object_in_taxonomy( $post->post_type, 'category' ) ) {
+		foreach ( get_the_category( $post->ID ) as $cat ) {
+			if ( apt_pdf_search_has_excluded_keyword( $cat->slug ) || apt_pdf_search_has_excluded_keyword( $cat->name ) ) {
+				return 'In a restricted category ("' . $cat->name . '").';
+			}
+		}
+	}
+	return apt_pdf_search_is_indexable( $post ) ? '' : 'Excluded by the apt_pdf_search_is_indexable filter.';
+}
+
+/**
+ * Every .pdf link in a post's content with what happened to it, for the
+ * "Check a statement" tool: URL => reason it is skipped ('' when used).
+ */
+function apt_pdf_search_explain_links( $post ) {
+	$post    = get_post( $post );
+	$content = (string) apply_filters( 'apt_pdf_search_source_html', $post ? $post->post_content : '', $post );
+	$used    = $post ? apt_pdf_search_find_pdfs( $post ) : array();
+	$out     = array();
+	if ( preg_match_all( '#["\'(=]\s*([^"\'\s<>()]+?\.pdf)#i', $content, $m ) ) {
+		$uploads = wp_upload_dir( null, false );
+		foreach ( array_unique( $m[1] ) as $raw ) {
+			$url = html_entity_decode( $raw, ENT_QUOTES, 'UTF-8' );
+			if ( isset( $used[ $url ] ) ) {
+				$out[ $url ] = '';
+				continue;
+			}
+			$host = wp_parse_url( $url, PHP_URL_HOST );
+			$path = rawurldecode( (string) wp_parse_url( $url, PHP_URL_PATH ) );
+			$base = (string) wp_parse_url( $uploads['baseurl'], PHP_URL_PATH );
+			if ( ! preg_match( '#(?:href|src)\s*=\s*["\']' . preg_quote( $raw, '#' ) . '#i', $content ) ) {
+				$out[ $url ] = 'Not in an href/src attribute (e.g. a shortcode or embed); not read.';
+			} elseif ( $host && strcasecmp( preg_replace( '/^www\./i', '', $host ), preg_replace( '/^www\./i', '', (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) ) !== 0 ) {
+				$out[ $url ] = 'On another website (' . $host . ').';
+			} elseif ( apt_pdf_search_has_excluded_keyword( $path ) ) {
+				$out[ $url ] = 'Path is marked as restricted.';
+			} elseif ( '' === $base || 0 !== strpos( $path, $base . '/' ) ) {
+				$out[ $url ] = 'Not under the uploads URL (' . $uploads['baseurl'] . ').';
+			} else {
+				$out[ $url ] = 'File not found on the server at ' . $uploads['basedir'] . substr( $path, strlen( $base ) ) . '.';
+			}
+		}
+	}
+	return $out;
+}
+
+/**
  * The PDFs a post links to that live in this site's uploads folder.
  *
  * @return array URL => absolute file path.
@@ -253,7 +328,7 @@ function apt_pdf_search_clear_post( $post_id ) {
 	delete_post_meta( $post_id, APT_PDF_SEARCH_STATE );
 }
 
-/** Posts and pages whose content links to a PDF, oldest first (batchable). */
+/** Posts and pages whose content links to a PDF, newest first (batchable). */
 function apt_pdf_search_candidate_ids( $offset = 0, $limit = 10 ) {
 	global $wpdb;
 	return array_map(
@@ -264,7 +339,7 @@ function apt_pdf_search_candidate_ids( $offset = 0, $limit = 10 ) {
 				 WHERE post_type NOT IN ('attachment','revision','nav_menu_item')
 				   AND post_status IN ('publish','private','future','draft','pending')
 				   AND post_content LIKE %s
-				 ORDER BY ID ASC LIMIT %d OFFSET %d",
+				 ORDER BY ID DESC LIMIT %d OFFSET %d",
 				'%' . $wpdb->esc_like( '.pdf' ) . '%',
 				$limit,
 				$offset
