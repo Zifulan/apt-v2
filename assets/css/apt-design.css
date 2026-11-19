@@ -849,6 +849,46 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 }
 .apt-coop-links a:hover { text-decoration-color: currentColor; }
 
+/* ---------- Home: latest from each pillar (on gradient) ------------------- */
+
+.apt-pillar-list {
+	list-style: none; margin: 0; padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+	column-gap: clamp(24px, 4vw, 56px);
+}
+.apt-pillar-item {
+	display: flex; flex-direction: column;
+	padding: 22px 0 28px;
+	border-top: 1px solid var(--on-grad-rule);
+	color: var(--on-grad);
+}
+.apt-pillar-name {
+	display: flex; align-items: center; gap: 10px;
+	margin: 0 0 14px;
+	font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+	color: var(--on-grad-2);
+}
+.apt-pillar-name::before { /* pillar colour, as on news tags */
+	content: ''; flex: none; width: 10px; height: 10px; border-radius: 50%;
+	background: var(--tag-c, var(--pillar-other));
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+}
+.apt-pillar-quote { margin: 0 0 16px; flex: 1; }
+.apt-pillar-quote blockquote { margin: 0 0 12px; }
+.apt-pillar-quote blockquote p { margin: 0; font-size: 1.05rem; line-height: 1.6; }
+.apt-pillar-quote figcaption { font-size: 0.85rem; line-height: 1.5; color: var(--on-grad-2); }
+.apt-pillar-quote cite { font-style: normal; }
+.apt-pillar-quote cite a { color: inherit; text-decoration: underline; text-decoration-color: var(--on-grad-rule); text-underline-offset: 3px; }
+.apt-pillar-quote cite a:hover { color: var(--on-grad); text-decoration-color: currentColor; }
+.apt-pillar-more {
+	align-self: flex-start;
+	display: inline-flex; align-items: center; min-height: var(--target-size);
+	font-size: 0.9rem; font-weight: 600; color: var(--on-grad);
+	text-decoration: underline; text-decoration-color: var(--on-grad-rule); text-underline-offset: 4px;
+}
+.apt-pillar-more:hover { color: var(--on-grad); text-decoration-color: currentColor; }
+
 /* ---------- Home: resources (white panel) -------------------------------- */
 
 .resources-accordion { padding-top: 6px; padding-bottom: 6px; }

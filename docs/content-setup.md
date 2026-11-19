@@ -45,3 +45,28 @@ Unpublish (**Quick Edit → Status: Private**, or move to Trash):
 - ~~`/login_ujv5g/`~~ done: it exposed the renamed login address.
 
 Nothing on the site links to either page (checked all 835 pages and posts).
+
+## 3. Homepage quote for each pillar ("Latest from Each Pillar")
+
+The homepage shows the newest statement in each pillar (Political-Security,
+Economic and Finance, Socio-Cultural), quoted word for word and cited with the
+statement's title and date. Pillars come from the statement's categories, so
+nothing extra is needed to make a statement appear.
+
+**Choosing the quote (optional, about 10 seconds):**
+
+1. Open the statement in the editor.
+2. In the sidebar, open **Excerpt** (Post → Excerpt).
+3. Copy the key sentence *exactly* from the statement text and paste it in.
+   Do not reword it. Quotation marks around it are not needed.
+4. Update the post.
+
+- If the Excerpt is empty, the homepage quotes the statement's opening
+  sentences instead (whole sentences only, usually "The ... was held on ...").
+- If the Excerpt is not found word for word in the statement, it is ignored
+  and the opening sentences are used. The editor shows a yellow notice when
+  this happens.
+- Statements that are only a PDF link (no text in the post) are skipped; the
+  pillar then shows the newest statement that has text.
+- The homepage updates as soon as a post is saved.
+- The Excerpt is also used as the summary on archive and category pages.

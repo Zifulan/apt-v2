@@ -129,6 +129,209 @@ function apt_get_summit_count() {
 }
 add_action( 'save_post', function () {
 	delete_transient( 'apt_summit_count' );
+	delete_transient( 'apt_pillar_quotes' );
+} );
+
+/*
+ * ---------------------------------------------------------------------------
+ * Homepage "Latest from Each Pillar": the newest statement under each pillar,
+ * quoted word for word from the statement itself and cited.
+ *
+ * The quote is the post's Excerpt when an editor has filled it in AND it
+ * appears word for word in the statement; otherwise the statement's opening
+ * sentences (whole sentences only). Nothing is reworded.
+ * ---------------------------------------------------------------------------
+ */
+
+/** Pillars, with headings from the ASEC "Overview of ASEAN Plus Three Cooperation". */
+function apt_pillars() {
+	return array(
+		'ps' => array( 'title' => 'Political-Security Cooperation', 'slug' => 'political-cooperations' ),
+		'ec' => array( 'title' => 'Economic and Finance Cooperation', 'slug' => 'economic-cooperations' ),
+		'sc' => array( 'title' => 'Socio-Cultural Cooperation', 'slug' => 'socio-cultural-cooperations' ),
+	);
+}
+
+/**
+ * Category IDs for a pillar: every category whose slug starts with the pillar
+ * slug (each level has its own, e.g. "political-cooperations-som-level"),
+ * plus their children.
+ */
+function apt_pillar_category_ids( $slug ) {
+	$ids = array();
+	foreach ( get_categories( array( 'hide_empty' => false ) ) as $cat ) {
+		if ( 0 === strpos( $cat->slug, $slug ) ) {
+			$ids[] = (int) $cat->term_id;
+			$children = get_term_children( $cat->term_id, 'category' );
+			if ( is_array( $children ) ) {
+				$ids = array_merge( $ids, array_map( 'intval', $children ) );
+			}
+		}
+	}
+	return array_values( array_unique( $ids ) );
+}
+
+/** Post HTML to plain text, one paragraph per line. */
+function apt_plain_text( $html ) {
+	$html = strip_shortcodes( (string) $html );
+	$html = preg_replace( '#<(script|style)\b[^>]*>.*?</\1>#is', ' ', $html );
+	$html = preg_replace( '#</?(p|div|br|li|ul|ol|h[1-6]|tr|td|th|table|blockquote|figure|figcaption|section|hr)\b[^>]*>#i', "\n", $html );
+	$text = html_entity_decode( wp_strip_all_tags( $html, false ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	return str_replace( "\xC2\xA0", ' ', $text );
+}
+
+/** Text normalised for a word-for-word comparison (spacing and quote marks only). */
+function apt_quote_key( $text ) {
+	$text = str_replace(
+		array( "\u{2018}", "\u{2019}", "\u{201C}", "\u{201D}", "\u{2013}", "\u{2014}" ),
+		array( "'", "'", '"', '"', '-', '-' ),
+		(string) $text
+	);
+	return trim( preg_replace( '/\s+/u', ' ', $text ) );
+}
+
+/** Split a paragraph into sentences, keeping abbreviations such as "H.E." and "Ma." intact. */
+function apt_split_sentences( $para ) {
+	$parts = preg_split( '/(?<=[.!?])(["\x{201D}\x{2019})]?)\s+(?=["\x{201C}(]?[A-Z0-9])/u', $para, -1, PREG_SPLIT_DELIM_CAPTURE );
+	$abbr  = '/(?:^|[\s(])(?:H\.E|U\.S|Dr|Mr|Mrs|Ms|Prof|Amb|Hon|No|Nos|St|Jr|Sr|Ma|Gen|Lt|Col|e\.g|i\.e|vs|Inc|Co|Ltd|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|[A-Z])\.$/';
+	$sentences = array();
+	$current   = $parts[0];
+	for ( $i = 1; $i < count( $parts ); $i += 2 ) {
+		$current .= $parts[ $i ];
+		$next     = isset( $parts[ $i + 1 ] ) ? $parts[ $i + 1 ] : '';
+		// Keep abbreviations and list markers ("1.", "(a)") with the sentence that follows.
+		if ( preg_match( $abbr, $current ) || preg_match( '/^\(?[0-9a-z]{1,3}[.)]$/i', trim( $current ) ) ) {
+			$current .= ' ' . $next;
+			continue;
+		}
+		$sentences[] = $current;
+		$current     = $next;
+	}
+	if ( '' !== trim( $current ) ) {
+		$sentences[] = $current;
+	}
+	return array_map( 'trim', $sentences );
+}
+
+/**
+ * The quote for a statement: array( 'text' => ..., 'source' => 'excerpt'|'opening' ),
+ * or null when there is nothing suitable (e.g. a post that is only a PDF link).
+ */
+function apt_statement_quote( $post ) {
+	$post = get_post( $post );
+	if ( ! $post ) {
+		return null;
+	}
+	$content = apt_plain_text( $post->post_content );
+
+	if ( has_excerpt( $post ) ) {
+		$excerpt = preg_replace( '/\s+/u', ' ', html_entity_decode( wp_strip_all_tags( $post->post_excerpt ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+		$excerpt = trim( preg_replace( '/^["\x{201C}\s]+|["\x{201D}\s]+$/u', '', $excerpt ) );
+		if ( '' !== $excerpt && false !== strpos( apt_quote_key( $content ), apt_quote_key( $excerpt ) ) ) {
+			return array( 'text' => $excerpt, 'source' => 'excerpt' );
+		}
+	}
+
+	// Opening sentences: whole sentences from the first real paragraph, carrying
+	// on into the next paragraph when the first is a single short sentence.
+	$quote = '';
+	foreach ( preg_split( '/\n+/', $content ) as $para ) {
+		$para = trim( preg_replace( '/\s+/u', ' ', $para ) );
+		if ( mb_strlen( $para ) < 80 || ! preg_match( '/[.!?]["\x{201D}\x{2019})]?$/u', $para ) ) {
+			if ( '' !== $quote ) {
+				break; // a heading or list after the opening: stop here
+			}
+			continue;
+		}
+		foreach ( apt_split_sentences( $para ) as $sentence ) {
+			$candidate = '' === $quote ? $sentence : $quote . ' ' . $sentence;
+			if ( mb_strlen( $candidate ) > 360 ) {
+				break 2;
+			}
+			$quote = $candidate;
+			if ( mb_strlen( $quote ) >= 140 ) {
+				break 2;
+			}
+		}
+	}
+	if ( mb_strlen( $quote ) >= 60 ) {
+		return array( 'text' => $quote, 'source' => 'opening' );
+	}
+	return null;
+}
+
+/** Newest quotable statement per pillar, cached until a post is saved. */
+function apt_pillar_quotes() {
+	$cached = get_transient( 'apt_pillar_quotes' );
+	if ( false !== $cached ) {
+		return $cached;
+	}
+	$out = array();
+	foreach ( apt_pillars() as $key => $pillar ) {
+		$ids = apt_pillar_category_ids( $pillar['slug'] );
+		if ( ! $ids ) {
+			continue;
+		}
+		$query = new WP_Query( array(
+			'post_type'           => 'post',
+			'post_status'         => 'publish',
+			'category__in'        => $ids,
+			'posts_per_page'      => 10,
+			'no_found_rows'       => true,
+			'ignore_sticky_posts' => true,
+		) );
+		foreach ( $query->posts as $p ) {
+			if ( has_tag( 'hasnocontent', $p ) ) {
+				continue;
+			}
+			$quote = apt_statement_quote( $p );
+			if ( ! $quote ) {
+				continue;
+			}
+			$more     = get_category_by_slug( $pillar['slug'] );
+			$out[ $key ] = array(
+				'pillar' => $pillar['title'],
+				'quote'  => $quote['text'],
+				'title'  => html_entity_decode( wp_strip_all_tags( get_the_title( $p ) ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+				'date'   => get_the_date( 'j F Y', $p ),
+				'url'    => get_permalink( $p ),
+				'more'   => $more ? get_category_link( $more->term_id ) : '',
+			);
+			break;
+		}
+	}
+	set_transient( 'apt_pillar_quotes', $out, 12 * HOUR_IN_SECONDS );
+	return $out;
+}
+
+/**
+ * Editor hint: warn on a pillar statement whose Excerpt is not word for word
+ * in the statement (the homepage then quotes the opening sentences instead).
+ */
+add_action( 'admin_notices', function () {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( ! $screen || 'post' !== $screen->base || 'post' !== $screen->post_type ) {
+		return;
+	}
+	$post = get_post();
+	if ( ! $post || ! has_excerpt( $post ) ) {
+		return;
+	}
+	$in_pillar = false;
+	foreach ( apt_pillars() as $pillar ) {
+		if ( in_category( apt_pillar_category_ids( $pillar['slug'] ), $post ) ) {
+			$in_pillar = true;
+			break;
+		}
+	}
+	if ( ! $in_pillar ) {
+		return;
+	}
+	$quote = apt_statement_quote( $post );
+	if ( $quote && 'excerpt' === $quote['source'] ) {
+		return;
+	}
+	echo '<div class="notice notice-warning"><p>' . esc_html__( 'The Excerpt of this statement does not appear word for word in its text, so the homepage will quote the opening sentences instead. To choose the homepage quote, copy a sentence exactly from the statement into the Excerpt.', 'akseki-vi' ) . '</p></div>';
 } );
 
 /**
