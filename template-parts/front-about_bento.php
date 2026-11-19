@@ -41,56 +41,71 @@
 						<div class="stat-label">Ministerial Level Activities</div>
 					</div>
 					
+					<?php
+					/*
+					 * ASEANstats figures (2024 data). Update when new editions come out:
+					 * ASEAN Statistical Highlights (ASH) and ASEAN Key Figures (AKF),
+					 * https://www.aseanstats.org/publication/
+					 *
+					 * Trade with China, Japan and Korea is not published as one total.
+					 * It is worked out from ASH2025: exports/imports shares by partner
+					 * x total exports (1,952.9) / imports (1,891.4), with the missing
+					 * side from each published trade balance. ~US$1,219B = 31.7% of
+					 * total goods trade (3,844.3).
+					 */
+					?>
 					<div class="stat-card stat-card-detail">
 						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 								<path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
 								<path d="M9 10h6M9 14h6" stroke="currentColor" stroke-width="2"/>
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">US$ 32.65 billion</div>
-							<div class="stat-desc">Foreign direct investment inflow from Plus Three countries <em>(25.4% of total FDI inflows into ASEAN)</em></div>
+							<div class="stat-value">US$ 230.8 billion</div>
+							<div class="stat-desc">Foreign direct investment into ASEAN in 2024 <em>(double the US$ 115.4 billion of 2015)</em></div>
 						</div>
 					</div>
-					
+
 					<div class="stat-card stat-card-detail">
 						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 								<path d="M3 3h18v18H3z" stroke="currentColor" stroke-width="2"/>
 								<path d="M8 8h8M8 12h8M8 16h4" stroke="currentColor" stroke-width="2"/>
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">US$ 1.098 trillion</div>
-							<div class="stat-desc">Total ASEAN trade with Plus Three countries <em>(25.1% increase in 2021)</em></div>
+							<div class="stat-value">US$ 1.22 trillion</div>
+							<div class="stat-desc">ASEAN trade in goods with China, Japan and Korea in 2024 <em>(almost a third of all ASEAN trade)</em></div>
 						</div>
 					</div>
-					
+
 					<div class="stat-card stat-card-detail">
 						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 								<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"/>
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">2,103.4</div>
-							<div class="stat-desc">Population in Million</div>
+							<div class="stat-value">2.28 billion</div>
+							<div class="stat-desc">People in ASEAN+3 <em>(28.1% of the world&rsquo;s population)</em></div>
 						</div>
 					</div>
-					
+
 					<div class="stat-card stat-card-detail">
 						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
 								<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
 								<path d="M12 6v6l4 4" stroke="currentColor" stroke-width="2"/>
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">7,056.1</div>
-							<div class="stat-desc">GDP per capita in US dollars</div>
+							<div class="stat-value">US$ 28.6 trillion</div>
+							<div class="stat-desc">Combined GDP of ASEAN+3 <em>(about a quarter of the world economy, 25.9%)</em></div>
 						</div>
 					</div>
+
+					<p class="apt-stats-source">2024 figures. Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">ASEAN Statistical Highlights 2025</a> and <a href="https://www.aseanstats.org/publication/akf2025/">ASEAN Key Figures 2025</a>. Trade with China, Japan and Korea is estimated from partner shares and trade balances.</p>
 				</div>
 			</div>
 		</div>
