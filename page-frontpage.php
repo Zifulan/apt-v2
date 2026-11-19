@@ -11,6 +11,7 @@ get_header();
 			<?php get_template_part( 'template-parts/front-topnew4' ); ?>
 			<?php get_template_part( 'template-parts/front-news_bento' ); ?>
 			<?php get_template_part( 'template-parts/front-about_bento' ); ?>
+			<?php get_template_part( 'template-parts/front-cooperation_bento' ); ?>
 			<?php get_template_part( 'template-parts/front-resources_bento' ); ?>
 			<?php get_template_part( 'template-parts/sidebar-agenda_bento' ); ?>
 		</main>

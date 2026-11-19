@@ -822,6 +822,45 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	.stat-card.stat-card-detail { grid-column: 1 / -1; }
 }
 
+/* ---------- Home: cooperation in practice (on gradient) ------------------ */
+
+.apt-coop-lede { max-width: 62ch; }
+.apt-coop-grid {
+	list-style: none; margin: 0; padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+	gap: 14px;
+}
+.apt-coop-card {
+	position: relative;
+	display: flex; flex-direction: column;
+	padding: 22px 22px 24px;
+	border: 1px solid var(--on-grad-rule);
+	border-radius: var(--radius-tile);
+	background: rgba(255, 255, 255, 0.08);
+	color: var(--on-grad);
+	transition: background-color 0.2s ease;
+}
+.apt-coop-card:hover { background: rgba(255, 255, 255, 0.14); }
+.apt-coop-card:has(a:focus-visible) { outline: 3px solid var(--apt-yellow); outline-offset: 2px; }
+/* Figure leads visually; the heading stays first for screen readers */
+.apt-coop-figure {
+	order: -1;
+	margin: 0 0 12px;
+	font-size: clamp(1.5rem, 1.25rem + 0.8vw, 1.9rem); font-weight: 700; line-height: 1.1;
+}
+.apt-coop-figure::after {
+	content: ''; display: block; width: 28px; height: 4px; border-radius: 4px; margin-top: 10px;
+	background: var(--apt-yellow);
+}
+.apt-coop-name { font-size: 1rem; font-weight: 700; line-height: 1.35; margin: 0 0 8px; }
+.apt-coop-name a { color: inherit; text-decoration: none; }
+.apt-coop-name a:focus-visible { outline: none; }
+.apt-coop-name a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; } /* whole card is the target */
+.apt-coop-card:hover .apt-coop-name a { text-decoration: underline; text-underline-offset: 3px; }
+.apt-coop-text { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--on-grad-2); }
+@media (prefers-reduced-motion: reduce) { .apt-coop-card { transition: none; } }
+
 /* ---------- Home: resources (white panel) -------------------------------- */
 
 .resources-accordion { padding-top: 6px; padding-bottom: 6px; }
