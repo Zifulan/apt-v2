@@ -47,7 +47,8 @@
 					 * paraphrase. Update when new editions come out.
 					 * - Trade and FDI: ASEAN Secretariat, "Overview of ASEAN Plus Three
 					 *   Cooperation" (as of 14 November 2025), para 8.
-					 * - Population, GDP, visitor arrivals: ASEANstats, ASEAN Statistical
+					 * - Population, GDP, visitor arrivals (127.1 million; 26.7% from +3
+					 *   countries): ASEANstats, ASEAN Statistical
 					 *   Highlights 2025 (2024 data), https://www.aseanstats.org/publication/
 					 * The intro paragraph is the site's own About page text (/about-apt/).
 					 */
@@ -111,7 +112,7 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">26.7%</div>
-							<div class="stat-desc">Share of visitor arrivals from +3 countries <em>(ASEAN, 2024)</em></div>
+							<div class="stat-desc">of the 127.1 million visitor arrivals in ASEAN came from China, Japan and the Republic of Korea <em>(2024)</em></div>
 						</div>
 					</div>
 
