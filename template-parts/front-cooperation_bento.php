@@ -63,5 +63,7 @@ $apt_mechanisms = array(
 			</li>
 			<?php endforeach; ?>
 		</ul>
+
+		<p class="apt-stats-source apt-coop-source">Sources: the APT pages linked above; <a href="https://amro-asia.org/about-amro/amro-and-the-cmim/">AMRO</a> (CMIM and AMRO); <a href="https://www.asean.org/wp-content/uploads/images/2015/October/outreach-document/Edited%20APTERR-2.pdf">ASEAN Secretariat</a> (APTERR reserve and its use in 2013); <a href="https://cil.nus.edu.sg/databasecil/2011-asean-plus-three-emergency-rice-reserve-agreement/">NUS Centre for International Law</a> (APTERR entry into force); <a href="https://www.mof.go.jp/english/policy/international_policy/financial_cooperation_in_asia/index.html">Ministry of Finance, Japan</a> (ABMI).</p>
 	</div>
 </section>

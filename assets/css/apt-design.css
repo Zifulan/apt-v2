@@ -848,6 +848,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 .apt-coop-name a { color: inherit; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; transition: text-decoration-color 0.2s ease; }
 .apt-coop-name a:hover { text-decoration-color: currentColor; }
 .apt-coop-text { margin: 0; max-width: 60ch; font-size: 0.95rem; line-height: 1.6; color: var(--on-grad-2); }
+.apt-coop-source { margin-top: 8px; max-width: 90ch; }
 .apt-coop-text strong { color: var(--on-grad); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .apt-coop-name a { transition: none; } }
 
