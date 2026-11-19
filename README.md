@@ -29,6 +29,7 @@ ASEAN-Korea Cooperation Fund site, in the official ASEAN colours.
 | `header.php`, `template-parts/search-form.php` | Search dialog (native `<dialog>`) and the shared search form |
 | `search.php`, `template-parts/search-result.php` | Search results page |
 | `extras/apt-pdf-search/` | Separate plugin: search inside statement PDFs (see **Search** below) |
+| `extras/apt-link-checker/` | Separate plugin: lists broken links, missing files and broken PDFs (Tools → Link checker). See its README |
 | `docs/content-setup.md` | Changes made in WordPress, not the theme: Contact page, pages to unpublish, how editors choose the homepage quote |
 | `list-category-posts/` | Templates for the List Category Posts plugin |
 | `img/flags/`, `img/summitlogo/` | Loaded by name at run time (country flags, summit logos by year) |
