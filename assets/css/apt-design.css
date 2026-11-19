@@ -798,6 +798,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	border-radius: var(--radius-tile);
 	background: rgba(255, 255, 255, 0.08);
 }
+.stat-card.stat-card-wide { grid-column: 1 / -1; }
 .stat-icon { color: var(--apt-yellow); flex: none; }
 .stat-icon svg { width: 28px; height: 28px; }
 .stat-value { font-size: 1.35rem; font-weight: 700; line-height: 1.15; }
