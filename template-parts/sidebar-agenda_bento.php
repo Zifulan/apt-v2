@@ -189,9 +189,11 @@ if ( $is_dtd === '' && $is_tbd === '' ) {
 // On the home page this is a gradient section with its own heading; on the
 // Agenda page (in_page) the page already has a title and a white frame.
 $apt_agenda_in_page = ! empty( $args['in_page'] );
+// Nothing upcoming but recent meetings to show: label the block accordingly.
+$apt_agenda_recent = ( $is_dtd === '' && $is_tbd === '' && $is_recent !== '' );
 ?>
 <?php if ( $apt_agenda_in_page ) : ?>
-<section class="modern-agenda-section apt-agenda-page" id="front-events" aria-label="Upcoming meetings">
+<section class="modern-agenda-section apt-agenda-page" id="front-events" aria-label="<?php echo $apt_agenda_recent ? 'Recent meetings' : 'Upcoming meetings'; ?>">
 	<div class="container">
 		<div class="agenda-timeline">
 <?php else : ?>
@@ -199,16 +201,27 @@ $apt_agenda_in_page = ! empty( $args['in_page'] );
 	<div class="container">
 		<div class="apt-section-head">
 			<div>
+				<?php if ( $apt_agenda_recent ) : ?>
+				<h2 class="apt-section-title">Recent Meetings</h2>
+				<p class="apt-section-lede">No upcoming meetings are scheduled at the moment. These are the most recent.</p>
+				<?php else : ?>
 				<h2 class="apt-section-title">Upcoming Agenda</h2>
 				<p class="apt-section-lede">Scheduled ASEAN Plus Three summits and meetings.</p>
+				<?php endif; ?>
 			</div>
+			<?php if ( $apt_agenda_recent ) : ?>
+			<a class="apt-pill apt-pill--light apt-arrow" href="<?php echo esc_url( home_url( '/archives/' ) ); ?>">All meetings by year</a>
+			<?php else : ?>
 			<a class="apt-pill apt-pill--light apt-arrow" href="<?php echo esc_url( home_url( '/agenda/' ) ); ?>">Full agenda</a>
+			<?php endif; ?>
 		</div>
 
 		<div class="agenda-timeline apt-panel">
 <?php endif; ?>
 			<?php if ( $is_dtd === '' && $is_tbd === '' ) : ?>
+			<?php if ( $apt_agenda_in_page || ! $is_recent ) : // home: the heading already says it ?>
 			<p class="apt-empty">No upcoming meetings are scheduled at the moment.<?php echo $is_recent ? ' The most recent meetings:' : ''; ?></p>
+			<?php endif; ?>
 			<?php if ( $is_recent ) : ?>
 			<ol class="agenda-recent" aria-label="Most recent meetings"><?php echo $is_recent; ?></ol>
 			<?php endif; ?>
