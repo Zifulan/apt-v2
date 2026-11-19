@@ -4,7 +4,7 @@
 			<div class="apt-about-intro">
 				<h2 class="apt-section-title">ASEAN+3 at a Glance</h2>
 				<div class="about-card-body">
-						<p class="about-card-text apt-section-lede">ASEAN Plus Three (APT) consist of ASEAN Member States and the People's Republic of China, Japan and the Republic of Korea. The APT Cooperation process began in December 1997 and since than has evolve as the main vehicle to promote East Asian Cooperation towards the long-term goal of building an East Asian Community, with ASEAN as the driving force. The APT has become one of the most comprehensive cooperation frameworks in the region, and APT cooperation continue to be broadened and deepened in a wide range of areas, including political-security, trade and investment, finance, energy, tourism, agriculture and forestry, environment, education, health, culture and arts, etc, among others. The APT also supports the implementation of the ASEAN Community Vision 2045.</p>
+						<p class="about-card-text apt-section-lede">ASEAN Plus Three (APT) consist of ASEAN Member States and the People&rsquo;s Republic of China, Japan and the Republic of Korea. The APT Cooperation process began in December 1997 and since than has evolve as the main vehicle to promote East Asian Cooperation towards the long-term goal of building an East Asian Community, with ASEAN as the driving force. The APT has become one of the most comprehensive cooperation frameworks in the region, and APT cooperation continue to be broadened and deepened in a wide range of areas, including political-security, trade and investment, finance, energy, tourism, agriculture and forestry, environment, education, health, culture and arts, etc, among others. The APT also supports the implementation of the ASEAN Community Vision 2045.</p>
 						<div class="about-links">
 							<a href="<?php echo esc_url( home_url( '/about-apt/history/' ) ); ?>" class="apt-pill apt-pill--light apt-arrow">History</a>
 							<a href="<?php echo esc_url( home_url( '/about-apt/areas-of-cooperation/' ) ); ?>" class="apt-pill apt-pill--light apt-arrow">Areas of Cooperation</a>
@@ -43,18 +43,13 @@
 					
 					<?php
 					/*
-					 * ASEANstats figures (2024 data). Update when new editions come out:
-					 * ASEAN Statistical Highlights (ASH) and ASEAN Key Figures (AKF),
-					 * https://www.aseanstats.org/publication/
-					 *
-					 * Trade with China, Japan and the Republic of Korea is not published as one total.
-					 * It is worked out from ASH2025: exports/imports shares by partner
-					 * x total exports (1,952.9) / imports (1,891.4), with the missing
-					 * side from each published trade balance. ~US$1,219B = 31.7% of
-					 * total goods trade (3,844.3).
-					 *
-					 * Visitors from China, Japan and the Republic of Korea: ASH2025 total arrivals (127.1M)
-					 * x share from +3 countries (26.7%).
+					 * Every label below is quoted word for word from its source; do not
+					 * paraphrase. Update when new editions come out.
+					 * - Trade and FDI: ASEAN Secretariat, "Overview of ASEAN Plus Three
+					 *   Cooperation" (as of 14 November 2025), para 8.
+					 * - Population, GDP, visitor arrivals: ASEANstats, ASEAN Statistical
+					 *   Highlights 2025 (2024 data), https://www.aseanstats.org/publication/
+					 * The intro paragraph is the site's own About page text (/about-apt/).
 					 */
 					?>
 					<div class="stat-card stat-card-detail">
@@ -65,8 +60,8 @@
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">US$ 230.8 billion</div>
-							<div class="stat-desc">Foreign direct investment into ASEAN in 2024 <em>(double the US$ 115.4 billion of 2015)</em></div>
+							<div class="stat-value">US$ 44.4 billion</div>
+							<div class="stat-desc">FDI from the Plus Three countries <em>(preliminary ASEAN statistics for 2024)</em></div>
 						</div>
 					</div>
 
@@ -78,8 +73,8 @@
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">US$ 1.22 trillion</div>
-							<div class="stat-desc">ASEAN trade in goods with China, Japan and the Republic of Korea in 2024 <em>(almost a third of all ASEAN trade)</em></div>
+							<div class="stat-value">US$ 1.2 trillion</div>
+							<div class="stat-desc">ASEAN and the Plus Three countries: two-way merchandise trade <em>(preliminary ASEAN statistics for 2024)</em></div>
 						</div>
 					</div>
 
@@ -90,8 +85,8 @@
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">2.28 billion</div>
-							<div class="stat-desc">People in ASEAN+3 <em>(28.1% of the world&rsquo;s population)</em></div>
+							<div class="stat-value">2,277.5 million</div>
+							<div class="stat-desc">ASEAN+3 population <em>(ASEAN+3 population as % world population: 28.1%)</em></div>
 						</div>
 					</div>
 
@@ -104,7 +99,7 @@
 						</div>
 						<div class="stat-content">
 							<div class="stat-value">US$ 28.6 trillion</div>
-							<div class="stat-desc">Combined GDP of ASEAN+3 <em>(about a quarter of the world economy, 25.9%)</em></div>
+							<div class="stat-desc">ASEAN+3 GDP <em>(ASEAN+3 GDP as % of world GDP (Nominal): 25.9%)</em></div>
 						</div>
 					</div>
 
@@ -115,12 +110,12 @@
 							</svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">33.9 million</div>
-							<div class="stat-desc">Visitors to ASEAN from China, Japan and the Republic of Korea in 2024 <em>(about 1 in 4 of all 127.1 million visitors)</em></div>
+							<div class="stat-value">26.7%</div>
+							<div class="stat-desc">Share of visitor arrivals from +3 countries <em>(ASEAN, 2024)</em></div>
 						</div>
 					</div>
 
-					<p class="apt-stats-source">2024 figures. Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">ASEAN Statistical Highlights 2025</a> and <a href="https://www.aseanstats.org/publication/akf2025/">ASEAN Key Figures 2025</a>. Trade and visitor totals for China, Japan and the Republic of Korea are worked out from the published shares.</p>
+					<p class="apt-stats-source">Sources: ASEAN Secretariat, <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025), for trade and FDI; ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">ASEAN Statistical Highlights 2025</a>, for population, GDP and visitor arrivals.</p>
 				</div>
 			</div>
 		</div>
