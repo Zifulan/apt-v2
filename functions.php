@@ -46,6 +46,20 @@ function apt_mega_menu_items( $items, $args ) {
 	foreach ( $items as $item ) {
 		$by_id[ $item->ID ] = $item;
 	}
+	// A parent the old Bootstrap navbar only used to open its dropdown may
+	// point nowhere (e.g. "News" -> /news, which doesn't exist). In the drawer
+	// every item is a real link, so send such a parent to its first child.
+	foreach ( $items as $item ) {
+		if ( (int) $item->menu_item_parent || apt_menu_url_resolves( $item->url ) ) {
+			continue;
+		}
+		foreach ( $items as $child ) {
+			if ( (int) $child->menu_item_parent === (int) $item->ID && apt_menu_url_resolves( $child->url ) ) {
+				$item->url = $child->url;
+				break;
+			}
+		}
+	}
 	return array_values( array_filter( $items, function ( $item ) use ( $by_id ) {
 		if ( '' === trim( wp_strip_all_tags( $item->title ) ) ) {
 			return false;
@@ -58,6 +72,52 @@ function apt_mega_menu_items( $items, $args ) {
 	} ) );
 }
 add_filter( 'wp_nav_menu_objects', 'apt_mega_menu_items', 10, 2 );
+
+/**
+ * Whether a menu address leads somewhere: other websites are assumed fine;
+ * on this site it must be the home page, a post or page, a category or tag,
+ * or a post type archive. "#" and empty links don't lead anywhere.
+ */
+function apt_menu_url_resolves( $url ) {
+	static $seen = array();
+	$url = trim( (string) $url );
+	if ( isset( $seen[ $url ] ) ) {
+		return $seen[ $url ];
+	}
+	$ok   = true;
+	$host = wp_parse_url( $url, PHP_URL_HOST );
+	if ( '' === $url || '#' === $url[0] ) {
+		$ok = false;
+	} elseif ( ! $host || 0 === strcasecmp( preg_replace( '/^www\./i', '', $host ), preg_replace( '/^www\./i', '', (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) ) ) {
+		$path = trim( (string) wp_parse_url( $url, PHP_URL_PATH ), '/' );
+		$ok   = '' === $path
+			|| url_to_postid( $host ? $url : home_url( '/' . $path . '/' ) )
+			|| get_page_by_path( $path )
+			|| apt_menu_path_is_archive( $path );
+	}
+	$seen[ $url ] = (bool) $ok;
+	return $seen[ $url ];
+}
+
+/** A category/tag/term or post type archive path, e.g. category/news or news. */
+function apt_menu_path_is_archive( $path ) {
+	$slug = sanitize_title( basename( $path ) );
+	foreach ( get_taxonomies( array( 'public' => true ) ) as $taxonomy ) {
+		if ( false !== strpos( $path, '/' ) && get_term_by( 'slug', $slug, $taxonomy ) ) {
+			return true;
+		}
+	}
+	foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $type ) {
+		$archive = $type->has_archive;
+		if ( $archive ) {
+			$archive_slug = is_string( $archive ) ? $archive : ( ! empty( $type->rewrite['slug'] ) ? $type->rewrite['slug'] : $type->name );
+			if ( trim( $archive_slug, '/' ) === $path ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 /**
  * Turn an ordinal ("29th", "twenty-ninth", "Twenty Ninth") into an integer, or 0.
