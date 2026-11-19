@@ -1,7 +1,4 @@
 jQuery(function($) {
-	/*add class to search modal window for bootstrap styling*/
-	$("#searchModal input, #searchModal select").addClass("form-control");
-	$("#searchModal input[type='submit']").addClass("btn btn-primary");
 	
 	/*popup image in detail post
 	

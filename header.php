@@ -39,7 +39,7 @@
 						<span class="apt-brand-text" aria-hidden="true"><span>ASEAN</span><span>Plus</span><span>Three</span></span>
 					</a>
 					<div class="apt-header-actions">
-						<button type="button" class="apt-header-btn" data-toggle="modal" data-target="#searchModal" aria-label="<?php esc_attr_e( 'Search', 'akseki-vi' ); ?>">
+						<button type="button" class="apt-header-btn" commandfor="apt-search" command="show-modal" aria-label="<?php esc_attr_e( 'Search', 'akseki-vi' ); ?>">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
 						</button>
 						<button type="button" class="apt-header-btn apt-menu-toggle" aria-controls="apt-menu" aria-expanded="false" aria-label="<?php esc_attr_e( 'Menu', 'akseki-vi' ); ?>">
@@ -73,20 +73,34 @@
 					</div>
 				</dialog>
 
-<!-- Search Modal -->
-<div class="modal fade bd-example-modal-lg" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Search</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <?php echo do_shortcode( '[searchandfilter fields="search,category" hierarchical=",1"]' ); ?>
-      </div>
-      
-    </div>
-  </div>
-</div>
+<!-- Search: native modal dialog. Opens from any button with
+     commandfor="apt-search" command="show-modal"; closes with Esc, the close
+     button or a click outside (closedby="any"). Fallbacks in apt-nav.js. -->
+<dialog id="apt-search" class="apt-search" closedby="any" aria-labelledby="apt-search-title">
+	<div class="apt-search-head">
+		<h2 class="apt-search-title" id="apt-search-title"><?php esc_html_e( 'Search the site', 'akseki-vi' ); ?></h2>
+		<button type="button" class="apt-search-close" commandfor="apt-search" command="close" aria-label="<?php esc_attr_e( 'Close search', 'akseki-vi' ); ?>">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+		</button>
+	</div>
+	<form class="apt-search-form" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+		<div class="apt-search-field">
+			<label for="apt-search-q"><?php esc_html_e( 'Keywords', 'akseki-vi' ); ?></label>
+			<input type="search" id="apt-search-q" name="s" value="<?php echo esc_attr( get_search_query() ); ?>" enterkeyhint="search" autocomplete="off" autofocus>
+		</div>
+		<div class="apt-search-field">
+			<label for="apt-search-cat"><?php esc_html_e( 'Category', 'akseki-vi' ); ?></label>
+			<?php
+			wp_dropdown_categories( array(
+				'show_option_all' => __( 'All categories', 'akseki-vi' ),
+				'hierarchical'    => 1,
+				'orderby'         => 'name',
+				'name'            => 'cat',
+				'id'              => 'apt-search-cat',
+				'selected'        => (int) get_query_var( 'cat' ),
+			) );
+			?>
+		</div>
+		<button type="submit" class="apt-search-submit"><?php esc_html_e( 'Search', 'akseki-vi' ); ?></button>
+	</form>
+</dialog>

@@ -109,3 +109,51 @@
 		}
 	});
 })();
+
+/*
+ * Search dialog (#apt-search) fallbacks. Opening and closing are declarative
+ * (command="show-modal" / command="close", Invoker Commands, Baseline since
+ * Dec 2025) and click-outside uses closedby="any" (not in Safari yet). These
+ * small fallbacks cover browsers without either, instead of loading polyfills
+ * from a third-party CDN.
+ */
+(function () {
+	'use strict';
+
+	var dialog = document.getElementById('apt-search');
+	if (!dialog || typeof dialog.showModal !== 'function') {
+		return;
+	}
+
+	if (!('commandForElement' in HTMLButtonElement.prototype)) {
+		document.addEventListener('click', function (event) {
+			var button = event.target.closest('button[commandfor="apt-search"]');
+			if (!button) {
+				return;
+			}
+			var command = button.getAttribute('command');
+			if (command === 'show-modal' && !dialog.open) {
+				dialog.showModal();
+			} else if (command === 'close' && dialog.open) {
+				dialog.close();
+			}
+		});
+	}
+
+	if (!('closedBy' in HTMLDialogElement.prototype)) {
+		// Test the pointer position, not event.target: the dialog is also the
+		// target for its own padding. Require press and release outside, so a
+		// text-selection drag that ends on the backdrop does not close it.
+		var outside = function (event) {
+			var r = dialog.getBoundingClientRect();
+			return event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom;
+		};
+		var pressedOutside = false;
+		dialog.addEventListener('pointerdown', function (event) { pressedOutside = outside(event); });
+		dialog.addEventListener('pointerup', function (event) {
+			if (pressedOutside && outside(event)) {
+				dialog.close();
+			}
+		});
+	}
+})();

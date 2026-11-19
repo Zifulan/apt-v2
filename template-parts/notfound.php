@@ -9,5 +9,5 @@
 		<h2><?php esc_html_e( 'Nothing here yet', 'akseki-vi' ); ?></h2>
 		<p><?php esc_html_e( 'There are no published items in this section.', 'akseki-vi' ); ?></p>
 	<?php endif; ?>
-	<button type="button" class="apt-pill apt-pill--dark" data-toggle="modal" data-target="#searchModal"><?php esc_html_e( 'Search the site', 'akseki-vi' ); ?></button>
+	<button type="button" class="apt-pill apt-pill--dark" commandfor="apt-search" command="show-modal"><?php esc_html_e( 'Search the site', 'akseki-vi' ); ?></button>
 </div>

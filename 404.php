@@ -13,7 +13,7 @@
 					<li><a class="apt-arrow" href="<?php echo esc_url( home_url( '/agenda/' ) ); ?>"><?php esc_html_e( 'Agenda', 'akseki-vi' ); ?></a></li>
 					<li><a class="apt-arrow" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact', 'akseki-vi' ); ?></a></li>
 				</ul>
-				<button type="button" class="apt-pill apt-pill--dark" data-toggle="modal" data-target="#searchModal"><?php esc_html_e( 'Search the site', 'akseki-vi' ); ?></button>
+				<button type="button" class="apt-pill apt-pill--dark" commandfor="apt-search" command="show-modal"><?php esc_html_e( 'Search the site', 'akseki-vi' ); ?></button>
 			</div>
 		</div>
 	</main><!-- .site-main -->

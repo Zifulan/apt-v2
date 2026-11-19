@@ -170,52 +170,6 @@ ul.navbar-nav li.dropdown{
 	#menu-item-2081,#menu-item-2082,#menu-item-2083,#menu-item-2084,#menu-item-2085,#menu-item-3529,#menu-item-6523,#menu-item-6521{display:none;}
 }
 
-/*SEARCH BOX*/
-#searchModal .modal-dialog{
-	width:90%;
-	max-width:900px;
-	margin:0 auto;
-}
-#searchModal form.searchandfilter ul{
-	width:100%;
-	padding-left:10%;
-	padding-right:10%;
-	margin-top: 1em;
-}
-#searchModal form.searchandfilter ul > li:first-child{
-	width:40%;
-	padding-right:0;
-}
-#searchModal form.searchandfilter ul > li:nth-child(2){
-	width:40%;
-	padding-right:0;
-}
-#searchModal form.searchandfilter ul > li:last-child{
-	width:20%;
-	padding-right:0;
-}
-#searchModal form.searchandfilter ul > li:first-child > input, 
-#searchModal form.searchandfilter ul > li:nth-child(2) > select, 
-#searchModal form.searchandfilter ul > li:last-child > input{
-	width:96%;
-	margin:0 2%;
-}
-#searchModal form.searchandfilter ul > li:last-child > input{
-	padding-left:.5em;
-	padding-right:.5em;
-	display: block; 
-	position: relative;
-}
-/*SEARCH BOX RESPONSIVENESS < 640px*/
-@media screen and (max-width: 640px) {
-	#searchModal form.searchandfilter ul > li:first-child, 
-	#searchModal form.searchandfilter ul > li:nth-child(2), 
-	#searchModal form.searchandfilter ul > li:last-child{
-		width:100%;
-		margin:0;
-		margin-bottom:.5em;
-	}
-}
 /* frontpage carousel */
 
 #front-top #fc-col, #front-top #fc-row, #front-top .carousel-inner, #front-top .carousel-item{

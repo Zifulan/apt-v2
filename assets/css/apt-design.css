@@ -465,15 +465,68 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	.apt-menu-list > li > a { font-size: 1.3rem; }
 }
 
-/* ---------- Search modal -------------------------------------------------- */
+/* ---------- Search dialog (header.php, native <dialog>) --------------------- */
 
-#searchModal .modal-content { border: 0; border-radius: var(--radius-frame); padding: 8px; }
-#searchModal .modal-header { border-bottom: 1px solid var(--rule); }
-#searchModal .modal-title { font-weight: 700; font-size: 1.5rem; }
-#searchModal ul { list-style: none; padding: 0; margin: 0; }
-#searchModal li { margin-bottom: 12px; }
-#searchModal input[type="text"],
-#searchModal select { border-radius: 10px; border: 1px solid #767676; min-height: 48px; font: inherit; font-size: max(1rem, 1em); }
+.apt-search {
+	width: min(760px, calc(100vw - 2 * var(--page-gutter)));
+	max-width: none;
+	max-height: calc(100dvh - 2 * var(--page-gutter));
+	margin: max(var(--page-gutter), 12vh) auto auto;
+	padding: clamp(20px, 3vw, 32px);
+	border: 0;
+	border-radius: var(--radius-frame);
+	background: var(--paper);
+	color: var(--ink);
+	box-shadow: 0 24px 60px rgba(17, 19, 24, 0.35);
+}
+/* Keep scrolling inside the dialog from moving the page behind it */
+.apt-search:modal { overscroll-behavior: contain; }
+.apt-search::backdrop {
+	background: rgba(17, 19, 24, 0.55);
+	backdrop-filter: blur(3px);
+	overflow: hidden;
+	overscroll-behavior: contain;
+}
+.apt-search-head {
+	display: flex; align-items: center; justify-content: space-between; gap: 16px;
+	margin-bottom: 20px;
+}
+.apt-search-title { margin: 0; font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem); }
+.apt-search-close {
+	flex: none;
+	display: inline-flex; align-items: center; justify-content: center;
+	width: 44px; height: 44px; padding: 0;
+	border: 1px solid var(--rule-soft); border-radius: 50%;
+	background: var(--paper); color: var(--ink); cursor: pointer;
+}
+.apt-search-close:hover { background: var(--paper-2); }
+.apt-search-close svg { width: 20px; height: 20px; }
+.apt-search-form {
+	display: grid;
+	grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+	gap: 12px;
+	align-items: end;
+}
+.apt-search-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.apt-search-field label { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); }
+.apt-search-field :is(input, select) {
+	width: 100%; min-height: 48px; padding: 0 14px;
+	border: 1px solid #767676; border-radius: 10px;
+	background-color: var(--paper); color: var(--ink);
+	font: inherit; font-size: max(1rem, 1em); /* >= 16px: no zoom on iOS */
+}
+.apt-search-submit {
+	min-height: 48px; padding: 0 28px;
+	border: 0; border-radius: var(--radius-pill);
+	background: var(--ink); color: var(--paper);
+	font: inherit; font-weight: 600; cursor: pointer;
+	transition: background-color 150ms ease-out;
+}
+.apt-search-submit:hover { background: var(--apt-blue); }
+@media (max-width: 767.98px) {
+	.apt-search { margin-top: var(--header-offset); }
+	.apt-search-form { grid-template-columns: 1fr; }
+}
 
 /* ---------- Layout container ---------------------------------------------- */
 
