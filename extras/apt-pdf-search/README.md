@@ -67,6 +67,14 @@ and allows `exec`, it is used as a fallback for PDFs the parser can't read.
   (`/wp-content/uploads/2022/07/Overview-of-APT-Cooperation-6-July-2022.pdf`):
   returns a web page instead of the PDF.
 
+## Website firewall
+
+Bulk runs are paced for the GoDaddy/Sucuri website firewall: each admin
+request works for up to 20 seconds, then the page pauses 3 seconds before
+continuing. If the firewall still blocks you ("temporarily blocked by our
+IDS"), wait for the block to lift or allowlist your IP in the firewall
+settings before running it again.
+
 ## Uninstall
 
 Deleting the plugin removes the stored text (`_apt_pdf_text`,

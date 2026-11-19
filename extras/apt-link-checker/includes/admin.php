@@ -28,14 +28,19 @@ function apt_lc_admin_page() {
 		if ( 0 === $offset ) {
 			update_option( APT_LC_RESULTS, array(), false ); // start clean: drop links no longer used
 		}
-		$n     = apt_lc_scan_batch( $offset, APT_LC_BATCH, true );
+		$started = microtime( true );
+		$handled = 0;
+		do {
+			$n        = apt_lc_scan_batch( $offset + $handled, APT_LC_BATCH, true );
+			$handled += $n;
+		} while ( APT_LC_BATCH === $n && microtime( true ) - $started < APT_LC_SECONDS );
 		$total = apt_lc_post_count();
-		$done  = min( $total, $offset + $n );
+		$done  = min( $total, $offset + $handled );
 		echo '<h2>' . esc_html( sprintf( __( 'Checking: %1$d of %2$d posts and pages', 'apt-link-checker' ), $done, $total ) ) . '</h2>';
-		if ( APT_LC_BATCH === $n ) {
-			$next = wp_nonce_url( add_query_arg( array( 'page' => 'apt-link-checker', 'scan' => 1, 'offset' => $offset + APT_LC_BATCH ), admin_url( 'tools.php' ) ), 'apt_lc_scan' );
-			echo '<p><a class="button" id="apt-lc-next" href="' . esc_url( $next ) . '">' . esc_html__( 'Continue', 'apt-link-checker' ) . '</a> ' . esc_html__( 'Continuing automatically… keep this tab open.', 'apt-link-checker' ) . '</p>';
-			echo '<script>setTimeout(function(){ location.replace(document.getElementById("apt-lc-next").href); }, 300);</script></div>';
+		if ( APT_LC_BATCH === $n ) { // stopped on time, not at the end
+			$next = wp_nonce_url( add_query_arg( array( 'page' => 'apt-link-checker', 'scan' => 1, 'offset' => $offset + $handled ), admin_url( 'tools.php' ) ), 'apt_lc_scan' );
+			echo '<p><a class="button" id="apt-lc-next" href="' . esc_url( $next ) . '">' . esc_html__( 'Continue', 'apt-link-checker' ) . '</a> ' . esc_html__( 'Continuing automatically in a few seconds… keep this tab open.', 'apt-link-checker' ) . '</p>';
+			echo '<script>setTimeout(function(){ location.replace(document.getElementById("apt-lc-next").href); }, ' . (int) APT_LC_PAUSE . ');</script></div>';
 			return;
 		}
 		$progress              = get_option( APT_LC_PROGRESS, array() );

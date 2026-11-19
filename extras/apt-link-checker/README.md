@@ -19,7 +19,7 @@ address at most once a week), so the list stays current.
 | Link | How | Reported as broken when |
 |---|---|---|
 | Files in this site's uploads (PDFs, images) | On disk, no web request | missing, empty, or a ".pdf" that isn't a PDF |
-| Other pages on this site | Looked up in WordPress, else a web request | not published (draft, private, trashed) or error |
+| Other pages on this site | Looked up in WordPress (posts, pages, categories, archives); never a web request to the site itself | not published (draft, private, trashed); unknown addresses go to "Check by hand" |
 | Other websites | Web request (HEAD, then GET) | 404 and similar |
 | Any address | Pattern check | HTML or spaces inside the address |
 
@@ -35,6 +35,14 @@ On the live site (November 2026 crawl) that is about 970 addresses across
 51 links to other websites. Known problems it will report: the 4th APT EMM
 Joint Statement link (HTML inside the address) and the Overview of APT
 Cooperation of 6 July 2022 (a web page saved as .pdf).
+
+## Website firewall
+
+Bulk runs are paced for the GoDaddy/Sucuri website firewall: each admin
+request works for up to 20 seconds, then the page pauses 3 seconds before
+continuing. If the firewall still blocks you ("temporarily blocked by our
+IDS"), wait for the block to lift or allowlist your IP in the firewall
+settings before running it again.
 
 ## Uninstall
 

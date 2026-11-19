@@ -82,13 +82,38 @@ function apt_lc_check_url( $url ) {
 			}
 			return array( 'status' => 'broken', 'detail' => 'Links to content that is ' . $status . '.' );
 		}
-		return apt_lc_http_check( $absolute );
+		return apt_lc_internal_archive_check( $path );
 	}
 
 	if ( ! preg_match( '#^https?://#i', $url ) ) {
 		$url = 'https:' . ( 0 === strpos( $url, '//' ) ? '' : '//' ) . ltrim( $url, '/' );
 	}
 	return apt_lc_http_check( $url );
+}
+
+/**
+ * A link to this site that isn't a post or page: the home page, or a
+ * category / tag / other archive matched by its slug. Checked inside
+ * WordPress, never by a web request to our own site: a burst of those can
+ * trip the website firewall and block the server.
+ */
+function apt_lc_internal_archive_check( $path ) {
+	$path = trim( (string) $path, '/' );
+	if ( '' === $path ) {
+		return array( 'status' => 'ok', 'detail' => 'Home page.' );
+	}
+	$slug = sanitize_title( basename( $path ) );
+	foreach ( get_taxonomies( array( 'public' => true ) ) as $taxonomy ) {
+		if ( get_term_by( 'slug', $slug, $taxonomy ) ) {
+			return array( 'status' => 'ok', 'detail' => 'Archive (' . $taxonomy . ').' );
+		}
+	}
+	foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $type ) {
+		if ( $type->has_archive && trim( (string) ( is_string( $type->has_archive ) ? $type->has_archive : $type->rewrite['slug'] ?? $type->name ), '/' ) === $path ) {
+			return array( 'status' => 'ok', 'detail' => 'Archive (' . $type->name . ').' );
+		}
+	}
+	return array( 'status' => 'warning', 'detail' => 'Could not match this address to published content; open it to check.' );
 }
 
 /** HEAD (then GET if the server rejects HEAD) and classify the answer. */

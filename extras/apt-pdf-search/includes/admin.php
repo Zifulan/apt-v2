@@ -7,7 +7,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'APT_PDF_SEARCH_BATCH', 8 );
+define( 'APT_PDF_SEARCH_BATCH', 200 );   // most posts fetched per request
+define( 'APT_PDF_SEARCH_SECONDS', 20 );  // work per request; then pause and continue
+define( 'APT_PDF_SEARCH_PAUSE', 3000 );  // ms between requests (stay under the website firewall's rate limit)
 
 add_action( 'admin_menu', function () {
 	add_management_page(
@@ -57,11 +59,18 @@ function apt_pdf_search_admin_page() {
 	if ( $running ) {
 		$ids     = apt_pdf_search_candidate_ids( $offset, APT_PDF_SEARCH_BATCH );
 		$results = array();
+		$started = microtime( true );
+		$handled = 0;
 		foreach ( $ids as $id ) {
 			$results[] = get_the_title( $id ) . ': ' . apt_pdf_search_index_post( $id, $force );
+			$handled++;
+			if ( microtime( true ) - $started > APT_PDF_SEARCH_SECONDS ) {
+				break;
+			}
 		}
+		$more = $handled < count( $ids ) || count( $ids ) === APT_PDF_SEARCH_BATCH;
 		$total = apt_pdf_search_stats()['candidates'];
-		$done  = min( $total, $offset + count( $ids ) );
+		$done  = min( $total, $offset + $handled );
 		update_option( 'apt_pdf_search_progress', array( 'done' => $done, 'total' => $total, 'time' => time() ), false );
 		echo '<h2>' . esc_html( sprintf( __( 'Indexing: %1$d of %2$d posts and pages with PDF links', 'apt-pdf-search' ), $done, $total ) ) . '</h2>';
 		echo '<ul>';
@@ -69,13 +78,13 @@ function apt_pdf_search_admin_page() {
 			echo '<li>' . esc_html( $line ) . '</li>';
 		}
 		echo '</ul>';
-		if ( count( $ids ) === APT_PDF_SEARCH_BATCH ) {
+		if ( $more ) {
 			$next = wp_nonce_url(
-				add_query_arg( array( 'page' => 'apt-pdf-search', 'run' => 1, 'force' => $force ? 1 : 0, 'offset' => $offset + APT_PDF_SEARCH_BATCH ), admin_url( 'tools.php' ) ),
+				add_query_arg( array( 'page' => 'apt-pdf-search', 'run' => 1, 'force' => $force ? 1 : 0, 'offset' => $offset + $handled ), admin_url( 'tools.php' ) ),
 				'apt_pdf_search_run'
 			);
-			echo '<p><a class="button" id="apt-pdf-next" href="' . esc_url( $next ) . '">' . esc_html__( 'Continue', 'apt-pdf-search' ) . '</a> ' . esc_html__( 'Continuing automatically…', 'apt-pdf-search' ) . '</p>';
-			echo '<script>setTimeout(function(){ location.replace(document.getElementById("apt-pdf-next").href); }, 400);</script>';
+			echo '<p><a class="button" id="apt-pdf-next" href="' . esc_url( $next ) . '">' . esc_html__( 'Continue', 'apt-pdf-search' ) . '</a> ' . esc_html__( 'Continuing automatically in a few seconds… keep this tab open.', 'apt-pdf-search' ) . '</p>';
+			echo '<script>setTimeout(function(){ location.replace(document.getElementById("apt-pdf-next").href); }, ' . (int) APT_PDF_SEARCH_PAUSE . ');</script>';
 			echo '</div>';
 			return;
 		}

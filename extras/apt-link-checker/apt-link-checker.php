@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       APT Link Checker
  * Description:       Finds broken links, missing files and broken PDFs in published content and lists them for editors (Tools > Link checker). Re-checks weekly.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 5.5
  * Requires PHP:      7.4
  * Author:            ASEAN Plus Three website
@@ -22,7 +22,9 @@ defined( 'ABSPATH' ) || exit;
 
 define( 'APT_LC_RESULTS', 'apt_link_checker_results' ); // url => result
 define( 'APT_LC_PROGRESS', 'apt_link_checker_progress' );
-define( 'APT_LC_BATCH', 6 );          // posts per request
+define( 'APT_LC_BATCH', 6 );          // posts per inner step
+define( 'APT_LC_SECONDS', 20 );       // work per admin request; then pause and continue
+define( 'APT_LC_PAUSE', 3000 );       // ms between requests (stay under the website firewall's rate limit)
 define( 'APT_LC_TIMEOUT', 8 );        // seconds per external request
 define( 'APT_LC_RECHECK', WEEK_IN_SECONDS );
 
