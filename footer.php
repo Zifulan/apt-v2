@@ -49,7 +49,7 @@
 
 						<div class="apt-footer-bottom">
 							<span>ASEAN Plus Three Cooperation</span>
-							<span>&copy; <?php echo esc_html( date( 'Y' ) ); ?> ASEAN+3. All rights reserved.</span>
+							<span>&copy; <?php echo esc_html( date( 'Y' ) ); ?> ASEAN Plus Three. All rights reserved.</span>
 						</div>
 					</div>
 				</footer>

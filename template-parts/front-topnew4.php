@@ -97,7 +97,7 @@
 		<nav class="apt-quicklinks" aria-label="Quick links">
 			<span class="apt-quicklinks-label">Quick links:</span>
 			<a class="apt-arrow" href="#front-news">Latest News</a>
-			<a class="apt-arrow" href="#front-about">About ASEAN+3</a>
+			<a class="apt-arrow" href="#front-about">About ASEAN Plus Three</a>
 			<a class="apt-arrow" href="#front-resources">Key Documents</a>
 			<a class="apt-arrow" href="#front-events">Upcoming Agenda</a>
 		</nav>

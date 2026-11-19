@@ -27,7 +27,7 @@ get_header();
 		<div class="col-md-6">
 			<div class="card w-100 h-100 shadow bg-primary text-white">										
 				<div class="card-body">
-					<h2 class="card-title pt-0 w-100 topic-head">About ASEAN+3</h2>
+					<h2 class="card-title pt-0 w-100 topic-head">About ASEAN Plus Three</h2>
 					<p class="card-text w-100 col-12">ASEAN Plus Three (APT) consist of ASEAN Member States and the People’s Republic of China, Japan and the Republic of Korea. The APT Cooperation process began in December 1997 and since than has evolve as the main vehicle to promote East Asian Cooperation towards the long-term goal of building an East Asian Community, with ASEAN as the driving force. The APT has become one of the most comprehensive cooperation frameworks in the region, and APT cooperation continue to be broadened and deepened in a wide range of areas, including political-security, trade and investment, finance, energy, tourism, agriculture and forestry, environment, education, health, culture and arts, etc, among others. The APT also supports the implementation of the ASEAN Community Vision 2045.</p>					<div class="row mx-3">
 					<a href="/about-apt/history/" class="btn ab-items btn-primary col-6">	
 						<span class="dashicons dashicons-hourglass"></span>

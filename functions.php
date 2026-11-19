@@ -1623,7 +1623,7 @@ function notifyauthor($post_id) {
     // FIX: Use $postm instead of undefined $post
     $author = get_userdata($postm->post_author);
     
-    $subject = "[Notification] A post has been published in ASEAN+3 website: ".$postm->post_title;
+    $subject = "[Notification] A post has been published on the ASEAN Plus Three website: ".$postm->post_title;
     
     $multiple_recipients = array(
         'fifi@asean.org',
