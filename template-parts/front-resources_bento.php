@@ -57,7 +57,7 @@ function gcc2($catid){
 			$apt_pillar_quotes = apt_pillar_quotes();
 			if ( $apt_pillar_quotes ) :
 				?>
-			<details class="resource-accordion-item" open>
+			<details class="resource-accordion-item" data-apt-collapse-mobile open>
 				<summary class="resource-accordion-summary">Latest Statements by Pillar</summary>
 				<div class="resource-accordion-content">
 					<ul class="resource-cards-grid apt-pillar-cards">
@@ -83,7 +83,7 @@ function gcc2($catid){
 			</details>
 			<?php endif; ?>
 
-			<details class="resource-accordion-item" open>
+			<details class="resource-accordion-item" data-apt-collapse-mobile open>
 				<summary class="resource-accordion-summary">Mechanisms</summary>
 				<div class="resource-accordion-content">
 					<div class="mechanisms-wrapper">
@@ -92,5 +92,11 @@ function gcc2($catid){
 				</div>
 			</details>
 		</div>
+		<script>
+		/* On phones, start with only Key Documents open (runs before first paint). */
+		if ( window.matchMedia( '(max-width: 767.98px)' ).matches ) {
+			document.querySelectorAll( '#front-resources [data-apt-collapse-mobile]' ).forEach( function ( d ) { d.open = false; } );
+		}
+		</script>
 	</div>
 </section>
