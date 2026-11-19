@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>APT Statement Search</title>
+<style>
+:root {
+	--blue: #2c59a7; --red: #c73935; --yellow: #fbf315;
+	--ink: #111318; --ink-2: #4a4f5c; --rule: #e3e5ea; --paper: #ffffff; --paper-2: #f5f6f8;
+	--mark: rgba(251, 243, 21, 0.6); --focus: #111318;
+	--font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--ink: #eef0f4; --ink-2: #b8bdc9; --rule: #2c313b; --paper: #15181e; --paper-2: #1d2129;
+		--mark: rgba(251, 243, 21, 0.35); --focus: #eef0f4; --blue: #8fb1ee;
+	}
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: 16px/1.55 var(--font); color: var(--ink); background: var(--paper); }
+a { color: var(--blue); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.bar { height: 6px; background: linear-gradient(90deg in oklab, var(--blue) 45%, var(--red) 75%); }
+header, main { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+header { padding-top: 28px; padding-bottom: 8px; }
+h1 { margin: 0; font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.2rem); line-height: 1.15; }
+.lede { margin: 6px 0 0; color: var(--ink-2); max-width: 70ch; }
+.privacy { display: inline-flex; gap: 6px; align-items: center; margin-top: 10px; font-size: 0.85rem; color: var(--ink-2); }
+.privacy::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #2e9d5b; }
+
+.panel { margin: 20px 0; padding: 18px; border-radius: var(--radius); background: var(--paper-2); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button, .btn {
+	min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--ink); background: var(--paper);
+	color: var(--ink); font: inherit; font-weight: 600; cursor: pointer;
+}
+button.primary { background: var(--ink); color: var(--paper); }
+button:disabled { opacity: 0.5; cursor: default; }
+button.link { min-height: 32px; padding: 0 4px; border: 0; background: none; color: var(--blue); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.status { font-size: 0.9rem; color: var(--ink-2); }
+.progress { width: 100%; height: 6px; margin-top: 12px; accent-color: var(--blue); }
+
+.search { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 10px; align-items: end; }
+label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--ink-2); margin-bottom: 4px; }
+input[type="search"], select {
+	width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid #767676; border-radius: 10px;
+	background: var(--paper); color: var(--ink); font: inherit;
+}
+.hint { margin: 8px 0 0; font-size: 0.85rem; color: var(--ink-2); }
+@media (max-width: 760px) { .search { grid-template-columns: 1fr 1fr; } .search .q { grid-column: 1 / -1; } }
+
+.count { margin: 8px 0 0; font-weight: 600; }
+.results { list-style: none; margin: 0; padding: 0; }
+.result { padding: 18px 0; border-top: 1px solid var(--rule); }
+.result h2 { margin: 0 0 2px; font-size: 1.1rem; line-height: 1.35; }
+.meta { margin: 0 0 8px; font-size: 0.85rem; color: var(--ink-2); word-break: break-word; }
+.snippet { margin: 0 0 8px; padding-left: 12px; border-left: 3px solid var(--rule); color: var(--ink-2); }
+mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 2px; }
+.pages { font-size: 0.85rem; color: var(--ink-2); }
+.empty { padding: 24px 0; color: var(--ink-2); }
+details { margin-top: 10px; }
+summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+.list { margin: 6px 0 0; padding-left: 20px; font-size: 0.85rem; color: var(--ink-2); }
+footer { max-width: 1040px; margin: 40px auto; padding: 16px; font-size: 0.8rem; color: var(--ink-2); border-top: 1px solid var(--rule); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="bar" aria-hidden="true"></div>
+<header>
+	<h1>APT Statement Search</h1>
+	<p class="lede">Search inside the PDFs in a folder on this computer, including OneDrive and SharePoint folders synced to it. Results open the PDF at the matching page.</p>
+	<p class="privacy">Your files never leave this computer: they are read and indexed in this browser.</p>
+</header>
+
+<main>
+	<section class="panel" aria-labelledby="folder-title">
+		<h2 id="folder-title" class="sr">Folder</h2>
+		<div class="row">
+			<button type="button" class="primary" id="pick">Choose folder</button>
+			<button type="button" id="reconnect" hidden>Reconnect folder</button>
+			<button type="button" id="rescan" hidden>Rescan</button>
+			<input type="file" id="dir-input" webkitdirectory multiple hidden>
+			<span class="status" id="folder-status">No folder chosen yet.</span>
+		</div>
+		<progress class="progress" id="progress" value="0" max="1" hidden></progress>
+		<p class="status" id="scan-status" role="status" aria-live="polite"></p>
+		<details id="problems" hidden>
+			<summary>PDFs with no searchable text</summary>
+			<p class="hint">Usually scanned images (would need OCR), password-protected or damaged files.</p>
+			<ul class="list" id="problem-list"></ul>
+		</details>
+	</section>
+
+	<section aria-labelledby="search-title">
+		<h2 id="search-title" class="sr">Search</h2>
+		<form class="search" id="search-form" role="search">
+			<div class="q">
+				<label for="q">Words or phrase</label>
+				<input type="search" id="q" autocomplete="off" enterkeyhint="search" placeholder='e.g. food security, or "constructive engagement"'>
+			</div>
+			<div>
+				<label for="year">Year</label>
+				<select id="year"><option value="">All years</option></select>
+			</div>
+			<div>
+				<label for="folder">Folder</label>
+				<select id="folder"><option value="">All folders</option></select>
+			</div>
+			<div>
+				<label for="sort">Order</label>
+				<select id="sort">
+					<option value="relevance">Best match</option>
+					<option value="newest">Newest first</option>
+					<option value="oldest">Oldest first</option>
+				</select>
+			</div>
+		</form>
+		<p class="hint">All words must appear. Put a phrase in "quotes" for the exact wording; add -word to exclude a word.</p>
+		<p class="count" id="count" aria-live="polite"></p>
+		<ul class="results" id="results"></ul>
+	</section>
+</main>
+
+<footer>
+	<button type="button" class="link" id="forget">Forget this folder and its index</button>
+	· Works best in Chrome or Edge (they can reopen the same folder next time). Uses pdf.js (Apache-2.0, Mozilla).
+</footer>
+
+<!--PDFJS_LIB-->
+<script type="text/plain" id="pdfjs-worker-src"><!--PDFJS_WORKER--></script>
+<script>
+(function () {
+'use strict';
+
+/* ---------- pdf.js (bundled; worker from an inline Blob, no network) ---------- */
+var pdfjsLib = window.pdfjsLib;
+var workerSrc = document.getElementById('pdfjs-worker-src').textContent;
+pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([workerSrc], { type: 'text/javascript' }));
+
+/* ---------- storage (IndexedDB) ---------- */
+var DB_NAME = 'apt-statement-search', db;
+function openDb() {
+	return new Promise(function (resolve, reject) {
+		var req = indexedDB.open(DB_NAME, 1);
+		req.onupgradeneeded = function () {
+			req.result.createObjectStore('docs', { keyPath: 'path' });
+			req.result.createObjectStore('meta');
+		};
+		req.onsuccess = function () { resolve(req.result); };
+		req.onerror = function () { reject(req.error); };
+	});
+}
+function tx(store, mode, fn) {
+	if (!db) { return Promise.resolve(store === 'docs' && mode === 'readonly' ? [] : undefined); } // storage unavailable: session only
+	return new Promise(function (resolve, reject) {
+		var t = db.transaction(store, mode), s = t.objectStore(store), out = fn(s);
+		t.oncomplete = function () { resolve(out && 'result' in out ? out.result : out); };
+		t.onerror = function () { reject(t.error); };
+	});
+}
+var getAllDocs = function () { return tx('docs', 'readonly', function (s) { return s.getAll(); }); };
+var putDoc = function (d) { return tx('docs', 'readwrite', function (s) { s.put(d); }); };
+var deleteDoc = function (p) { return tx('docs', 'readwrite', function (s) { s.delete(p); }); };
+var getMeta = function (k) { return tx('meta', 'readonly', function (s) { return s.get(k); }); };
+var setMeta = function (k, v) { return tx('meta', 'readwrite', function (s) { s.put(v, k); }); };
+var clearAll = function () { return Promise.all([tx('docs', 'readwrite', function (s) { s.clear(); }), tx('meta', 'readwrite', function (s) { s.clear(); })]); };
+
+/* ---------- state ---------- */
+var docs = [];          // {path, name, folder, size, mtime, year, title, pages[], error}
+var lower = new Map();  // path -> lowercased page texts
+var files = new Map();  // path -> File or FileSystemFileHandle (this session)
+var dirHandle = null;
+var canPickDir = 'showDirectoryPicker' in window;
+var $ = function (id) { return document.getElementById(id); };
+
+/* ---------- folder access ---------- */
+async function walk(dir, prefix, out) {
+	for await (var entry of dir.values()) {
+		if (entry.name.charAt(0) === '.' || entry.name.indexOf('~$') === 0) { continue; }
+		var path = prefix ? prefix + '/' + entry.name : entry.name;
+		if (entry.kind === 'directory') {
+			await walk(entry, path, out);
+		} else if (/\.pdf$/i.test(entry.name)) {
+			out.push({ path: path, handle: entry });
+		}
+	}
+	return out;
+}
+
+async function listFromHandle(handle) {
+	var entries = await walk(handle, '', []);
+	files.clear();
+	var list = [];
+	for (var e of entries) {
+		files.set(e.path, e.handle);
+		list.push(e);
+	}
+	return list;
+}
+
+async function pickFolder() {
+	if (!canPickDir) { $('dir-input').click(); return; }
+	try {
+		dirHandle = await window.showDirectoryPicker({ id: 'apt-statements', mode: 'read' });
+	} catch (e) { return; } // cancelled
+	await setMeta('dir', dirHandle);
+	await scan(await listFromHandle(dirHandle), true);
+}
+
+async function reconnect() {
+	if (!dirHandle) { return pickFolder(); }
+	var perm = await dirHandle.requestPermission({ mode: 'read' });
+	if (perm !== 'granted') { return; }
+	await scan(await listFromHandle(dirHandle), true);
+}
+
+$('dir-input').addEventListener('change', async function () {
+	var list = [];
+	files.clear();
+	for (var f of this.files) {
+		if (!/\.pdf$/i.test(f.name)) { continue; }
+		var path = (f.webkitRelativePath || f.name).split('/').slice(1).join('/') || f.name;
+		files.set(path, f);
+		list.push({ path: path, file: f });
+	}
+	await scan(list, true);
+});
+
+/* ---------- reading PDFs ---------- */
+var MONTHS = 'january|february|march|april|may|june|july|august|september|october|november|december';
+function clean(t) {
+	return t.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ').replace(/\s+/g, ' ').replace(/(\p{L}) -(\p{L})/gu, '$1-$2').trim();
+}
+function guessYear(path, firstPages, info) {
+	var m = path.match(/(?:^|[^\d])((?:19|20)\d{2})(?!\d)/g);
+	if (m) { return m[m.length - 1].replace(/\D/g, ''); }
+	var d = (firstPages || '').match(new RegExp('\\b\\d{1,2}(?:st|nd|rd|th)?\\s+(?:' + MONTHS + ')\\s+((?:19|20)\\d{2})\\b', 'i'));
+	if (d) { return d[1]; }
+	var c = info && info.CreationDate && String(info.CreationDate).match(/D:((?:19|20)\d{2})/);
+	return c ? c[1] : '';
+}
+function niceName(name) { return name.replace(/\.pdf$/i, '').replace(/_+|-(?!\d)|(?<!\d)-/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+// pdf.js returns text in fragments, often split inside words ("em" + "erging").
+// Join by position: a space only where there is a visible gap, a newline when
+// the line changes.
+function joinItems(items) {
+	var out = '', lastEnd = null, lastY = null;
+	for (var it of items) {
+		if (!('str' in it)) { continue; }
+		var x = it.transform[4], y = it.transform[5];
+		var h = Math.abs(it.transform[3]) || it.height || 10;
+		if (lastY !== null && Math.abs(y - lastY) > h * 0.5) {
+			out += '\n';
+		} else if (lastEnd !== null && x - lastEnd > h * 0.12 && !/\s$/.test(out) && !/^\s/.test(it.str)) {
+			out += ' ';
+		}
+		out += it.str;
+		if (it.str) { lastEnd = x + (it.width || 0); lastY = y; }
+		if (it.hasEOL) { out += '\n'; lastEnd = null; }
+	}
+	return out;
+}
+
+async function readPdf(file) {
+	var data = new Uint8Array(await file.arrayBuffer());
+	var pdf = await pdfjsLib.getDocument({ data: data, isEvalSupported: false, disableFontFace: true, useSystemFonts: false, verbosity: 0 }).promise;
+	var pages = [];
+	for (var i = 1; i <= pdf.numPages; i++) {
+		var page = await pdf.getPage(i);
+		var content = await page.getTextContent();
+		pages.push(clean(joinItems(content.items)));
+		page.cleanup();
+	}
+	var meta = await pdf.getMetadata().catch(function () { return {}; });
+	await pdf.destroy();
+	return { pages: pages, info: meta.info || {} };
+}
+
+/* ---------- scanning (only new or changed files are read) ---------- */
+var scanning = false;
+async function scan(list, complete) {
+	if (scanning) { return; }
+	scanning = true;
+	$('pick').disabled = $('rescan').disabled = $('reconnect').disabled = true;
+	var known = new Map(docs.map(function (d) { return [d.path, d]; }));
+	var todo = [];
+	for (var e of list) {
+		var f = e.file || await e.handle.getFile().catch(function () { return null; });
+		if (!f) { continue; }
+		e.f = f;
+		var old = known.get(e.path);
+		if (!old || old.size !== f.size || old.mtime !== f.lastModified) { todo.push(e); }
+	}
+	// Remove PDFs no longer in the folder.
+	if (complete) {
+		var present = new Set(list.map(function (e) { return e.path; }));
+		for (var d of docs) { if (!present.has(d.path)) { await deleteDoc(d.path); } }
+		docs = docs.filter(function (d) { return present.has(d.path); });
+	}
+	var bar = $('progress');
+	bar.hidden = todo.length === 0;
+	bar.max = Math.max(1, todo.length);
+	for (var i = 0; i < todo.length; i++) {
+		var item = todo[i];
+		bar.value = i;
+		$('scan-status').textContent = 'Reading ' + (i + 1) + ' of ' + todo.length + ': ' + item.path;
+		var doc = { path: item.path, name: item.f.name, folder: item.path.indexOf('/') > -1 ? item.path.split('/')[0] : '', size: item.f.size, mtime: item.f.lastModified, pages: [], title: niceName(item.f.name), year: '', error: '' };
+		try {
+			var r = await readPdf(item.f);
+			doc.pages = r.pages;
+			var t = r.info && r.info.Title ? String(r.info.Title).trim() : '';
+			if (t.length > 12 && !/^microsoft word|untitled|\.docx?$/i.test(t)) { doc.title = t; }
+			doc.year = guessYear(item.path, r.pages.slice(0, 2).join(' '), r.info);
+			if (!r.pages.join('').trim()) { doc.error = 'No text (probably a scanned image)'; }
+		} catch (err) {
+			doc.error = err && err.name === 'PasswordException' ? 'Password-protected' : 'Could not be read (' + (err && err.message ? err.message : err) + ')';
+			doc.year = guessYear(item.path, '', null);
+		}
+		await putDoc(doc);
+		docs = docs.filter(function (d) { return d.path !== doc.path; }).concat(doc);
+		lower.set(doc.path, doc.pages.map(function (p) { return p.toLowerCase(); }));
+		if (i % 10 === 9) { refreshFilters(); runSearch(); }
+	}
+	bar.hidden = true;
+	await setMeta('lastScan', Date.now());
+	scanning = false;
+	$('pick').disabled = $('rescan').disabled = $('reconnect').disabled = false;
+	$('scan-status').textContent = todo.length ? 'Done: read ' + todo.length + ' PDF' + (todo.length === 1 ? '' : 's') + '.' : 'Up to date: no new or changed PDFs.';
+	updateStatus();
+	refreshFilters();
+	runSearch();
+}
+
+/* ---------- status ---------- */
+function updateStatus() {
+	var pages = docs.reduce(function (n, d) { return n + d.pages.length; }, 0);
+	var name = dirHandle ? '“' + dirHandle.name + '”' : 'the chosen folder';
+	var connected = files.size > 0;
+	$('folder-status').textContent = docs.length
+		? docs.length + ' PDFs, ' + pages.toLocaleString() + ' pages indexed from ' + name + (connected ? '.' : ' (reconnect the folder to open files or rescan).')
+		: 'No folder chosen yet.';
+	$('rescan').hidden = !connected || !dirHandle; // the fallback file input can't re-read a folder
+	$('reconnect').hidden = connected || !dirHandle;
+	$('pick').textContent = docs.length ? 'Choose another folder' : 'Choose folder';
+	var bad = docs.filter(function (d) { return d.error; });
+	$('problems').hidden = !bad.length;
+	$('problem-list').replaceChildren.apply($('problem-list'), bad.map(function (d) {
+		var li = document.createElement('li'); li.textContent = d.path + ': ' + d.error; return li;
+	}));
+	$('problems').querySelector('summary').textContent = 'PDFs with no searchable text (' + bad.length + ')';
+}
+
+function refreshFilters() {
+	function fill(sel, values, label) {
+		var cur = sel.value;
+		var opts = [new Option(label, '')].concat(values.map(function (v) { return new Option(v, v); }));
+		sel.replaceChildren.apply(sel, opts);
+		sel.value = values.indexOf(cur) > -1 ? cur : '';
+	}
+	fill($('year'), Array.from(new Set(docs.map(function (d) { return d.year; }).filter(Boolean))).sort().reverse(), 'All years');
+	fill($('folder'), Array.from(new Set(docs.map(function (d) { return d.folder; }).filter(Boolean))).sort(), 'All folders');
+	$('folder').disabled = $('folder').options.length < 2;
+}
+
+/* ---------- search ---------- */
+function parseQuery(q) {
+	var phrases = [], words = [], not = [];
+	q = q.replace(/["“”]([^"“”]+)["“”]/g, function (_, p) { p = p.trim().toLowerCase().replace(/\s+/g, ' '); if (p) { phrases.push(p); } return ' '; });
+	q.split(/\s+/).forEach(function (w) {
+		w = w.toLowerCase().replace(/^[^\p{L}\p{N}-]+|[^\p{L}\p{N}]+$/gu, '');
+		if (!w || w === '-') { return; }
+		if (w.charAt(0) === '-') { not.push(w.slice(1)); } else { words.push(w); }
+	});
+	var all = words.concat(phrases);
+	var whole = words.length > 1 && !phrases.length ? words.join(' ') : '';
+	return { phrases: phrases, words: words, not: not, terms: all, whole: whole };
+}
+
+function escapeHtml(s) { return s.replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function snippet(text, q, radius) {
+	var low = text.toLowerCase(), at = -1, len = 0;
+	var tries = (q.whole ? [q.whole] : []).concat(q.phrases, q.words);
+	for (var t of tries) { var p = low.indexOf(t); if (p > -1) { at = p; len = t.length; break; } }
+	if (at < 0) { return ''; }
+	var start = Math.max(0, at - radius), end = Math.min(text.length, at + len + radius);
+	if (start > 0) { var s = text.indexOf(' ', start); if (s > -1 && s < at) { start = s + 1; } }
+	if (end < text.length) { var e = text.lastIndexOf(' ', end); if (e > at + len) { end = e; } }
+	var html = escapeHtml(text.slice(start, end));
+	var marks = (q.whole ? [q.whole] : []).concat(q.phrases, q.words).filter(Boolean).sort(function (a, b) { return b.length - a.length; });
+	if (marks.length) { html = html.replace(new RegExp('(' + marks.map(function (m) { return escapeRe(escapeHtml(m)); }).join('|') + ')', 'gi'), '<mark>$1</mark>'); }
+	return (start > 0 ? '…' : '') + html + (end < text.length ? '…' : '');
+}
+
+function search(qs) {
+	var q = parseQuery(qs);
+	if (!q.terms.length) { return { q: q, hits: [] }; }
+	var year = $('year').value, folder = $('folder').value, hits = [];
+	for (var d of docs) {
+		if (year && d.year !== year) { continue; }
+		if (folder && d.folder !== folder) { continue; }
+		var pages = lower.get(d.path) || [];
+		var hay = d.title.toLowerCase() + ' ' + d.name.toLowerCase();
+		var all = hay + '\n' + pages.join('\n');
+		if (!q.terms.every(function (t) { return all.indexOf(t) > -1; })) { continue; }
+		if (q.not.some(function (t) { return all.indexOf(t) > -1; })) { continue; }
+		var key = q.whole || (q.phrases.length ? q.phrases[0] : '');
+		var score = 0, best = -1, bestScore = -1, matchPages = [];
+		pages.forEach(function (p, i) {
+			var s = q.terms.filter(function (t) { return p.indexOf(t) > -1; }).length;
+			if (key && p.indexOf(key) > -1) { s += 10; }
+			if (s > 0) { matchPages.push(i + 1); }
+			if (s > bestScore) { bestScore = s; best = i; }
+		});
+		if (key && hay.indexOf(key) > -1) { score = 300; }
+		else if (key && pages.some(function (p) { return p.indexOf(key) > -1; })) { score = 200; }
+		else if (pages.some(function (p) { return q.terms.every(function (t) { return p.indexOf(t) > -1; }); })) { score = 100; }
+		score += Math.min(50, matchPages.length);
+		hits.push({ doc: d, score: score, page: best + 1, pages: matchPages });
+	}
+	var sort = $('sort').value;
+	hits.sort(function (a, b) {
+		if (sort === 'newest') { return (b.doc.year || '').localeCompare(a.doc.year || '') || b.score - a.score; }
+		if (sort === 'oldest') { return (a.doc.year || '9999').localeCompare(b.doc.year || '9999') || b.score - a.score; }
+		return b.score - a.score || (b.doc.year || '').localeCompare(a.doc.year || '');
+	});
+	return { q: q, hits: hits };
+}
+
+var MAX = 100;
+function runSearch() {
+	var qs = $('q').value.trim(), list = $('results');
+	if (!qs) { list.replaceChildren(); $('count').textContent = docs.length ? '' : ''; return; }
+	if (!docs.length) { $('count').textContent = 'Choose a folder first.'; list.replaceChildren(); return; }
+	var r = search(qs);
+	$('count').textContent = r.hits.length ? r.hits.length + ' PDF' + (r.hits.length === 1 ? '' : 's') + ' found' + (r.hits.length > MAX ? ' (showing the first ' + MAX + ')' : '') : 'No PDFs found. Check the spelling, or try fewer words.';
+	list.replaceChildren.apply(list, r.hits.slice(0, MAX).map(function (h) {
+		var d = h.doc, li = document.createElement('li');
+		li.className = 'result';
+		var text = d.pages[h.page - 1] || '';
+		var others = h.pages.filter(function (p) { return p !== h.page; }).slice(0, 12);
+		li.innerHTML =
+			'<h2><button type="button" class="link" data-open="' + escapeHtml(d.path) + '" data-page="' + h.page + '">' + escapeHtml(d.title) + '</button></h2>' +
+			'<p class="meta">' + (d.year ? escapeHtml(d.year) + ' · ' : '') + escapeHtml(d.path) + ' · page ' + h.page + ' of ' + d.pages.length + '</p>' +
+			(text ? '<p class="snippet">' + snippet(text, r.q, 140) + '</p>' : '') +
+			(others.length ? '<p class="pages">Also on page' + (others.length > 1 ? 's' : '') + ': ' + others.map(function (p) { return '<button type="button" class="link" data-open="' + escapeHtml(d.path) + '" data-page="' + p + '">' + p + '</button>'; }).join(' ') + (h.pages.length - 1 > others.length ? ' …' : '') + '</p>' : '');
+		return li;
+	}));
+}
+
+/* ---------- opening a PDF at a page ---------- */
+document.addEventListener('click', async function (e) {
+	var b = e.target.closest('[data-open]');
+	if (!b) { return; }
+	var path = b.getAttribute('data-open'), page = b.getAttribute('data-page');
+	var w = window.open('', '_blank'); // open now, while the click still counts as a user action
+	var src = files.get(path);
+	if (!src && dirHandle && (await dirHandle.queryPermission({ mode: 'read' })) === 'granted') {
+		await listFromHandle(dirHandle); src = files.get(path);
+	}
+	if (!src) {
+		if (w) { w.close(); }
+		$('scan-status').textContent = 'To open files, reconnect the folder first (button above).';
+		$('reconnect').hidden = !dirHandle;
+		$('pick').focus();
+		return;
+	}
+	var file = src.getFile ? await src.getFile() : src;
+	var url = URL.createObjectURL(file) + '#page=' + page;
+	if (w) { w.location.href = url; } else { window.open(url, '_blank'); }
+});
+
+/* ---------- wiring ---------- */
+var timer;
+$('q').addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(runSearch, 180); });
+$('search-form').addEventListener('submit', function (e) { e.preventDefault(); runSearch(); });
+['year', 'folder', 'sort'].forEach(function (id) { $(id).addEventListener('change', runSearch); });
+$('pick').addEventListener('click', pickFolder);
+$('reconnect').addEventListener('click', reconnect);
+$('rescan').addEventListener('click', async function () { if (dirHandle) { await scan(await listFromHandle(dirHandle), true); } });
+$('forget').addEventListener('click', async function () {
+	if (!confirm('Remove the saved folder and its search index from this browser? Your PDF files are not touched.')) { return; }
+	await clearAll(); docs = []; lower.clear(); files.clear(); dirHandle = null;
+	updateStatus(); refreshFilters(); runSearch(); $('scan-status').textContent = 'Forgotten.';
+});
+
+(async function init() {
+	try { db = await openDb(); } catch (e) {
+		$('scan-status').textContent = 'This browser cannot store the index here (private window or blocked storage); searches will work until you close the tab.';
+		db = null;
+	}
+	if (db) {
+		docs = (await getAllDocs()) || [];
+		docs.forEach(function (d) { lower.set(d.path, d.pages.map(function (p) { return p.toLowerCase(); })); });
+		// Restoring the remembered folder is best effort: if the browser can't,
+		// the index still works and "Choose folder" reconnects it.
+		try {
+			dirHandle = (await getMeta('dir')) || null;
+			if (dirHandle && (await dirHandle.queryPermission({ mode: 'read' })) === 'granted') {
+				await listFromHandle(dirHandle);
+			}
+		} catch (e) {
+			dirHandle = null;
+			files.clear();
+		}
+	}
+	if (!canPickDir) {
+		$('folder-status').textContent = 'Choose the folder each time you open this page in this browser (Chrome and Edge can remember it).';
+	}
+	updateStatus();
+	refreshFilters();
+	$('q').focus();
+})();
+})();
+</script>
+</body>
+</html>
