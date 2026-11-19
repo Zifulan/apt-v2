@@ -1709,17 +1709,3 @@ main.site-single {
 @media (max-width: 575.98px) {
 	.apt-footer-top { flex-direction: column; align-items: flex-start; }
 }
-
-/* News page: the home page cards in a grid. Each cell is narrow, so the
-   card keeps its stacked layout (the side-by-side one is for the carousel). */
-.apt-news-grid {
-	list-style: none;
-	margin: 24px 0 0;
-	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-	gap: 24px;
-}
-.apt-news-grid > li { display: flex; margin: 0; }
-.apt-news-grid .news-card { width: 100%; }
-.apt-news-grid .news-card-title { font-size: 1.15rem; }
