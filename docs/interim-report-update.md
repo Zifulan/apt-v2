@@ -191,12 +191,192 @@ artefacts, checked by eye:
 - **Tap targets:** 92 too-small targets brought to 0 across all audited pages
   (first draft).
 
-**Limits:** this is a contrast check, not a full WCAG audit. Screen reader use,
-form labels and link wording were reviewed during the redesign but not audited
-page by page. A full audit would need a specialist or assistive-technology
-testing.
+**Limits:** this section covers contrast only. The full WCAG 2.2 AA audit is
+section 5.
 
-## 5. Security
+## 5. Accessibility: WCAG 2.2 AA audit (20 November)
+
+**Scope and method**
+- **Pages:** the same 29 page types as the contrast check, at desktop
+  (1360px) and phone (390px) width.
+- **Automated scan:** axe-core 4.10, the engine behind most accessibility
+  checkers, set to every WCAG 2.0, 2.1 and 2.2 level A and AA rule.
+- **Hands-on tests:**
+  - **Keyboard:** about 150 Tab presses per page on home, statement, search,
+    news and Resources, on desktop and phone. For each stop I checked whether
+    focus is visible and whether the sticky header hides it.
+  - **Widgets:** the menu, search box, carousel and accordions, operated with
+    the keyboard alone.
+  - **Reflow:** every page at 320px wide (the same as 400% zoom).
+  - **Text spacing:** the WCAG 1.4.12 spacing applied, checking nothing gets cut
+    off.
+  - **Structure:** headings, landmarks, page titles, language and link wording.
+- **Pass meaning:** a criterion is marked pass when the theme meets it. Where it
+  depends on what editors put into pages, the table says so.
+
+**Fixed during the audit (commit 0e4561b)**
+
+| Criterion | Problem | Fix |
+|---|---|---|
+| 1.1.1 Non-text content | 7 theme images had no alt attribute, including the photos in the Overview page's "latest statement per area" lists (16 images on that page), the APT logo on Resources, the gallery preview and a loading spinner | Decorative images get an empty alt; the gallery preview copies its thumbnail's description; the spinner says "Loading" |
+| 1.3.1 Info and relationships | WordPress galleries were coded as "definition lists", so screen readers announced them wrongly | The theme switches WordPress to modern gallery and caption markup |
+| 1.4.1 Use of colour | Links inside paragraphs differed from the text only by colour (History, Areas of Cooperation, APTERR, Overview, Resources) | Links in running text are underlined |
+| 1.4.12 Text spacing | At 320px with wider spacing, the homepage title "ASEAN Plus Three at a Glance" could not wrap and pushed the page sideways | The title may wrap on narrow screens |
+| 2.4.7 Focus visible | Bootstrap buttons (topic tags on statements, "Download the Overview" buttons) hid the keyboard focus ring | Focus ring restored on buttons, page numbers and tabs |
+
+After the fixes, the automated scan finds **no violations on any theme-built
+page type**, at either width. It still reports two items, both on saved copies
+of live pages that predate the fixes; they disappear once the new theme
+renders them.
+
+**Results by WCAG 2.2 criterion (levels A and AA)**
+
+*Perceivable*
+
+| Criterion | Result |
+|---|---|
+| 1.1.1 Non-text content | Pass (theme). Editors must still describe meaningful images they add to pages |
+| 1.2.1–1.2.5 Audio and video | Not applicable to the theme. Any video embedded in a page needs captions |
+| 1.3.1 Info and relationships | Pass, with a recommendation: some older templates and pages skip heading levels (e.g. h1 straight to h4/h5). WCAG doesn't strictly forbid this, but it makes screen-reader navigation harder |
+| 1.3.2 Meaningful sequence | Pass |
+| 1.3.3 Sensory characteristics | Pass (theme) |
+| 1.3.4 Orientation | Pass: works in portrait and landscape |
+| 1.3.5 Identify input purpose | Not verified: the Limited Access login form comes from WordPress |
+| 1.4.1 Use of colour | Pass after fix |
+| 1.4.2 Audio control | Not applicable |
+| 1.4.3 Contrast (minimum) | Pass (section 4) |
+| 1.4.4 Resize text | Pass |
+| 1.4.5 Images of text | Pass (the emblem is a logo, which is exempt) |
+| 1.4.10 Reflow | Pass: no sideways scrolling at 320px on any page type |
+| 1.4.11 Non-text contrast | Pass for focus rings (dark ring with white halo, ≥3:1 on any background); form field borders not measured |
+| 1.4.12 Text spacing | Pass after fix |
+| 1.4.13 Content on hover or focus | Pass: nothing appears on hover except the browser's own tooltips |
+
+*Operable*
+
+| Criterion | Result |
+|---|---|
+| 2.1.1 Keyboard | Pass: menu, search, carousel, accordions and all links work with the keyboard |
+| 2.1.2 No keyboard trap | Pass: the menu and search close with Escape and return focus to their button |
+| 2.1.4 Character key shortcuts | Not applicable |
+| 2.2.1 Timing adjustable | Not applicable |
+| 2.2.2 Pause, stop, hide | Pass: the news carousel never moves by itself. The background drifts very slowly (28-second cycle) and stops when "reduce motion" is on. It is decoration, not information, but a stricter reading would want it static; see recommendations |
+| 2.3.1 Three flashes | Pass: nothing flashes |
+| 2.4.1 Bypass blocks | Pass: "Skip to content" is the first Tab stop on every page |
+| 2.4.2 Page titled | Pass |
+| 2.4.3 Focus order | Pass |
+| 2.4.4 Link purpose (in context) | Pass: every "Read more" says what it is about to screen readers |
+| 2.4.5 Multiple ways | Pass: menu, search and section pages |
+| 2.4.6 Headings and labels | Pass |
+| 2.4.7 Focus visible | Pass after fix |
+| 2.4.11 Focus not obscured (minimum) | Pass: across about 870 focus stops, the sticky header never covered a focused item |
+| 2.5.1 Pointer gestures | Pass: swiping the carousel also has buttons |
+| 2.5.2 Pointer cancellation | Pass |
+| 2.5.3 Label in name | Pass |
+| 2.5.4 Motion actuation | Not applicable |
+| 2.5.7 Dragging movements | Pass: nothing requires dragging |
+| 2.5.8 Target size (minimum) | Pass (automated rule plus the earlier tap-target audit: 92 → 0) |
+
+*Understandable*
+
+| Criterion | Result |
+|---|---|
+| 3.1.1 Language of page | Pass (English) |
+| 3.1.2 Language of parts | Content: text in other languages inside pages needs its language marked by editors |
+| 3.2.1 On focus / 3.2.2 On input | Pass: nothing changes until the user acts (e.g. search runs on its button) |
+| 3.2.3 Consistent navigation / 3.2.4 Consistent identification | Pass: same header, menu and footer on every page |
+| 3.2.6 Consistent help | Pass: contact details in the same footer on every page |
+| 3.3.1–3.3.3 Errors and labels | Pass for search. The Limited Access login's error message comes from WordPress and was not tested |
+| 3.3.4 Error prevention | Not applicable (no legal or financial transactions) |
+| 3.3.7 Redundant entry | Not applicable |
+| 3.3.8 Accessible authentication | Not verified (WordPress login; password managers are not blocked) |
+
+*Robust*
+
+| Criterion | Result |
+|---|---|
+| 4.1.2 Name, role, value | Pass: no automated violations; buttons and dialogs have names |
+| 4.1.3 Status messages | Not applicable to the theme as it stands |
+
+**Summary:** of the 55 level A and AA criteria:
+- **Pass:** 40, five of them after this audit's fixes;
+- **Not applicable:** 12, mostly audio/video and transactions;
+- **Depends on editors:** 1 (3.1.2, language of parts). Image descriptions
+  under 1.1.1 also rely on editors;
+- **Not verified:** 2 (1.3.5 and 3.3.8), both on the WordPress login form.
+  Its error messages under 3.3.1 were not tested either;
+- **Failing in the theme:** 0 known.
+
+**Recommendations (not failures)**
+1. Make the background drift static, to remove any doubt under 2.2.2.
+2. Fix heading-level skips in the older templates: statements lists, Agenda
+   and the statement sidebar.
+3. Mark links that open a new tab (about 8 per page, mostly the footer's
+   social links), e.g. with hidden text "opens in a new tab".
+4. Editors: describe meaningful images, and mark text in other languages.
+
+**Limits**
+- This is a thorough technical audit, not a certified conformance statement.
+- No real screen reader (NVDA, JAWS, VoiceOver) was used; that needs a person
+  and about 30 minutes on the main pages.
+- The statement PDFs themselves were not audited (tagging, reading order).
+- The live site was not tested directly; the theme was tested as rendered
+  here, plus saved copies of live pages.
+
+## 6. Performance: original theme vs apt-v2 (20 November)
+
+**Method**
+- **Tool:** Lighthouse 12, Google's standard page-speed test, on its default
+  "mobile phone on a 4G connection" simulation. Each page was run 3 times and
+  the median taken.
+- **Before:** saved copies of the live site, which runs the original theme,
+  served with the original theme's files (commit 13edb04).
+- **After:** the same page types rendered by apt-v2.
+- **Same conditions for both:** both were served from the same local server
+  with the same compression. Content photos, plugins and analytics were left
+  out of both, so the comparison measures the theme only.
+
+**Results**
+
+| Page | Score (0–100) | Main content appears (LCP) | First paint (FCP) | Page frozen by scripts (TBT) | Data transferred |
+|---|---|---|---|---|---|
+| Home | 83 → **99** | 2.5 s → **1.9 s** | 2.1 s → **1.7 s** | 500 ms → **0 ms** | 295 KB → **185 KB** (−37%) |
+| Statement | 95 → 98 | 2.4 s → 2.0 s | 2.3 s → 1.9 s | 0 → 0 | 198 KB → 176 KB (−11%) |
+| Statements list | 95 → 99 | 2.4 s → 1.9 s | 2.3 s → 1.8 s | 0 → 28 ms | 174 KB → 154 KB (−11%) |
+| Search results | 95 → 99 | 2.4 s → 1.9 s | 2.3 s → 1.7 s | 0 → 22 ms | 194 KB → 154 KB (−21%) |
+| News | 95 → 99 | 2.4 s → 1.9 s | 2.3 s → 1.8 s | 0 → 22 ms | 186 KB → 154 KB (−17%) |
+| Page not found | 95 → 99 | 2.4 s → 1.8 s | 2.3 s → 1.7 s | 0 → 0 | 172 KB → 152 KB (−12%) |
+
+Layout shift (CLS) was 0 before and after on every page.
+
+**Why it's faster**
+- **Fonts:** the original loaded four web font families (Inter, Sora,
+  Fjalla One, Source Sans Pro), 127 KB on the homepage. apt-v2 loads one
+  (Outfit), 33 KB. Two leftover font imports were removed during this audit.
+- **No more frozen homepage:** the original homepage blocked the phone for
+  half a second while its carousel library (Owl Carousel) and scripts started
+  up. The new carousel uses the browser's own scrolling: 0 ms.
+- **Smaller pages:** the original homepage's HTML carried about 58 KB of
+  inline styles and 116 KB of inline SVG drawings. Its compressed HTML was
+  65 KB; the new one is 10 KB. Part of that difference is sample versus live
+  content, so the report should lean on the timing figures.
+- **Theme files on the homepage** (styles, scripts, fonts): 229 KB → 144 KB
+  (−37%).
+
+**Fair caveats**
+- These are lab measurements, not real visitors on the real server. Real
+  load times also depend on the hosting, the firewall and the content photos,
+  which are the same for both themes.
+- apt-v2 sends more CSS (48 KB vs 32 KB): it still loads the old Bootstrap
+  stylesheet for the older inner templates as well as its own design system.
+  The homepage also loads 15 small flag images (about 22 KB in total).
+- **Next steps:**
+  - Remove Bootstrap once the remaining older templates are rebuilt.
+  - Combine the flags into one file.
+  - Measure real visitors with Google Search Console's Core Web Vitals report
+    after launch.
+
+## 7. Security
 
 - **Limited Access login (d650750):**
   - a dead login handler was removed;
@@ -212,7 +392,7 @@ testing.
   batches, because fast bursts tripped the hosting firewall (GoDaddy/Sucuri)
   and blocked the server (7932a2b).
 
-## 6. Maintainability
+## 8. Maintainability
 
 - **Theme identity:** the theme is now named **apt-v2**, version 2.1.0, with a
   fresh screenshot (63e4ed6).
