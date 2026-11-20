@@ -1321,7 +1321,9 @@ main.site-single {
 	mask: var(--icon-arrow) center / contain no-repeat;
 }
 .apt-post .entry-content .wp-block-file a:hover { background: var(--apt-red); color: var(--paper); }
-.apt-post .entry-content .wp-block-file .wp-block-file__button { display: none; } /* duplicate core button */
+/* The core button duplicates the file link: hide it only when that link is there.
+   Older posts have the button alone, which must stay. */
+.apt-post .entry-content .wp-block-file a:not(.wp-block-file__button) ~ .wp-block-file__button { display: none; }
 
 /* Aside */
 .apt-post-aside { display: flex; flex-direction: column; gap: 16px; text-align: left; }
