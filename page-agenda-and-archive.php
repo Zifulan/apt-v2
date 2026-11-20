@@ -1,45 +1,20 @@
 <?php
+/**
+ * Agenda and Archive (page slug "agenda-and-archive"): upcoming meetings,
+ * then statements by year.
+ */
 get_header();
 ?>
-<script type="text/javascript">	
-
-	//smooth scrolling
-
-	jQuery(function($) {			
-
-		$('.smoothscroll').click(function(){
-
-			$('html, body').animate({
-
-				scrollTop: $( $(this).attr('href') ).offset().top
-
-			}, 500);
-
-			return false;
-
-		});			
-
-	});
-
-</script>	
-<script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/vendor/jquery.als-2.1.min.js" ></script>
-<main id="main" class="site-main">	
-	<div class="topic-head mt-4" id="page-events-2">
-
-		<div class="container">
-
-			<h1>Agenda</h1>
-
-		</div>
-
+<main id="main" class="site-main">
+	<div class="container" id="avi-content">
+		<header class="apt-page-head">
+			<h1><?php esc_html_e( 'Agenda', 'akseki-vi' ); ?></h1>
+		</header>
 	</div>
-	<?php get_template_part("template-parts/sidebar-agenda2"); ?>
-	<?php get_template_part("template-parts/sidebar-archives"); ?>
-
+	<?php get_template_part( 'template-parts/sidebar-agenda_bento', null, array( 'in_page' => true ) ); ?>
+	<div class="container">
+		<?php get_template_part( 'template-parts/sidebar-archives' ); ?>
+	</div>
 </main>
-
-		
-
 <?php
 get_footer();
-?>

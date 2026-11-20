@@ -753,16 +753,6 @@ ul.page-numbers .current{
     padding-left: 2em;
 	background-color:#ced4da;
 }
-.childcat a h4 span{
-	transition: .4s;
-    position: relative;
-}
-.childcat a:hover h4 span{
-	padding-left: 1em;
-}
-.childcat a:hover h4 span:before{
-	content: "\27A5";position: absolute;left: 0;
-}
 
 /*limited access page*/
 #post-4452 .login-username{visibility:hidden;height:2px;}

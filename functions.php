@@ -1,4 +1,16 @@
 <?php
+// PHP 7.4 support: WordPress 5.9+ provides these, older WordPress does not.
+if ( ! function_exists( 'str_starts_with' ) ) {
+	function str_starts_with( $haystack, $needle ) {
+		return '' === (string) $needle || 0 === strncmp( (string) $haystack, (string) $needle, strlen( (string) $needle ) );
+	}
+}
+if ( ! function_exists( 'str_contains' ) ) {
+	function str_contains( $haystack, $needle ) {
+		return '' === (string) $needle || false !== strpos( (string) $haystack, (string) $needle );
+	}
+}
+
 
 //CHILD THEMING FROM TWENTY NINETEEN
 
@@ -284,6 +296,7 @@ add_action( 'save_post', function () {
 	delete_transient( 'apt_summit_count' );
 	delete_transient( 'apt_ministerial_count' );
 	delete_transient( 'apt_pillar_quotes' );
+	delete_transient( 'apt_archive_years' );
 } );
 
 /*
@@ -1107,11 +1120,6 @@ function akseki_get_ott_categories(){
 	}	
 	return $appear;
 }
-function akseki_get_commision_categories(){
-	$appear = ['ministerial-level-statements','summit-level-statements'];
-
-	return $appear;
-}
 function akseki_post_is_in_a_subcategory( $categories, $_post = null ) {
     foreach ( (array) $categories as $category ) {
         // get_term_children() only accepts integer ID
@@ -1425,113 +1433,72 @@ function no_nopaging($query) {
 }
 add_action('parse_query', 'no_nopaging');
 
-//akseki shortcodes
-function akseki_cat_children($atts){
-	$atts = shortcode_atts(array(
-        'parent' => 0,
-		'style' => 'card-group',
-    ), $atts);
-    $return = '';
-	$categories=get_categories(
-		array( 'parent' => $atts['parent'] )
-	);
-	if($atts['style'] == 'card-group'){
-		$return .= '<div class="card bg-light"><div class="card-body">';
-		$return .= '<h4 class="card-title mb-0">'.get_cat_name($atts['parent']).'</h4></div>';
-		$return .= '<ul class="list-group list-group-flush">';
-		foreach($categories as $cat){
-			$return .= '<li class="list-group-item btn btn-light text-left"><a href="'.get_category_link($cat->term_id).'">&raquo; '.$cat->name.'</a></li>';
-		}
-		$return .= '</ul></div>';
-	}elseif($atts['style'] == 'buttons'){
-		$return .= '<div class="row mr-0 mb-2">';
-		foreach($categories as $cat){
-			$return .= '<a href="'.get_category_link($cat->term_id).'" class="btn btn-secondary col m-1" style="width:49%"><h5>'.$cat->name.'</h5><hr class="mt-0 mb-2">'.$cat->description.'</a>';
-		}
-		$return .= '</div>';
-	}elseif($atts['style'] == 'withlatestpost-economic'){
-		$return .= '<div class="m-0 w-100">';
-		foreach($categories as $cat){
-			$latpos = get_posts(array('category' => $cat->term_id, 'numberposts' => 1));
+/*
+ * Shortcodes used in page content (Overview, Resources …). Same names and
+ * attributes as before, so existing content keeps working; the markup is the
+ * new design.
+ */
 
-			foreach($latpos as $latpo){
-				if(has_post_thumbnail($latpo->ID)){
-					$thethumb = get_the_post_thumbnail_url( $latpo->ID, "medium-large" );
-				}else{
-					$thethumb = wp_get_attachment_image_url( 1007, "medium-large" );
-				}
-			}
-			$return .= '<img src="'.esc_url($thethumb).'" class="rounded m-1 w-100" alt="" loading="lazy">';
-			$return .= '<a href="'.get_category_link($cat->term_id).'" class="btn btn-secondary m-1 w-100"><h5>'.$cat->name.'</h5><hr class="mt-0 mb-2">'.$cat->description.'</a>';
-		}
-		$return .= '</div>';
-	}elseif($atts['style'] == 'withlatestpost-socio'){
-		$return .= '<div class="w-100 m-0 d-flex flex-wrap align-content-around">';
-		foreach($categories as $cat){
-			$latpos = get_posts(array('category' => $cat->term_id, 'numberposts' => 1));
-
-			foreach($latpos as $latpo){
-				if(has_post_thumbnail($latpo->ID)){
-					$thethumb = get_the_post_thumbnail_url( $latpo->ID, "medium" );
-				}else{
-					$thethumb = wp_get_attachment_image_url( 1007, "medium" );
-				}
-			}
-			$return .= '<img src="'.esc_url($thethumb).'" class="rounded m-1" style="height:140px;width:auto;" alt="" loading="lazy">';
-			$return .= '<a href="'.get_category_link($cat->term_id).'" class="btn btn-secondary m-1" style="flex-grow:1;max-width:200px;"><h5>'.$cat->name.'</h5><hr class="mt-0 mb-2">'.$cat->description.'</a>';
-		}
-		$return .= '</div>';
-	}
-	return $return;
+/** Photo of a category's latest statement (or the default image). */
+function apt_latest_photo_html( $cat_id, $size = 'medium_large' ) {
+	$latest = get_posts( array( 'cat' => $cat_id, 'numberposts' => 1, 'post_status' => 'publish', 'fields' => 'ids' ) );
+	$thumb  = ( $latest && has_post_thumbnail( $latest[0] ) ) ? get_post_thumbnail_id( $latest[0] ) : 1007;
+	return wp_get_attachment_image( $thumb, $size, false, array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async' ) );
 }
-add_shortcode('akseki_cat_children', 'akseki_cat_children');
 
-function akseki_get_recent_posts($atts){
-	$atts = shortcode_atts(
-        array(
-            'cat' => 0,
-			'limit' => 0,
-			'tag' => '',			
-        ), $atts
-	);
-	$args = array(
-		'cat' => $atts['cat'],
-		'numberposts' => $atts['limit'],
-		'tag' => $atts['tag'],
-	);
-	//$category_posts = new WP_Query($args);
-	//change wp_query object with get_posts
-	$category_posts = get_posts($args);
-	$return = '';
-	if(!empty($category_posts)){		
-		$return .= '<div class="card-group">'; 	
-		foreach($category_posts as $post){			
-			if(has_post_thumbnail($post->ID)){
-				$thethumb = get_the_post_thumbnail_url( $post->ID, "thumbnail" );
-			}else{
-				$thethumb = wp_get_attachment_image_url( 1007, "thumbnail" );
-			}
-			$return .= '<div class="card">';
-			$return .= '<img class="card-img-top" src="'.$thethumb.'" alt="Card image cap">';
-			$return .= '<div class="card-body p-3 text-center">';
-			$return .= '<h5 class="card-title mb-0"><a href="'.get_permalink($post->ID).'">'.akseki_get_shortname($post->post_title, $post->ID, 3).'</a></h5>';
-
-			$return .= '</div>';
-			$return .= '<ul class="list-group list-group-flush">';
-			$metas = explode('<span class="meta-comma"> </span>',akseki_get_the_meta($post->ID));
-			foreach($metas as $meta){
-				$return .= '<li class="list-group-item bg-light text-center"><small class="text-muted">'.$meta.'</small></li>';
-			}
-			$return .= '</ul>';
-
-			$return .= '</div>';
-		}
-		$return .= '</div>';		
+/**
+ * [akseki_cat_children parent="ID" style="card-group|buttons|withlatestpost-economic|withlatestpost-socio"]
+ * The child categories (meetings, mechanisms) of a category: a link list
+ * ("card-group"), or cards with name and full name, with the latest photo
+ * for the "withlatestpost" styles.
+ */
+function akseki_cat_children( $atts ) {
+	$atts = shortcode_atts( array( 'parent' => 0, 'style' => 'card-group' ), $atts );
+	$cats = get_categories( array( 'parent' => (int) $atts['parent'] ) );
+	if ( ! $cats ) {
+		return '';
 	}
-    return ($return ? $return : false);
-
+	if ( 'card-group' === $atts['style'] ) {
+		$out = '<nav class="apt-sidebar-list" aria-label="' . esc_attr( get_cat_name( $atts['parent'] ) ) . '"><p class="apt-sidebar-title">' . esc_html( get_cat_name( $atts['parent'] ) ) . '</p><ul>';
+		foreach ( $cats as $cat ) {
+			$out .= '<li><a href="' . esc_url( get_category_link( $cat->term_id ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
+		}
+		return $out . '</ul></nav>';
+	}
+	$with_photo = 0 === strpos( $atts['style'], 'withlatestpost' );
+	$out        = '<ul class="apt-mechanisms' . ( $with_photo ? ' has-photos' : '' ) . '">';
+	foreach ( $cats as $cat ) {
+		$out .= '<li><a class="apt-mechanism" href="' . esc_url( get_category_link( $cat->term_id ) ) . '">'
+			. ( $with_photo ? apt_latest_photo_html( $cat->term_id ) : '' )
+			. '<span class="apt-mechanism-name">' . esc_html( $cat->name ) . '</span>'
+			. ( trim( (string) $cat->description ) ? '<span class="apt-mechanism-desc">' . esc_html( wp_strip_all_tags( $cat->description ) ) . '</span>' : '' )
+			. '</a></li>';
+	}
+	return $out . '</ul>';
 }
-add_shortcode('akseki_get_recent_posts', 'akseki_get_recent_posts');
+add_shortcode( 'akseki_cat_children', 'akseki_cat_children' );
+
+/**
+ * [akseki_get_recent_posts cat="ID" limit="3" tag=""]
+ * The latest statements of a category as cards: photo, short name, place and date.
+ */
+function akseki_get_recent_posts( $atts ) {
+	$atts  = shortcode_atts( array( 'cat' => 0, 'limit' => 0, 'tag' => '' ), $atts );
+	$posts = get_posts( array( 'cat' => $atts['cat'], 'numberposts' => $atts['limit'], 'tag' => $atts['tag'] ) );
+	if ( ! $posts ) {
+		return '';
+	}
+	$out = '<ul class="apt-recent-cards">';
+	foreach ( $posts as $p ) {
+		$thumb = has_post_thumbnail( $p->ID ) ? get_post_thumbnail_id( $p->ID ) : 1007;
+		$out  .= '<li><a class="apt-recent-card" href="' . esc_url( get_permalink( $p->ID ) ) . '">'
+			. wp_get_attachment_image( $thumb, 'medium', false, array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async' ) )
+			. '<span class="apt-recent-name">' . akseki_get_shortname( $p->post_title, $p->ID, 3 ) . '</span>'
+			. '<span class="akseki-meta">' . akseki_get_the_meta( $p->ID ) . '</span></a></li>';
+	}
+	return $out . '</ul>';
+}
+add_shortcode( 'akseki_get_recent_posts', 'akseki_get_recent_posts' );
 
 /*
  * [akseki_limited_access]: the old password form posted to a handler that
@@ -1612,109 +1579,6 @@ function saveCategoryFields() {
 add_action ( 'edited_category', 'saveCategoryFields');
 
 //handle ajax for archives
-add_action("wp_ajax_archiveAjax", "archiveAjax");
-add_action("wp_ajax_nopriv_archiveAjax", "archiveAjax");
-function archiveAjax() {
-	if ( !wp_verify_nonce( $_REQUEST['nonce'], "nonce")) {
-      exit("No naughty business please");
-	}
-	$year = $_REQUEST['year'];
-
-	$SAA_cats = get_term_children(7,"category");
-	$SAA_query = new WP_Query(array(
-		//'category_name'=> implode( ',', $SAA_cats ),
-		'cat'				=> $SAA_cats,
-		'post_status' => 'publish',
-		'orderby'           => 'date',
-		'order'             => 'DESC',
-		'posts_per_page' =>-1,
-		'date_query' => array(
-				'relation' => 'OR',
-				array('year' => $year)
-			),
-		)
-	);
-	if( $SAA_query->have_posts() ) :
-		$tempyear = $tempmonth = $tempdtdcount = 0;
-		$echo = '';
-		$echo .= '<h3><strong>Year: '.$year.'</strong></h3>';
-		$echo .= '<div class="archive-inner-content" style="background-image: linear-gradient(to right, rgb(255, 255, 255) 45%, rgba(255, 255, 255, 0) 50%), url(\''.get_template_directory_uri().'/img/summitlogo/'.$year.'.jpg\'); background-repeat: no-repeat; background-position: right center; background-size: contain;">';
-		$images = [];
-		while($SAA_query->have_posts()):
-			$SAA_query->the_post();
-			//display a random image from query result
-
-			$firstbuttonaria = "false";
-			$qyear = get_the_date('Y');
-			if($qyear !== $tempyear){
-				if($tempdtdcount==0){
-					//first element
-					$echo .= '<div class="agenda-element">';
-				}else{
-					//other elements in the middle
-					$echo .= '</div><div class="agenda-element">';
-				}
-
-				$tempyear = $qyear;
-				$tempdtdcount = 1;
-			}
-			$qmonth = get_the_date('ny');
-			if($qmonth !== $tempmonth){
-				$fy = get_the_date("F Y");
-				$echo .= '<button class="mt-1 border-bottom font-weight-bold text-left w-100 btn mb-1 collapser-button" type="button" data-toggle="collapse" data-target="#collapse'.$qmonth.'" aria-expanded="'.$firstbuttonaria.'" aria-controls="collapse'.$qmonth.'"><span class="ml-1">'.$fy.'</span></button>';
-				$tempmonth = $qmonth;
-
-			}
-
-			if(has_tag("SC_month")){
-				$datedisplay = '<span class="badge badge-secondary">'.get_the_date('F Y').'</span>';
-			}else{
-				$datedisplay = '<span class="badge badge-secondary">'.get_the_date('j F Y').'</span>';
-			}
-
-			$mecloc = akseki_get_mec_location(get_the_ID());
-			if(empty($mecloc) or $mecloc == '' or $mecloc == 'tbd'){
-				$flagdisplay = '';
-			}else{
-				$flagdisplay = '&ensp;'.akseki_get_the_flag(get_the_ID());
-			}
-			$qcats = get_the_category();
-			$qcatsarr = wp_list_pluck( $qcats, 'slug' );
-
-			$intersector = array_merge(akseki_get_ministrial_categories(),akseki_get_dg_categories(),akseki_get_som_categories(),akseki_get_wg_categories(),akseki_get_othlev_categories(),akseki_get_ott_categories());
-			array_push($intersector,'summit-level-statements','cpr-level');
-
-			$qcatint = array_intersect($qcatsarr,$intersector);
-			$qcatObj = get_category_by_slug(implode($qcatint));
-			//echo('<pre>');print_r($qcatObj);echo('</pre>');
-			//borders, primary if summit, dark if ministerial
-			if($qcatObj->slug == "summit-level-statements"){
-				$border = " border border-primary rounded";
-			}elseif(in_array($qcatObj->slug,akseki_get_ministrial_categories())){
-				$border = " border border-dark rounded";
-			}else{
-				$border = "";
-			}
-			$catdisplay = '<br/><em class="badge badge-light"><a title="'.$qcatObj->name.' ('.$qcatObj->description.')" class="text-dark font-weight-normal" href="'.get_category_link($qcatObj).'">'.$qcatObj->description.'</a></em>';
-
-			if(has_tag("hasnocontent")){
-				$qitemname = '<span class="bg-white px-1">'.akseki_get_shortname(get_the_title(), get_the_ID()).'</span>';
-			}else{
-				$qitemname = '<a class="bg-white px-1" href="'.get_the_permalink().'">'.akseki_get_shortname(get_the_title(), get_the_ID()).'</a>';
-			}
-
-			$echo .= '<div class="collapse mx-4 p-1'.$border.'" id="collapse'.$qmonth.'">'.$datedisplay.$flagdisplay.'&ensp;'.$qitemname.$catdisplay.'</div>';			
-		endwhile;
-		$echo .= '</div></div>';
-
-		
-
-		echo($echo);
-	endif;
-	wp_reset_postdata();
-	die;
-}
-
 //get category descriptors
 function echo_category_descriptor($current_category_id){
 	$catdesc_echo = '';
@@ -1799,7 +1663,7 @@ function akseki_get_themes_in_pillar($pillar_id){
 	foreach($themes as $themepage){
 		$tpc_pillar = get_post_custom_values( "tpc_pillar", $themepage->ID);
 
-		if(str_starts_with($pil_obj->slug,$tpc_pillar[0])){
+		if(!empty($tpc_pillar[0]) && str_starts_with($pil_obj->slug,$tpc_pillar[0])){
 			$themes_arr[$themepage->ID] = $themepage->post_title;
 		}
 	}
@@ -2164,4 +2028,69 @@ function apt_statement_row_html( $id, $heading_tag = 'h2' ) {
 		. '<div class="apt-statement-when"><span class="apt-statement-short">' . $label . '</span><span class="apt-statement-year">' . $year . '</span></div>'
 		. '<div class="apt-statement-main"><' . $heading_tag . ' class="apt-statement-title">' . $link . '</' . $heading_tag . '>'
 		. '<p class="akseki-meta">' . $meta . '</p></div></li>';
+}
+
+/**
+ * Where a document was adopted: [ label, category ID ] — "Summit Level
+ * Statements", or "Ministerial Level › AMAF+3" — or [ '', 0 ] if neither.
+ */
+function apt_document_source( $id ) {
+	if ( in_category( 41, $id ) ) {
+		return array( 'Summit Level Statements', 41 );
+	}
+	if ( akseki_post_is_in_a_subcategory( 43, $id ) ) {
+		foreach ( akseki_get_ministrial_categories() as $slug ) {
+			$cat = get_term_by( 'slug', $slug, 'category' );
+			if ( $cat && in_category( $cat->term_id, $id ) ) {
+				return array( "Ministerial Level \u{203A} " . $cat->name, $cat->term_id );
+			}
+		}
+	}
+	return array( '', 0 );
+}
+
+/**
+ * One document row (agreements, work plans, other documents): the title
+ * linked, place and date, and where it was adopted.
+ *
+ * @param bool $with_source Show "Adopted at …" (agreements); off for work plans.
+ */
+function apt_document_row_html( $id, $with_source = true ) {
+	$sm    = akseki_get_sm( $id );
+	$title = get_the_title( $id );
+	$out   = '<article class="apt-doc" id="post-' . (int) $id . '">';
+	$out  .= '<h2 class="apt-doc-title"><a href="' . esc_url( get_permalink( $id ) ) . '">' . ( $sm ? esc_html( $sm ) : $title ) . '</a></h2>';
+	if ( $sm ) {
+		$out .= '<p class="apt-doc-full">' . $title . '</p>';
+	}
+	$out .= '<p class="akseki-meta">' . akseki_get_the_meta( $id ) . '</p>';
+	if ( $with_source ) {
+		list( $label, $cat ) = apt_document_source( $id );
+		if ( $cat ) {
+			$out .= '<p class="apt-doc-source">' . esc_html__( 'Adopted at', 'akseki-vi' ) . ': <a href="' . esc_url( get_category_link( $cat ) ) . '">' . esc_html( $label ) . '</a></p>';
+		}
+	}
+	return $out . '</article>';
+}
+
+/** Years that have statements (newest first), for the Archives page. Cached; cleared when a post is saved. */
+function apt_archive_years() {
+	$years = get_transient( 'apt_archive_years' );
+	if ( is_array( $years ) ) {
+		return $years;
+	}
+	$ids   = get_posts( array(
+		'cat'         => get_term_children( 7, 'category' ),
+		'post_status' => 'publish',
+		'numberposts' => -1,
+		'fields'      => 'ids',
+	) );
+	$years = array();
+	foreach ( $ids as $id ) {
+		$years[ (int) get_the_date( 'Y', $id ) ] = true;
+	}
+	$years = array_keys( $years );
+	rsort( $years );
+	set_transient( 'apt_archive_years', $years, 12 * HOUR_IN_SECONDS );
+	return $years;
 }

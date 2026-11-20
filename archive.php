@@ -122,7 +122,11 @@ switch($catancgroup){
 		}
 		break;
 	case "other":
-		$articlecontainer = '<div class="listings-wrapper row">';
+		if ( $catanc == "agreements" or $current_category == 'other-documents' ) {
+			$articlecontainer = '<div class="apt-doc-list">';
+		} else {
+			$articlecontainer = '<div class="listings-wrapper row">';
+		}
 		$articlecontainerend = "</div>";
 		break;
 	default:
@@ -171,25 +175,6 @@ switch($catancgroup){
 		break;
 }
 
-//children category for other-documents or ministerial level topic
-$childcattop = "";
-if($current_category == 'other-documents'){				
-	$term = get_queried_object();
-	$children = get_terms( $term->taxonomy, array(
-	'parent'    => $term->term_id,
-	'hide_empty' => false
-	) );
-	if($children) {
-		$childcattop .= '<div class="w-100 childcat mb-2 d-flex justify-content-around">';
-		foreach($children as $child){
-			$childcattop .= '<a href="'.get_term_link($child->term_id).'" class="w-50 btn btn-secondary m-1">';
-			$childcattop .= '<h4 class="mb-0"><span>'.$child->name.'</span></h4>';
-			$childcattop .= '<em class="mb-0">'.$child->description.'</em>';
-			$childcattop .= '</a>';
-		}
-		$childcattop .= '</div>';
-	}				
-}
 
 ?>
 
@@ -212,25 +197,18 @@ if($current_category == 'other-documents'){
 		</header><!-- .page-header -->
 		<div class="listings-wrapper row">		
 
-			<?php //children xcategory for other-documents
-			if($current_category == 'other-documents'){				
-				$term = get_queried_object();
-				$children = get_terms( $term->taxonomy, array(
-				'parent'    => $term->term_id,
-				'hide_empty' => false
-				) );				
-				if($children) { // get_terms will return false if tax does not exist or term wasn't found.
-					echo('<div class="w-100 childcat mb-2 d-flex flex-wrap">');
-					foreach($children as $child){
-						echo('<div class="p-1 m-0" style="flex:0 50%;">');
-						echo('<a href="'.get_term_link($child->term_id).'" class="btn btn-secondary m-0 w-100 h-100">');
-						echo('<h4 class="mb-0"><span>'.$child->name.'</span></h4>');
-						echo('<em class="mb-0">'.$child->description.'</em>');
-						echo('</a>');
-						echo('</div>');
+			<?php
+			// Other Documents: its sub-categories as cards
+			if ( $current_category == 'other-documents' ) {
+				$apt_children = get_terms( array( 'taxonomy' => 'category', 'parent' => get_queried_object_id(), 'hide_empty' => false ) );
+				if ( $apt_children && ! is_wp_error( $apt_children ) ) {
+					echo '<ul class="apt-level-grid apt-subcats">';
+					foreach ( $apt_children as $apt_child ) {
+						echo '<li><a class="apt-level-card" href="' . esc_url( get_term_link( $apt_child ) ) . '"><span class="apt-level-name apt-arrow">' . esc_html( $apt_child->name ) . '</span>'
+							. ( trim( (string) $apt_child->description ) ? '<span class="apt-level-desc">' . esc_html( wp_strip_all_tags( $apt_child->description ) ) . '</span>' : '' ) . '</a></li>';
 					}
-					echo('</div>');
-				}				
+					echo '</ul>';
+				}
 			}
 			?>
 

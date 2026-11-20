@@ -1536,17 +1536,7 @@ main.site-single {
 }
 .site-main:not(.front-main) .su-spoiler:not(.su-spoiler-closed) > .su-spoiler-content { padding: 0 0 18px 1.7em !important; }
 
-/* Gallery (page-gallery3.php masonry) */
-.site-main:not(.front-main) .masonryContainer { box-shadow: none !important; gap: 4px; }
-.site-main:not(.front-main) .masonryContainer a { margin: 0 !important; border-radius: 10px; }
-.site-main:not(.front-main) .masonryContainer a .innerText {
-	left: 0; text-align: left !important;
-	padding: 28px 12px 10px !important;
-	background: linear-gradient(180deg, rgba(8, 12, 30, 0.62), rgba(8, 12, 30, 0.88)) !important;
-}
-.site-main:not(.front-main) .masonryImg { scale: 1; transition: scale 0.6s ease !important; } /* identity at rest; scales on hover */
-.site-main:not(.front-main) .masonryImg:hover { transform: none !important; scale: 1.05; }
-@media (prefers-reduced-motion: reduce) { .site-main:not(.front-main) .masonryImg:hover { scale: 1; } }
+/* Gallery (page-gallery3.php masonry) */ /* identity at rest; scales on hover */
 
 /* News page cards (page-news-2.php): meta bar was maroon */
 .site-main:not(.front-main) .card .akseki-meta.rounded,
@@ -1954,3 +1944,90 @@ main.site-single {
 .apt-meeting-all { margin-top: auto; padding-top: 12px; display: inline-flex; align-items: center; gap: 8px; min-block-size: var(--target-size); font-weight: 600; color: var(--ink); text-decoration: none; }
 .apt-meeting-all:hover { color: var(--apt-blue); }
 @media (prefers-reduced-motion: no-preference) { .apt-level-pillar > summary::after { transition: rotate 0.2s; } }
+
+/* ---------- Document lists: agreements, work plans, other documents ---------- */
+.apt-doc-list { display: flex; flex-direction: column; margin-bottom: clamp(24px, 4vw, 48px); max-width: 64rem; }
+.apt-doc { padding: 18px 0; border-top: 1px solid var(--rule-soft); }
+.apt-doc:last-child { border-bottom: 1px solid var(--rule-soft); }
+.apt-doc-title { margin: 0 0 6px; font-size: 1.1rem !important; font-weight: 600; line-height: 1.35; font-family: var(--font) !important; letter-spacing: 0; }
+.apt-doc-title a { color: var(--ink); text-decoration: none; }
+.apt-doc-title a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
+.apt-doc-full { margin: 0 0 6px; color: var(--ink); }
+.apt-doc .akseki-meta { margin: 0; color: var(--ink-2); font-size: 0.9rem; }
+.apt-doc-source { margin: 6px 0 0; font-size: 0.9rem; color: var(--ink-2); }
+.apt-doc-source a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule-soft); text-underline-offset: 3px; }
+.apt-doc-source a:hover { color: var(--ink); text-decoration-color: currentColor; }
+.apt-subcats { margin-bottom: clamp(20px, 3vw, 32px) !important; }
+
+/* ---------- Yearly archives (template-parts/sidebar-archives.php) ---------- */
+.apt-archive { margin-bottom: clamp(24px, 4vw, 48px); }
+.apt-year-nav ul { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0 0 clamp(20px, 3vw, 32px); padding: 0; }
+.apt-year-nav a {
+	display: inline-flex; align-items: center; justify-content: center; min-inline-size: 4.2em; min-block-size: var(--target-size);
+	padding: 6px 12px; border: 1px solid var(--rule-soft); border-radius: var(--radius-pill);
+	color: var(--ink); text-decoration: none; font-weight: 500; font-variant-numeric: tabular-nums;
+}
+.apt-year-nav a:hover { border-color: var(--ink); }
+.apt-year-nav a[aria-current] { background: var(--ink); border-color: var(--ink); color: var(--paper); font-weight: 700; }
+.apt-archive-year { margin: 0 0 8px; font-size: clamp(1.8rem, 1.5rem + 1.2vw, 2.6rem); font-weight: 700; }
+.apt-archive-month { margin-top: 20px; }
+.apt-archive-month-name { margin: 0 0 4px; font-size: 1.1rem; font-weight: 700; color: var(--ink-2); text-transform: none; }
+@media (max-width: 575.98px) {
+	/* many years: one scrollable line instead of a tall block */
+	.apt-year-nav ul { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 6px; scrollbar-width: thin; }
+	.apt-year-nav li { flex: none; }
+}
+
+/* ---------- Photo gallery (template-parts/apt-gallery.php) ---------- */
+.apt-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 20px; list-style: none; margin: 0 0 clamp(24px, 4vw, 40px); padding: 0; }
+.apt-gallery-item { margin: 0; }
+.apt-gallery-link { display: block; border-radius: var(--radius-tile); overflow: hidden; background: var(--paper-2); }
+.apt-gallery-link img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; scale: 1; transition: scale 0.4s ease; }
+.apt-gallery-link:hover img { scale: 1.04; }
+@media (prefers-reduced-motion: reduce) { .apt-gallery-link img { transition: none; } .apt-gallery-link:hover img { scale: 1; } }
+.apt-gallery-item figcaption { display: flex; flex-direction: column; gap: 2px; padding: 10px 2px 0; }
+.apt-gallery-name { font-weight: 700; color: var(--ink); }
+.apt-gallery-item .akseki-meta { color: var(--ink-2); font-size: 0.85rem; }
+
+/* ---------- Overview page and content shortcodes ---------- */
+/* [akseki_get_recent_posts]: latest summits as cards */
+.apt-recent-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 12px; list-style: none; margin: 0 0 12px; padding: 0; }
+.apt-recent-card { display: flex; flex-direction: column; gap: 2px; height: 100%; padding-bottom: 10px; border-radius: var(--radius-tile); overflow: hidden; background: var(--paper-2); color: var(--ink); text-decoration: none !important; }
+.apt-recent-card img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; margin-bottom: 8px; border-radius: 0 !important; }
+.apt-recent-name { padding: 0 12px; font-weight: 700; }
+.apt-recent-card .akseki-meta { padding: 0 12px; color: var(--ink-2); font-size: 0.8rem; line-height: 1.4; }
+.apt-recent-card:hover .apt-recent-name { color: var(--apt-blue); }
+.site-main:not(.front-main) .entry-content .float-left:has(> .apt-recent-cards) { float: none !important; width: 100%; max-width: 560px; margin-right: 0 !important; }
+/* [akseki_cat_children]: mechanisms as cards */
+.apt-mechanisms { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 12px; list-style: none; margin: 0 0 16px; padding: 0; }
+.site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms { grid-template-columns: 1fr; }
+.apt-mechanism { display: flex; flex-direction: column; gap: 2px; height: 100%; padding: 14px 16px; border-radius: var(--radius-tile); background: var(--paper-2); color: var(--ink) !important; text-decoration: none !important; border: 1px solid transparent; }
+.apt-mechanism:hover { border-color: var(--ink); }
+.apt-mechanisms.has-photos .apt-mechanism { padding: 0 0 14px; overflow: hidden; }
+.apt-mechanisms.has-photos .apt-mechanism img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; margin-bottom: 10px; border-radius: 0 !important; }
+.apt-mechanisms.has-photos .apt-mechanism > span { padding: 0 16px; }
+.apt-mechanism-name { font-weight: 700; }
+.apt-mechanism-desc { color: var(--ink-2); font-size: 0.88rem; line-height: 1.4; }
+/* Overview section headings (h4.subsection in the content) */
+.site-main:not(.front-main) .entry-content .subsection {
+	clear: both; margin: clamp(32px, 5vw, 56px) 0 16px !important; padding: 16px 0 0 !important;
+	border-top: 1px solid var(--rule); border-bottom: 0 !important; text-decoration: none !important;
+	font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem); font-weight: 700;
+}
+.site-main:not(.front-main) .entry-content #subsectionPolitical { border-top: 4px solid var(--pillar-ps); }
+.site-main:not(.front-main) .entry-content #subsectionEconomic { border-top: 4px solid var(--pillar-ec); }
+.site-main:not(.front-main) .entry-content #subsectionSocio { border-top: 4px solid var(--pillar-sc); }
+/* Old style.css meta rules (dotted borders, floats) don't apply inside the new cards */
+:is(.apt-recent-card, .apt-mechanism, .apt-gallery-item, .apt-doc, .apt-summit, .apt-meeting-latest) .akseki-meta { float: none !important; border: 0 !important; background: none !important; text-align: left !important; }
+:is(.apt-recent-card, .apt-mechanism, .apt-gallery-item, .apt-doc, .apt-summit, .apt-meeting-latest) .akseki-meta * {
+	float: none !important; display: inline !important; border: 0 !important; padding: 0 !important; margin: 0 !important; background: none !important; text-align: left !important;
+}
+.apt-recent-card .akseki-meta { display: block; padding: 0 12px !important; }
+.apt-recent-name { text-align: left !important; display: block; }
+/* The 'lone link in a list item' rule (inline-flex, centred) must not reach the new cards */
+.site-main:not(.front-main) :is(.entry-content, .su-spoiler-content) li > a:only-child:is(.apt-recent-card, .apt-mechanism, .apt-level-card) { display: flex; flex-direction: column; align-items: stretch; text-align: left; min-block-size: 0; }
+.site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos li > a.apt-mechanism:only-child { display: grid; }
+/* Mechanisms with photos in a narrow column: thumbnail beside the name */
+.site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism { display: grid; grid-template-columns: 88px 1fr; grid-template-rows: auto 1fr; column-gap: 14px; padding: 10px 14px 10px 10px; }
+.site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism img { grid-row: 1 / span 2; width: 88px; height: 88px; aspect-ratio: 1; margin: 0; border-radius: 10px !important; }
+.site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism > span { padding: 0; }
