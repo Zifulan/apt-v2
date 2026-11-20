@@ -77,7 +77,7 @@ get_header();
 										</button>
 									  </div>
 									  <div class="modal-body text-center">
-										<img src="" id="imagepreview" class="img-fluid">
+										<img src="" id="imagepreview" class="img-fluid" alt="">
 									  </div>
 									  <!--div class="modal-footer">
 										<p>text</p>

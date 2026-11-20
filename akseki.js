@@ -15,8 +15,9 @@ jQuery(function($) {
 		$imgsrc = ($imgsrc.replace(/-\d+?x\d+?\./,'.'));
 		$('#imagepreview').attr('src', $imgsrc);
 		$('#imagemodal').modal('show');
-		$thetitle=$(this).find('> img').attr('alt');
-		$('#image-title').html($thetitle);
+		$thetitle=$(this).find('> img').attr('alt') || '';
+		$('#imagepreview').attr('alt', $thetitle); // same description as the thumbnail
+		$('#image-title').text($thetitle);
 	});
 	
 	/*sidebar in detail page*/

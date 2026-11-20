@@ -59,7 +59,7 @@
 		<span class="als-next dashicons dashicons-arrow-right text-primary"></span>
 		</div>
 		<div class="container p-4">
-			<span id="loader" class="bg-white"><img src="<?php echo(get_template_directory_uri()."/img/spinner.gif"); ?>"></span>
+			<span id="loader" class="bg-white"><img src="<?php echo(get_template_directory_uri()."/img/spinner.gif"); ?>" alt="<?php esc_attr_e( 'Loading', 'akseki-vi' ); ?>"></span>
 			<div id="archives-ajax-content">
 				
 			</div>

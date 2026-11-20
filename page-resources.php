@@ -22,7 +22,7 @@ jQuery(function($) {
 		<div class="row">
 			<?php
 			//echo do_shortcode('[su_accordion class="b_acc"]');
-			$rn_overview_content = '<img src="https://aseanplusthree.asean.org/wp-content/uploads/2022/07/android-chrome-512x512-1.png" style="float:left;height:190px;">
+			$rn_overview_content = '<img src="https://aseanplusthree.asean.org/wp-content/uploads/2022/07/android-chrome-512x512-1.png" style="float:left;height:190px;" alt="">
 			<p>The ASEAN Plus Three (APT) cooperation process began in December 1997 with the convening of an Informal Summit among the Leaders of ASEAN and China, Japan and the ROK at the sidelines of the 2nd ASEAN Informal Summit in Malaysia. The APT Summit was institutionalised in 1999 when the Leaders issued a Joint Statement on East Asia Cooperation at the 3rd APT Summit in Manila. The Joint Statement for the first time determined the main objectives, principles and further directions of APT countries cooperation. In the Joint Statement, the APT Leaders resolved to strengthen and deepen East Asia cooperation at various levels and in various areas, particularly in economic and social, political and other fields.</p>
 			<a href="https://aseanplusthree.asean.org/wp-content/uploads/2024/06/APT-Overview-Paper-12-June-2024.pdf" class="btn btn-secondary mb-2">Download the Overview in PDF&nbsp;<i class="ml-2 fas fa-file-pdf"></i></a>
             <a href="https://aseanplusthree.asean.org/overview-of-asean-plus-three-cooperation/" class="btn btn-secondary mb-2">Overview of ASEAN Plus Three Cooperation&nbsp;&nearr;</a>';

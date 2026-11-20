@@ -7,9 +7,7 @@ Requires PHP: 7.4
 Text Domain: akseki-vi
 */
 /* webfont */
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap'); 
 /*@import url('https://fonts.googleapis.com/css?family=Mulish&display=swap');*/
-@import url('https://fonts.googleapis.com/css?family=Fjalla%20One&display=swap');
 html{
 	font-family: 'Source Sans Pro',Helvetica,sans-serif;
 	font-size:16px;

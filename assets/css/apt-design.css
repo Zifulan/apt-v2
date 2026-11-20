@@ -132,6 +132,12 @@ a:hover { color: var(--apt-red); }
 	outline-offset: 2px;
 	box-shadow: 0 0 0 2px var(--paper), 0 0 0 6px var(--paper);
 }
+/* Bootstrap's .btn:focus removes the outline with higher specificity: restore the ring */
+.btn:focus-visible, .page-link:focus-visible, .nav-link:focus-visible {
+	outline: 2px solid var(--ink) !important;
+	outline-offset: 2px;
+	box-shadow: 0 0 0 2px var(--paper), 0 0 0 6px var(--paper) !important;
+}
 /* Press feedback, distinct from hover (colour/fill) and focus (ring) */
 :where(.apt-pill, .apt-header-btn, .apt-menu-close, .apt-carousel-btn, .apt-carousel-marker, .resource-accordion-summary, .agenda-month-summary) {
 	transition: background-color 150ms ease-out, color 150ms ease-out, scale 150ms ease-out, box-shadow 150ms ease-out;
@@ -1728,3 +1734,16 @@ main.site-single {
 /* Bootstrap's .text-muted (#6c757d) drops to 4.3:1 on the light grey panels;
    use the theme's secondary ink, which passes on white and grey. */
 .site-main .text-muted { color: var(--ink-2) !important; }
+
+/* Links inside running text are underlined, not told apart by colour alone
+   (WCAG 1.4.1). Lists of links, buttons and styled links keep their own look. */
+.site-main:not(.front-main) :where(p, td, dd, blockquote, figcaption, .catdes) > a:not([class]),
+.site-main:not(.front-main) :where(p, td, dd, blockquote, figcaption) > :where(strong, em, b, i) > a:not([class]) {
+	text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+}
+
+/* "ASEAN Plus Three" is kept on one line in section titles, but on very
+   narrow screens or with wider user text spacing (WCAG 1.4.12) it must wrap. */
+@media (max-width: 400px) {
+	.apt-section-title .text-nowrap { white-space: normal !important; }
+}

@@ -512,6 +512,9 @@ register_nav_menus( array(
 ) );
 
 add_theme_support( 'post-thumbnails' );
+// Modern markup for galleries and captions (figure/figcaption instead of the
+// old dl/dt/dd layout, which screen readers announce as a definition list).
+add_theme_support( 'html5', array( 'gallery', 'caption', 'style', 'script' ) );
 
 /*MEC LOCATION CUSTOM TAXONOMY*/
 /*get locations in add new posts*/
@@ -1572,7 +1575,7 @@ function akseki_cat_children($atts){
 					$thethumb = wp_get_attachment_image_url( 1007, "medium-large" );
 				}
 			}
-			$return .= '<img src="'.$thethumb.'" class="rounded m-1 w-100">';
+			$return .= '<img src="'.esc_url($thethumb).'" class="rounded m-1 w-100" alt="" loading="lazy">';
 			$return .= '<a href="'.get_category_link($cat->term_id).'" class="btn btn-secondary m-1 w-100"><h5>'.$cat->name.'</h5><hr class="mt-0 mb-2">'.$cat->description.'</a>';
 		}
 		$return .= '</div>';
@@ -1588,7 +1591,7 @@ function akseki_cat_children($atts){
 					$thethumb = wp_get_attachment_image_url( 1007, "medium" );
 				}
 			}
-			$return .= '<img src="'.$thethumb.'" class="rounded m-1" style="height:140px;width:auto;">';
+			$return .= '<img src="'.esc_url($thethumb).'" class="rounded m-1" style="height:140px;width:auto;" alt="" loading="lazy">';
 			$return .= '<a href="'.get_category_link($cat->term_id).'" class="btn btn-secondary m-1" style="flex-grow:1;max-width:200px;"><h5>'.$cat->name.'</h5><hr class="mt-0 mb-2">'.$cat->description.'</a>';
 		}
 		$return .= '</div>';
