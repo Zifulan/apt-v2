@@ -105,7 +105,7 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
 |---|---|---|
 | Hero | `front-topnew4.php` | Latest post tagged `front`, APT Highlights, quick links |
 | Latest News & Activities | `front-news_bento.php` | Carousel of the 12 newest statements and news |
-| ASEAN Plus Three at a Glance | `front-about_bento.php` | Years, summits and ministerial meetings (counted from site content); trade, FDI, population, GDP and visitor figures (quoted, see below) |
+| About ASEAN Plus Three | `front-about_bento.php` | Years, summits and ministerial meetings (counted from site content); trade, FDI, population, GDP and visitor figures (quoted, see below) |
 | Cooperation in Practice | `front-cooperation_bento.php` | CMIM, AMRO, APTERR and ABMI, each quoted from an official source, with a link to its page on this site and its official site |
 | Resources | `front-resources_bento.php` | Key Documents; **Latest Statements by Pillar** (newest statement per pillar, quoted); Mechanisms. On phones only Key Documents starts open |
 | Upcoming Agenda | `sidebar-agenda_bento.php` | Scheduled meetings, or the 5 most recent under "Recent Meetings" when none are scheduled |

@@ -221,7 +221,7 @@ section 5.
 | 1.1.1 Non-text content | 7 theme images had no alt attribute, including the photos in the Overview page's "latest statement per area" lists (16 images on that page), the APT logo on Resources, the gallery preview and a loading spinner | Decorative images get an empty alt; the gallery preview copies its thumbnail's description; the spinner says "Loading" |
 | 1.3.1 Info and relationships | WordPress galleries were coded as "definition lists", so screen readers announced them wrongly | The theme switches WordPress to modern gallery and caption markup |
 | 1.4.1 Use of colour | Links inside paragraphs differed from the text only by colour (History, Areas of Cooperation, APTERR, Overview, Resources) | Links in running text are underlined |
-| 1.4.12 Text spacing | At 320px with wider spacing, the homepage title "ASEAN Plus Three at a Glance" could not wrap and pushed the page sideways | The title may wrap on narrow screens |
+| 1.4.12 Text spacing | At 320px with wider spacing, the homepage title (then "ASEAN Plus Three at a Glance", now "About ASEAN Plus Three") could not wrap and pushed the page sideways | The title may wrap on narrow screens |
 | 2.4.7 Focus visible | Bootstrap buttons (topic tags on statements, "Download the Overview" buttons) hid the keyboard focus ring | Focus ring restored on buttons, page numbers and tabs |
 
 After the fixes, the automated scan finds **no violations on any theme-built

@@ -905,7 +905,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	.apt-carousel-markers { display: none; } /* swipe + buttons on phones; 12 dots don't fit */
 }
 
-/* ---------- Home: about / at a glance (on gradient) --------------------- */
+/* ---------- Home: About ASEAN Plus Three (on gradient) ------------------ */
 
 .modern-about-section { color: var(--on-grad); }
 .modern-about-section .apt-about-grid {

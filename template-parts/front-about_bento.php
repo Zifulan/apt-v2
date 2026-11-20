@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="apt-about-grid">
 			<div class="apt-about-intro">
-				<h2 class="apt-section-title"><span class="text-nowrap">ASEAN Plus Three</span> at a Glance</h2>
+				<h2 class="apt-section-title">About <span class="text-nowrap">ASEAN Plus Three</span></h2>
 				<div class="about-card-body">
 						<p class="about-card-text apt-section-lede">ASEAN Plus Three (APT) consist of ASEAN Member States and the People&rsquo;s Republic of China, Japan and the Republic of Korea. The APT Cooperation process began in December 1997 and since than has evolve as the main vehicle to promote East Asian Cooperation towards the long-term goal of building an East Asian Community, with ASEAN as the driving force. The APT has become one of the most comprehensive cooperation frameworks in the region, and APT cooperation continue to be broadened and deepened in a wide range of areas, including political-security, trade and investment, finance, energy, tourism, agriculture and forestry, environment, education, health, culture and arts, etc, among others. The APT also supports the implementation of the ASEAN Community Vision 2045.</p>
 						<div class="about-links">
