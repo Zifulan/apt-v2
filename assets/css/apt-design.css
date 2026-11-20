@@ -738,6 +738,7 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 .news-card > img {
 	display: block;
 	width: 100%;
+	height: auto; /* the width/height attributes would otherwise override the ratio */
 	aspect-ratio: 16 / 10;
 	object-fit: cover;
 	background: var(--paper-2);
