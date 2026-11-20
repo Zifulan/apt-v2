@@ -829,19 +829,26 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	.apt-carousel-track { scroll-behavior: smooth; }
 }
 .apt-carousel-track > * {
-	flex: 0 0 84%;
-	scroll-snap-align: center;
+	flex: 0 0 86%;
+	scroll-snap-align: start;
 	display: flex;
 }
-/* One main card per view with a sliver of each neighbour. Slides stay wider
-   than half the track: the looping technique parks one end slide at a time,
-   and an end slide resting at the track edge must still be the one nearest
-   the centre. */
+/* One main card per view, flush with the start edge; the next card peeks in
+   at the end edge and fades out, so it reads as "more" rather than a cut-off
+   card. No previous card shows. Slides stay wider than half the track (the
+   looping technique parks one end slide at a time). */
 @media (min-width: 640px) {
-	.apt-carousel-track > * { flex-basis: 72%; }
+	.apt-carousel-track > * { flex-basis: 80%; }
 }
-@media (min-width: 992px) {
-	.apt-carousel-track > * { flex-basis: 66%; }
+.apt-carousel-track {
+	-webkit-mask-image: linear-gradient(to right, #000 calc(100% - 96px), transparent);
+	mask-image: linear-gradient(to right, #000 calc(100% - 96px), transparent);
+}
+@media (max-width: 639.98px) {
+	.apt-carousel-track {
+		-webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+		mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+	}
 }
 .apt-slide .news-card { width: 100%; }
 

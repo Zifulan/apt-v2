@@ -67,20 +67,20 @@
 		}
 
 		// ---- geometry (visual order, inline axis only) -------------------
-		function trackCenter() {
-			var r = track.getBoundingClientRect();
-			return r.left + track.clientWidth / 2;
+		// The current slide sits at the track's start edge: no previous slide
+		// peeks in, the next one shows (and fades) at the end edge.
+		function trackStart() {
+			return track.getBoundingClientRect().left;
 		}
-		function slideCenter(slide) {
-			var r = slide.getBoundingClientRect();
-			return r.left + r.width / 2;
+		function slideStart(slide) {
+			return slide.getBoundingClientRect().left;
 		}
 		function nearestIndex() {
-			var c = trackCenter();
+			var c = trackStart();
 			var best = 0;
 			var bestDist = Infinity;
 			slides.forEach(function (s, i) {
-				var d = Math.abs(slideCenter(s) - c);
+				var d = Math.abs(slideStart(s) - c);
 				if (d < bestDist) { bestDist = d; best = i; }
 			});
 			return best;
@@ -98,7 +98,7 @@
 		}
 		function scrollToSlide(index) {
 			requestedFrom = track.scrollLeft;
-			track.scrollBy({ left: slideCenter(slides[index]) - trackCenter(), behavior: 'auto' });
+			track.scrollBy({ left: slideStart(slides[index]) - trackStart(), behavior: 'auto' });
 		}
 
 		// ---- parking (looping) ------------------------------------------
@@ -254,9 +254,28 @@
 		lastAnnounced = current;
 		setActiveMarker(current);
 		if (loops) {
-			// Park the last slide before the first, then centre the first slide.
+			// Park the last slide before the first, then put the first slide at
+			// the start edge.
 			park(0, 0, false);
-			track.scrollBy({ left: slideCenter(slides[0]) - trackCenter(), behavior: 'instant' });
+			track.scrollBy({ left: slideStart(slides[0]) - trackStart(), behavior: 'instant' });
+			// A scroll made while the page is still being laid out can be dropped:
+			// re-apply the start position on the next frame and after load,
+			// unless the visitor has already moved the carousel.
+			var moved = false;
+			track.addEventListener('pointerdown', function () { moved = true; }, { once: true });
+			var align = function () {
+				if (moved || current !== 0) {
+					return;
+				}
+				var d = slideStart(slides[0]) - trackStart();
+				if (Math.abs(d) > 1) {
+					track.style.scrollSnapType = 'none';
+					track.scrollLeft += d;
+					track.style.scrollSnapType = '';
+				}
+			};
+			requestAnimationFrame(function () { requestAnimationFrame(align); });
+			window.addEventListener('load', align, { once: true });
 		}
 		updateButtons();
 	}
