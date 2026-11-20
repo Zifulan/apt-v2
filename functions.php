@@ -1913,7 +1913,7 @@ function apt_seo_place_and_date( $post_id ) {
 function apt_seo_auto_description() {
 	if ( is_front_page() ) {
 		// ASEAN Secretariat wording, as on the home page (its first sentence, verbatim).
-		return "ASEAN Plus Three (APT) consist of ASEAN Member States and the People\u{2019}s Republic of China, Japan and the Republic of Korea.";
+		return "ASEAN Plus Three (APT) consists of the 11 ASEAN Member States and the People\u{2019}s Republic of China, Japan and the Republic of Korea.";
 	}
 	if ( is_singular( 'post' ) ) {
 		$id = get_queried_object_id();
