@@ -1898,3 +1898,59 @@ main.site-single {
 .apt-sidebar-list li a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
 .apt-sidebar-list .children { padding-left: 14px; }
 .apt-sidebar-list .current-cat > a { font-weight: 700; }
+
+/* ---------- Statements and Declarations (category-7.php) ---------- */
+.apt-statements-home { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 4vw, 56px); align-items: start; }
+.apt-block-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: 0 0 12px; }
+.apt-block-head h2 { margin: 0; font-size: clamp(1.3rem, 1.15rem + 0.6vw, 1.7rem); font-weight: 700; }
+.apt-summit-list { list-style: none; margin: 0; padding: 0; }
+.apt-summit { padding: 16px 0; border-top: 1px solid var(--rule-soft); }
+.apt-summit-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+.apt-summit-name { margin: 0; font-size: 1.15rem; font-weight: 700; }
+.apt-summit-name a { color: var(--ink); text-decoration: none; }
+.apt-summit-name a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
+.apt-summit .akseki-meta { margin: 0; font-size: 0.9rem; color: var(--ink-2); }
+.apt-summit-docs { list-style: none; margin: 8px 0 0; padding: 0; }
+.apt-summit-docs li { position: relative; padding: 4px 0 4px 18px; line-height: 1.45; }
+.apt-summit-docs li::before { content: ''; position: absolute; left: 2px; top: 0.85em; width: 8px; height: 2px; background: var(--rule); }
+.apt-summit-docs a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule-soft); text-underline-offset: 3px; }
+.apt-summit-docs a:hover { color: var(--apt-blue); text-decoration-color: currentColor; }
+.apt-statements-block .apt-statement-row { grid-template-columns: 7rem 1fr; }
+.apt-levels { margin: clamp(32px, 5vw, 56px) 0 clamp(24px, 4vw, 48px); padding-top: clamp(24px, 3vw, 32px); border-top: 1px solid var(--rule); }
+.apt-levels-title { margin: 0 0 16px; font-size: clamp(1.3rem, 1.15rem + 0.6vw, 1.7rem); font-weight: 700; }
+.apt-level-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 14px; list-style: none; margin: 0; padding: 0; }
+.apt-level-card { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 18px 20px; border-radius: var(--radius-tile); background: var(--paper-2); color: var(--ink); text-decoration: none; border: 1px solid transparent; }
+.apt-level-card:hover { border-color: var(--ink); color: var(--ink); }
+.apt-level-name { font-weight: 700; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 8px; }
+.apt-level-desc { color: var(--ink-2); font-size: 0.9rem; line-height: 1.45; }
+@media (max-width: 991.98px) { .apt-statements-home { grid-template-columns: 1fr; } }
+.apt-sidebar-list { margin: 0 0 28px; }
+.apt-sidebar-title { margin: 0 0 8px; font-size: 0.95rem; font-weight: 700; color: var(--ink); }
+.apt-sidebar-links a.apt-external::after { content: '\2197'; margin-left: 6px; color: var(--ink-2); font-size: 0.85em; }
+
+/* ---------- Level pages: Ministerial-level, SOM, DG (akseki_get_level_resources) ---------- */
+.apt-level-pillars { display: flex; flex-direction: column; }
+.apt-level-pillar { border-top: 1px solid var(--rule-soft); }
+.apt-level-pillar:last-child { border-bottom: 1px solid var(--rule-soft); }
+.apt-level-pillar > summary { display: flex; align-items: center; gap: 12px; min-block-size: var(--target-size); padding: 16px 0; cursor: pointer; list-style: none; }
+.apt-level-pillar > summary::-webkit-details-marker { display: none; }
+.apt-level-pillar > summary::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--tag-c, var(--pillar-other)); flex: none; }
+.apt-level-pillar > summary::after { content: ''; margin-left: auto; width: 10px; height: 10px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); rotate: 45deg; translate: 0 -3px; flex: none; }
+.apt-level-pillar[open] > summary::after { rotate: -135deg; translate: 0 3px; }
+.apt-level-pillar-name { margin: 0; font-size: clamp(1.2rem, 1.1rem + 0.4vw, 1.45rem); font-weight: 700; }
+.apt-level-pillar > summary:hover .apt-level-pillar-name { color: var(--apt-blue); }
+.apt-level-pillar-body { padding: 0 0 24px; }
+.apt-meeting-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.apt-meeting { display: flex; flex-direction: column; padding: 18px 20px; border-radius: var(--radius-tile); background: var(--paper-2); }
+.apt-meeting-name { margin: 0; font-size: 1.1rem; font-weight: 700; }
+.apt-meeting-name a { color: var(--ink); text-decoration: none; }
+.apt-meeting-name a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
+.apt-meeting-full { margin: 4px 0 0; color: var(--ink-2); font-size: 0.9rem; line-height: 1.4; }
+.apt-meeting-latest { list-style: none; margin: 12px 0 0; padding: 0; }
+.apt-meeting-latest li { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-top: 1px solid var(--rule-soft); font-size: 0.92rem; line-height: 1.4; }
+.apt-meeting-latest a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule-soft); text-underline-offset: 3px; }
+.apt-meeting-latest a:hover { color: var(--apt-blue); text-decoration-color: currentColor; }
+.apt-meeting-latest .akseki-meta { color: var(--ink-2); font-size: 0.82rem; }
+.apt-meeting-all { margin-top: auto; padding-top: 12px; display: inline-flex; align-items: center; gap: 8px; min-block-size: var(--target-size); font-weight: 600; color: var(--ink); text-decoration: none; }
+.apt-meeting-all:hover { color: var(--apt-blue); }
+@media (prefers-reduced-motion: no-preference) { .apt-level-pillar > summary::after { transition: rotate 0.2s; } }

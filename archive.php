@@ -570,14 +570,26 @@ if($current_category == 'other-documents'){
 				}
 				//cpr links
 				if($catanc == "cpr"){
-					echo('<div class="list-group list-group-flush cprleftlist">
-					<a class="list-group-item list-group-item-action" target="_blank" href="https://asean.org/what-we-do/committee-of-permanent-representatives/committee-of-permanent-representatives-to-asean-in-jakarta/" data-type="URL" data-id="https://asean.org/what-we-do/committee-of-permanent-representatives/committee-of-permanent-representatives-to-asean-in-jakarta/"> More about Committee of Permanent Representatives to ASEAN (CPR)</a>
-					<a class="list-group-item list-group-item-action" target="_blank" href="https://asean.org/book/committee-of-permanent-representatives-to-asean-cpr-handbook/" data-type="URL" data-id="https://asean.org/book/committee-of-permanent-representatives-to-asean-cpr-handbook/"> More in CPR Handbook</a>
-					<a class="list-group-item list-group-item-action" target="_blank" href="https://asean.org/what-we-do/committee-of-permanent-representatives/list-of-the-committee-of-permanent-representatives-to-asean-cpr/" data-type="URL" data-id="https://asean.org/what-we-do/committee-of-permanent-representatives/list-of-the-committee-of-permanent-representatives-to-asean-cpr/">List of The Committee of Permanent Representatives to ASEAN</a>
-					<a class="list-group-item list-group-item-action" target="_blank" href="http://asean.china-mission.gov.cn/eng/" data-type="URL" data-id="http://asean.china-mission.gov.cn/eng/">Mission of the People&apos;s Republic of China to ASEAN</a>
-					<a class="list-group-item list-group-item-action" target="_blank" href="https://overseas.mofa.go.kr/asean-en/index.do" data-type="URL" data-id="https://overseas.mofa.go.kr/asean-en/index.do">Mission of the Republic of Korea to ASEAN</a>
-					<a class="list-group-item list-group-item-action" target="_blank" href="https://www.asean.emb-japan.go.jp/itprtop_en/index.html" data-type="URL" data-id="https://www.asean.emb-japan.go.jp/itprtop_en/index.html">Mission of Japan to ASEAN</a>
-					</div>');
+					$apt_nt = '<span class="screen-reader-text"> (opens in a new tab)</span>';
+					$apt_cpr_links = array(
+						'About the CPR' => array(
+							'https://asean.org/what-we-do/committee-of-permanent-representatives/committee-of-permanent-representatives-to-asean-in-jakarta/' => 'Committee of Permanent Representatives to ASEAN (CPR)',
+							'https://asean.org/book/committee-of-permanent-representatives-to-asean-cpr-handbook/' => 'CPR Handbook',
+							'https://asean.org/what-we-do/committee-of-permanent-representatives/list-of-the-committee-of-permanent-representatives-to-asean-cpr/' => 'List of the Committee of Permanent Representatives to ASEAN',
+						),
+						'Missions to ASEAN' => array(
+							'http://asean.china-mission.gov.cn/eng/' => 'Mission of the People&rsquo;s Republic of China to ASEAN',
+							'https://www.asean.emb-japan.go.jp/itprtop_en/index.html' => 'Mission of Japan to ASEAN',
+							'https://overseas.mofa.go.kr/asean-en/index.do' => 'Mission of the Republic of Korea to ASEAN',
+						),
+					);
+					foreach ( $apt_cpr_links as $apt_group => $apt_links ) {
+						echo '<nav class="apt-sidebar-list apt-sidebar-links" aria-label="' . esc_attr( $apt_group ) . '"><h2 class="apt-sidebar-title">' . esc_html( $apt_group ) . '</h2><ul>';
+						foreach ( $apt_links as $apt_url => $apt_label ) {
+							echo '<li><a class="apt-external" href="' . esc_url( $apt_url ) . '" target="_blank" rel="noopener">' . $apt_label . $apt_nt . '</a></li>';
+						}
+						echo '</ul></nav>';
+					}
 				}
 				//for level pillars
 				if($catlev == "pillar"){
@@ -637,7 +649,7 @@ if($current_category == 'other-documents'){
 				//multilevel links
 				if($catanc == "cpr") :	
 					// Other levels and documents, as a plain list (styled in apt-design.css)
-					echo('<nav class="ministerial-sidebar apt-sidebar-list" aria-label="Other statements and documents"><ul>');
+					echo('<nav class="ministerial-sidebar apt-sidebar-list" aria-label="Other statements and documents"><h2 class="apt-sidebar-title">Browse statements and documents</h2><ul>');
 					wp_list_categories( array(
 						'echo'       => true,
 						'depth'      => 2,

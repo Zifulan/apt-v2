@@ -57,8 +57,6 @@ jQuery(function($) {
 			if($level->slug == "summit-level-statements"){
 
 				$spoilercontent = '[catlist id='.$level->term_id.' template=akseki_lcptemplate2 numberposts=-1]';
-			/*}elseif($level->slug == "director-general-level"){
-				$spoilercontent = "dg";*/
 			}elseif($level->slug == "cpr-level-statements-and-declarations"){
 				$spoilercontent = '[catlist id='.$level->term_id.' template=akseki_lcptemplate2 numberposts=-1]';
 			}else{

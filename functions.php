@@ -1739,47 +1739,55 @@ function echo_category_descriptor($current_category_id){
 	//end cat desc
 }
 
-//level resources
-function akseki_get_level_resources($level_id){
-	$level_obj = get_category($level_id);
-	$pillars=get_categories(array('parent'=>$level_id));
-	$sc2 = '';
-	foreach($pillars as $pillar){
-		$topics=get_categories(array('parent'=>$pillar->term_id));
-		$sc4 = '';
-		foreach($topics as $topic){
-			//handle no listing categories
-			$cat_extra = get_term_meta( $topic->term_id, '_catextra', true );
+/**
+ * Level page (Ministerial-level, SOM, Director-General …): one collapsible
+ * section per pillar, with its themes and a card per meeting showing the
+ * latest statements. Built directly, without plugin shortcodes.
+ */
+function akseki_get_level_resources( $level_id ) {
+	$pillars = get_categories( array( 'parent' => $level_id ) );
+	$out     = '<div class="apt-level-pillars">';
+	foreach ( $pillars as $n => $pillar ) {
+		$topics = get_categories( array( 'parent' => $pillar->term_id ) );
+		if ( ! $topics ) {
+			continue;
+		}
+		$out .= '<details class="apt-level-pillar pillar-' . esc_attr( apt_pillar_key( $pillar->name ) ) . '"' . ( 0 === $n ? ' open' : '' ) . '>';
+		$out .= '<summary><h2 class="apt-level-pillar-name">' . esc_html( $pillar->name ) . '</h2></summary><div class="apt-level-pillar-body">';
 
-			$extra_title = '<h5><u>'.$topic->name.'</u></h5>';
-			if($cat_extra == "has_no_listing"){
-				$sc5 = echo_category_descriptor($topic->term_id).'<em class="float-right"><a href="'.get_category_link($topic->term_id).'">more about '.$topic->name.'&hellip;</a></em>';
-			}else{
-				$sc5 = '[catlist id='.$topic->term_id.' template=akseki_lcptemplate2 numberposts=-1]';
-
+		$themes = akseki_get_themes_in_pillar( $pillar->term_id );
+		if ( $themes ) {
+			$out .= '<p class="apt-pillar-themes"><span>Themes:</span> ';
+			foreach ( $themes as $theme_id => $theme ) {
+				$out .= '<a class="badge badge-secondary" href="' . esc_url( get_permalink( $theme_id ) ) . '">' . esc_html( $theme ) . '</a> ';
 			}
-			$sc4 .= '[su_tab title="<h5>'.$topic->name.'</h5><em>'.$topic->description.'</em>" disabled="no" anchor="" url="" target="blank" class=""]'.$sc5.'[/su_tab]';
-
+			$out .= '</p>';
 		}
-		$sc3 = '';
-		$te_arr = akseki_get_themes_in_pillar($pillar->term_id);
-		$themesecho = '';
-		if(!empty($te_arr)){
-			foreach($te_arr as $keytheme=>$theme){
-				$themesecho .= '<a class="badge badge-secondary" href="'.get_permalink($keytheme).'">'.$theme.'</a>&ensp;';
+
+		$out .= '<div class="apt-meeting-grid">';
+		foreach ( $topics as $topic ) {
+			$url  = get_category_link( $topic->term_id );
+			$out .= '<section class="apt-meeting"><h3 class="apt-meeting-name"><a href="' . esc_url( $url ) . '">' . esc_html( $topic->name ) . '</a></h3>';
+			if ( trim( (string) $topic->description ) ) {
+				$out .= '<p class="apt-meeting-full">' . esc_html( wp_strip_all_tags( $topic->description ) ) . '</p>';
 			}
+			if ( 'has_no_listing' !== get_term_meta( $topic->term_id, '_catextra', true ) ) {
+				$latest = get_posts( array( 'cat' => $topic->term_id, 'numberposts' => 3, 'post_status' => 'publish' ) );
+				if ( $latest ) {
+					$out .= '<ul class="apt-meeting-latest">';
+					foreach ( $latest as $p ) {
+						$title = get_the_title( $p );
+						$item  = has_tag( 'hasnocontent', $p ) ? $title : '<a href="' . esc_url( get_permalink( $p ) ) . '">' . $title . '</a>';
+						$out  .= '<li>' . $item . '<span class="akseki-meta">' . akseki_get_the_meta( $p->ID ) . '</span></li>';
+					}
+					$out .= '</ul>';
+				}
+			}
+			$out .= '<a class="apt-meeting-all apt-arrow" href="' . esc_url( $url ) . '">' . esc_html( sprintf( 'All %s', $topic->name ) ) . '</a></section>';
 		}
-		if(!empty($themesecho)){
-			$sc3 .= '<p class="apt-pillar-themes"><span>Themes in '.$pillar->name.':</span> '.$themesecho.'</p>';
-		}
-		$sc3 .= '[su_tabs style="default" active="1" vertical="yes" class=""]'.$sc4.'[/su_tabs]';
-		//themes
-
-		$sc2 .= '[su_spoiler title="'.$pillar->name.'" open="no" style="default" icon="plus" anchor=""]'.$sc3.'[/su_spoiler]<hr class="my-2">';
+		$out .= '</div></div></details>';
 	}
-	$spoilercontent = do_shortcode('[su_accordion class="b_acc ml-4 '.$level_obj->slug.'"]'.$sc2.'[/su_accordion]');
-
-	return $spoilercontent;
+	return $out . '</div>';
 }
 
 function akseki_get_themes_in_pillar($pillar_id){
@@ -2119,4 +2127,41 @@ function apt_flag_lineup_html( $class = 'apt-hero-flags' ) {
 		$html .= '</ul>';
 	}
 	return $html . '</div>';
+}
+
+/**
+ * One statement row: the meeting's short name and year on the left, the full
+ * title (linked unless upcoming) and place/date on the right. Used by meeting
+ * pages (listings-list.php), the Statements page and the level pages.
+ *
+ * @param int    $id          Post ID.
+ * @param string $heading_tag Heading for the title, to fit the page outline.
+ */
+function apt_statement_row_html( $id, $heading_tag = 'h2' ) {
+	$heading_tag = in_array( $heading_tag, array( 'h2', 'h3', 'h4' ), true ) ? $heading_tag : 'h2';
+	$sm      = akseki_get_sm( $id );
+	$sc      = akseki_get_sc_raw( $id );
+	$future  = get_the_date( 'Y-m-d H:i:s', $id ) > current_time( 'Y-m-d H:i:s' );
+	$label   = ! empty( $sm ) ? 'Extra' : akseki_get_shortname( get_the_title( $id ), $id );
+	$year    = ( $future && 'SC_nodate' === $sc ) ? '<em>tbd</em>' : get_the_date( 'Y', $id );
+	$title   = get_the_title( $id );
+	if ( $future ) {
+		$link = '<span class="apt-tag">Upcoming</span> ' . $title;
+	} elseif ( has_tag( 'hasnocontent', $id ) ) {
+		$link = $title; // listed for the record; there is no page to open
+	} else {
+		$link = '<a href="' . esc_url( get_permalink( $id ) ) . '">' . $title . '</a>';
+	}
+	$meta    = akseki_get_the_meta( $id );
+	if ( $future && 'SC_year' === $sc ) {
+		$meta = preg_replace( '/<span class="meta-date">.+?<\/span>/', akseki_get_sc( $id ), $meta );
+	} elseif ( $future && 'SC_month' === $sc ) {
+		$meta = preg_replace( '/<span class="meta-date">.+?<\/span>/', get_the_date( 'F Y', $id ), $meta );
+	} elseif ( $future && 'SC_nodate' === $sc ) {
+		$meta = '<em>tbd</em>';
+	}
+	return '<li class="list-group-item apt-statement-row' . ( $future ? ' thefuturepost is-upcoming' : '' ) . '">'
+		. '<div class="apt-statement-when"><span class="apt-statement-short">' . $label . '</span><span class="apt-statement-year">' . $year . '</span></div>'
+		. '<div class="apt-statement-main"><' . $heading_tag . ' class="apt-statement-title">' . $link . '</' . $heading_tag . '>'
+		. '<p class="akseki-meta">' . $meta . '</p></div></li>';
 }
