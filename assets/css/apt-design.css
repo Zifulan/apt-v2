@@ -1248,32 +1248,16 @@ main.site-single {
 	margin: 0 0 18px;
 }
 
-/* Category tags (sidebar-breadcrumb.php): outline pills instead of skewed grey buttons */
-.site-main:not(.front-main) .akseki_breadcrumb { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px !important; }
-.site-main:not(.front-main) .akseki_breadcrumb > div { display: contents; }
-.site-main:not(.front-main) .akseki_breadcrumb .ab-item {
-	transform: none;
-	display: inline-flex; align-items: center; gap: 6px;
-	min-block-size: max(32px, var(--target-size));
-	margin: 0 !important;
-	padding: 4px 14px !important;
-	border: 1px solid var(--rule-soft) !important;
-	border-radius: var(--radius-pill);
-	background: var(--paper) !important;
-	color: var(--ink-2) !important;
-	box-shadow: none !important;
-	font-size: 0.85rem; font-weight: 500;
-}
-.site-main:not(.front-main) .akseki_breadcrumb .ab-item small { font-size: inherit; font-style: normal; font-weight: inherit; }
-.site-main:not(.front-main) .akseki_breadcrumb .ab-item:hover { border-color: var(--ink) !important; color: var(--ink) !important; }
-/* the meeting itself (last tag) */
-.site-main:not(.front-main) .akseki_breadcrumb > div:last-child .ab-item {
-	background: var(--ink) !important; border-color: var(--ink) !important; color: var(--paper) !important; font-weight: 600;
-}
-.site-main:not(.front-main) .akseki_breadcrumb > div:last-child .ab-item:hover { background: var(--apt-red) !important; border-color: var(--apt-red) !important; }
-.site-main:not(.front-main) .akseki_breadcrumb .ab-pillar::before {
-	content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--tag-c, var(--pillar-other));
-}
+/* Breadcrumb trail (sidebar-breadcrumb.php): level > pillar > theme > meeting.
+   Sits above the title on meeting pages and in the statement sidebar. */
+.apt-breadcrumb { margin: 0 0 14px !important; }
+.apt-breadcrumb ol { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 0; list-style: none; margin: 0; padding: 0; font-size: 0.9rem; color: var(--ink-2); }
+.apt-breadcrumb li { display: inline-flex; align-items: center; }
+.apt-breadcrumb li + li::before { content: '\203A'; margin: 0 8px; color: var(--ink-2); }
+.apt-breadcrumb a { display: inline-flex; align-items: center; gap: 6px; min-block-size: var(--target-size); color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule-soft); text-underline-offset: 3px; }
+.apt-breadcrumb a:hover { color: var(--ink); text-decoration-color: currentColor; }
+.apt-breadcrumb [aria-current] { color: var(--ink); font-weight: 600; }
+.apt-breadcrumb .ab-pillar::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--tag-c, var(--pillar-other)); }
 
 /* Place and date */
 .apt-post .akseki-detail-style1.akseki-meta,
@@ -1500,11 +1484,12 @@ main.site-single {
 .site-main:not(.front-main) .card.bg-primary .btn { background: var(--paper) !important; color: var(--ink) !important; border-radius: var(--radius-pill); }
 .site-main:not(.front-main) .card.bg-primary .btn:hover { background: var(--apt-yellow) !important; }
 
-/* Description boxes above category listings (were grey) */
+/* Introduction above category listings: plain lead text, not a grey box */
 .site-main:not(.front-main) .catdesc {
-	border: 0 !important; border-radius: var(--radius-tile) !important;
-	background: var(--paper-2) !important; color: var(--ink) !important;
-	padding: clamp(16px, 2.5vw, 24px) !important; line-height: 1.65;
+	border: 0 !important; border-radius: 0 !important;
+	background: none !important; color: var(--ink) !important;
+	padding: 0 !important; margin: 0 0 clamp(20px, 3vw, 32px) !important;
+	font-size: clamp(1rem, 0.96rem + 0.2vw, 1.1rem); line-height: 1.7; max-width: 72ch;
 }
 
 /* Listing meta: no italics, no maroon chevrons */
@@ -1747,3 +1732,34 @@ main.site-single {
 @media (max-width: 400px) {
 	.apt-section-title .text-nowrap { white-space: normal !important; }
 }
+
+/* Statement rows on meeting pages (listings-list.php): a quiet label with the
+   meeting and year on the left, the full title and place/date on the right. */
+.site-main:not(.front-main) .ministerial-listing { gap: 0; }
+.site-main:not(.front-main) .apt-statement-row {
+	display: grid !important; grid-template-columns: 8.5rem 1fr; gap: 6px 20px; align-items: start;
+	padding: 18px 0 !important; border: 0 !important; border-top: 1px solid var(--rule-soft) !important;
+	background: none !important;
+}
+.apt-statement-when { display: flex; flex-direction: column; gap: 2px; padding-top: 2px; }
+.apt-statement-short { font-weight: 600; color: var(--ink); font-size: 0.95rem; }
+.apt-statement-year { color: var(--ink-2); font-size: 0.85rem; }
+.apt-statement-main { min-width: 0; }
+.apt-statement-title { font-size: 1.05rem !important; font-weight: 600 !important; line-height: 1.35; margin: 0 0 6px !important; color: var(--ink); font-family: var(--font) !important; letter-spacing: 0; }
+.apt-statement-title a { color: var(--ink); text-decoration: none; }
+.apt-statement-title a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
+.apt-statement-row .akseki-meta { margin: 0; color: var(--ink-2); font-size: 0.9rem; }
+.apt-statement-row.is-upcoming .apt-statement-title { font-weight: 500 !important; color: var(--ink-2); }
+@media (max-width: 575.98px) {
+	.site-main:not(.front-main) .apt-statement-row { grid-template-columns: 1fr; }
+	.apt-statement-when { flex-direction: row; gap: 10px; }
+}
+
+/* Small notes in sidebars (e.g. "downloads are limited"): text, not a fake button */
+.apt-note { margin: 0 0 20px; padding-left: 12px; border-left: 3px solid var(--apt-yellow); color: var(--ink-2); font-size: 0.9rem; line-height: 1.5; }
+
+/* Category pages: content lines up with the title (Bootstrap's row/column
+   padding pushed it 15px in). */
+.site-main:not(.front-main) #avi-content > .listings-wrapper.row { margin-inline: 0; }
+.site-main:not(.front-main) #avi-content > .listings-wrapper.row > .order-2 { padding-left: 0; }
+.site-main:not(.front-main) #avi-content > .listings-wrapper.row > .order-3 { padding-right: 0; }

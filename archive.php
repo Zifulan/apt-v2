@@ -203,26 +203,9 @@ if($columns === "setup3"){
 	$sidebarcol = "";
 }
 
-//header extra class
+//header extra class (the old faded header photos are no longer used)
 $headerextraclass = '';
-if($catlev == "pillar"){
-	$headerbgimage = '';
-	if($catpil == "political"){
-		$headerbgimage = wp_get_attachment_url(3325);
-	}elseif($catpil == "economic"){
-		$headerbgimage = wp_get_attachment_url(3298);
-	}elseif($catpil == "socio"){
-		$headerbgimage = wp_get_attachment_url(3296);
-	}
-	$headerextraclass = ' py-4 hec hec-'.$catpil;
-	echo('
-	<style>
-	.hec{background-repeat: no-repeat;background-position: center center;background-size: cover;overflow: hidden;text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 60px #fff, 0 0 70px #fff;}
-	.hec-'.$catpil.'{background-image: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)), url('.$headerbgimage.');}
-	</style>
-	');
 
-}
 //category descriptors
 //handle category description page here
 //METHOD: search for a post that is a child in the Category Descriptor page that has the same title as the category
@@ -269,13 +252,15 @@ if($current_category == 'other-documents'){
 		<?php if ( have_posts() ) : ?>
 		<header class="page-header row mx-0<?php echo($headerextraclass);?>">
 			<?php					
+				// Meeting pages: where this meeting sits (level > pillar > theme), above the title
+				if ( $catlev == "topic" and in_array( $catanc, array( 'ministerial', 'dg', 'som', 'wg', 'othlev' ) ) ) {
+					get_template_part( 'template-parts/sidebar', 'breadcrumb', array( 'the_curcat' => $current_category_id ) );
+				}
 				echo '<h1 class="page-title w-100">';
 				single_term_title();
 				echo '</h1>';
 				if($catlev == 'topic') :
-					echo '<p class="category-subtitle badge badge-primary pl-1 pr-2"><span class="dashicons dashicons-arrow-right-alt2"></span>'.strip_tags(category_description()).'</p>';
-				else:
-					echo('<hr/>');
+					echo '<p class="category-subtitle">'.strip_tags(category_description()).'</p>';
 				endif;			
 			?>
 		</header><!-- .page-header -->
@@ -631,14 +616,10 @@ if($current_category == 'other-documents'){
 			?>
 			<div class="<?php echo($sidebarcol); ?> <?php echo($extraclass); ?>-sidebar topic-sidebar order-3">
 				<?php
-				//image logo
-				if($catlev == "topic" or $catanc == "cpr"){					
-					echo(wp_get_attachment_image(3347, 'medium', '', array('class' => 'rounded img-fluid float-left mr-4')));
-				}
 				//limited download
 				if($catanc == "cpr" or $catanc == "som" or $catanc == "othlev"){
 					if($catlev == "topic" or $catanc == "cpr"){
-						echo('<div class="btn btn-outline-primary my-4 w-100 text-center">Document downloads for these meetings are limited.</div>');
+						echo('<p class="apt-note">Document downloads for these meetings are limited.</p>');
 					}
 				}
 				//cpr links
@@ -734,8 +715,6 @@ if($current_category == 'other-documents'){
 				//other topics in ministerial or som in topic
 				if($catlev == "topic" and in_array($catanc,['ministerial','dg','som','wg','othlev'])):
 
-					//vertical breadcrumb
-					get_template_part( 'template-parts/sidebar', 'breadcrumb', $args = array('the_curcat'=>$current_category_id) );
 					//same theme
 					get_template_part( 'template-parts/sidebar', 'akseki_same-theme', $args = array('current_category'=>$current_category_id));
 

@@ -1726,26 +1726,12 @@ function echo_category_descriptor($current_category_id){
 		if($current_category_obj->name === $child->post_title):
 
 			$catdesc_content = $child->post_content;
-			if ( has_post_thumbnail($child->ID) ) :
-				$catdesc_echo .= '
-				<style>
-					.category-'.$current_category_id.' .ministerial-sidebar{padding-right:0;}
-					.category-'.$current_category_id.' .ministerial-sidebar h3{width:100%;}
-					.category-'.$current_category_id.' header h1{margin-top:10px;}
-					.category-'.$current_category_id.' header{
-						background-image: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)), url("'.get_the_post_thumbnail_url($child->ID).'");
-						background-repeat:none;
-						background-position: center center;
-						background-size:cover;
-						overflow:hidden;
-					}
-				</style>
-				';
-			endif;
+			// The descriptor's featured image used to sit faded behind the page title;
+			// the redesigned header is plain, so it is no longer used.
 		endif;
 	endforeach;	
 	if(!empty($catdesc_content)):
-		$catdesc_echo .= '<div class="catdesc list-group-item w-100 rounded bg-secondary p-3 mb-3">';
+		$catdesc_echo .= '<div class="catdesc apt-catdesc">';
 		$catdesc_echo .= $catdesc_content;			
 		$catdesc_echo .= '</div>';				
 	endif;
