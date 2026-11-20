@@ -84,33 +84,32 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-/* Gradient on a fixed, oversized layer (background-attachment: fixed is
-   ignored on iOS). It drifts with transform only, so the compositor moves it
-   without repainting the page every frame. */
+/* Background on a fixed layer (background-attachment: fixed is ignored on
+   iOS). Official ASEAN blue, with the red as a glow behind the hero's photo
+   card (top right) and a faint yellow at the bottom left. The red fades out
+   before the Highlights row, so no text sits on a red/yellow mix; it is
+   static, so it never drifts under text either. Positions are in viewport
+   units because the layer is the viewport. */
 body::before {
 	content: '';
 	position: fixed;
-	inset: -30vmax;
+	inset: 0;
 	z-index: -1;
 	pointer-events: none;
+	background-color: var(--apt-blue);
 	background-image:
-		radial-gradient(30vmax 24vmax at 80% 76%, rgba(251, 243, 21, 0.1), transparent 70%),
-		linear-gradient(120deg, var(--apt-blue) 45%, var(--apt-red) 75%);
-	/* Official blue to official red with a short blend, mixed in Oklab so the
-	   middle stays muted rather than purple; a faint yellow warms the bottom-
-	   right corner. Yellow is kept at 10%: any stronger and white text on the
-	   red drops below 4.5:1 (measured worst case 4.52:1). Browsers without
-	   "in oklab" keep the plain gradient above. */
-	background-image:
-		radial-gradient(30vmax 24vmax at 80% 76%, rgba(251, 243, 21, 0.1), transparent 70%),
-		linear-gradient(120deg in oklab, var(--apt-blue) 45%, var(--apt-red) 75%);
+		radial-gradient(46vw 40vh at 74vw 34vh, rgba(199, 57, 53, 0.95), rgba(199, 57, 53, 0.55) 45%, rgba(199, 57, 53, 0) 78%),
+		radial-gradient(40vw 34vh at 0 100vh, rgba(251, 243, 21, 0.09), transparent 75%),
+		linear-gradient(160deg, var(--apt-blue), #234a8f);
 }
-@media (prefers-reduced-motion: no-preference) {
-	body::before { animation: apt-grad 28s ease-in-out infinite alternate; }
-}
-@keyframes apt-grad {
-	from { transform: translate3d(-12vmax, -4vmax, 0); }
-	to   { transform: translate3d(12vmax, 4vmax, 0); }
+@media (max-width: 767.98px) {
+	/* Phones: the photo card sits under the title, full width */
+	body::before {
+		background-image:
+			radial-gradient(90vw 26vh at 70vw 44vh, rgba(199, 57, 53, 0.9), rgba(199, 57, 53, 0.5) 45%, rgba(199, 57, 53, 0) 80%),
+			radial-gradient(60vw 30vh at 0 100vh, rgba(251, 243, 21, 0.09), transparent 75%),
+			linear-gradient(160deg, var(--apt-blue), #234a8f);
+	}
 }
 
 h1, h2, h3, h4, h5, h6,

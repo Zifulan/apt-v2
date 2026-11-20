@@ -27,7 +27,7 @@
 				<header class="apt-header">
 					<a class="apt-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="ASEAN Plus Three - Home">
 						<?php echo load_logo_svg(); ?>
-						<span class="apt-brand-text" aria-hidden="true"><span>ASEAN</span><span>Plus</span><span>Three</span></span>
+						<span class="apt-brand-text" aria-hidden="true"><span>ASEAN</span> <span>Plus</span> <span>Three</span></span>
 					</a>
 					<div class="apt-header-actions">
 						<button type="button" class="apt-header-btn" commandfor="apt-search" command="show-modal" aria-label="<?php esc_attr_e( 'Search', 'akseki-vi' ); ?>">

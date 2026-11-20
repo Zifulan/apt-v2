@@ -111,7 +111,7 @@
 								if(has_post_thumbnail()):
 									echo the_post_thumbnail( 'medium_large' );
 								else:
-									echo '<img src="'.wp_get_attachment_image_url( 1007, "medium_large" ).'" class="attachment-medium_large size-medium_large wp-post-image" sizes="(max-width: 768px) 100vw, 768px" width="768" height="512" alt="">';
+									echo apt_post_image_html( get_the_ID(), 'medium_large', '(max-width: 768px) 100vw, 768px', array( 'class' => 'wp-post-image', 'loading' => 'eager' ) ); // category cover
 								endif;
 							?>
 						</a>

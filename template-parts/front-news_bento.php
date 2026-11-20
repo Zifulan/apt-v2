@@ -26,7 +26,9 @@
 				'post_status' => 'publish',
 				'order'=>'DESC',
 				'posts_per_page' => 12,
-				'category_name'=> implode( ',', $descats_arr )
+				'category_name'=> implode( ',', $descats_arr ),
+				// The hero already features the newest statement: don't repeat it here.
+				'post__not_in' => ! empty( $GLOBALS['apt_home_feature_id'] ) ? array( (int) $GLOBALS['apt_home_feature_id'] ) : array(),
 			];										
 			$latest_query = new WP_Query( $latest_args ); 
 			

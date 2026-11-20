@@ -6,12 +6,6 @@
 		'posts_per_page' => 4,
 	] );
 
-	if ( ! function_exists( 'a_get_the_post_thumbnail_url' ) ) {
-		function a_get_the_post_thumbnail_url( $size = 'large' ) {
-			$th = get_the_post_thumbnail_url( get_the_ID(), $size );
-			return $th !== false ? $th : wp_get_attachment_image_url( 1007, $size );
-		}
-	}
 
 	$ftn_cats = array_merge(
 		akseki_get_ministrial_categories(),
@@ -36,21 +30,19 @@
 				$ftn_short = $ftn_title;
 			}
 
-			$thumb_id = get_post_thumbnail_id( $ftn_ID );
-			$thumb    = wp_get_attachment_image_src( $thumb_id ? $thumb_id : 1007, 'large' );
 			$item = [
+				'id'    => $ftn_ID,
 				'short' => $ftn_short,
 				'title' => $ftn_title,
 				'link'  => get_the_permalink(),
 				'meta'  => akseki_get_the_meta( $ftn_ID ),
-				'img'   => a_get_the_post_thumbnail_url( 'large' ),
-				'w'     => $thumb ? (int) $thumb[1] : 0,
-				'h'     => $thumb ? (int) $thumb[2] : 0,
 			];
 
 			if ( null === $ftn_feature ) {
 				$ftn_feature = $item;
-			} else {
+				// The news carousel below leaves this statement out (no duplicate).
+				$GLOBALS['apt_home_feature_id'] = $ftn_ID;
+			} elseif ( $ftn_ID !== $ftn_feature['id'] ) {
 				$ftn_highlights[] = $item;
 			}
 		endwhile;
@@ -67,7 +59,7 @@
 		<?php if ( $ftn_feature ) : ?>
 		<a class="apt-hero-feature" href="<?php echo esc_url( $ftn_feature['link'] ); ?>">
 			<?php /* LCP image: high priority, never lazy; intrinsic size prevents layout shift */ ?>
-			<img src="<?php echo esc_url( $ftn_feature['img'] ); ?>" alt=""<?php if ( $ftn_feature['w'] && $ftn_feature['h'] ) : ?> width="<?php echo (int) $ftn_feature['w']; ?>" height="<?php echo (int) $ftn_feature['h']; ?>"<?php endif; ?> fetchpriority="high">
+			<?php echo apt_post_image_html( $ftn_feature['id'], 'large', '(max-width: 767px) 92vw, (max-width: 1279px) 46vw, 600px', array( 'loading' => 'eager', 'fetchpriority' => 'high' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<span class="apt-hero-feature-label">Latest</span>
 			<span class="apt-hero-feature-cap">
 				<span>

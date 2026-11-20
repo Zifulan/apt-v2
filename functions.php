@@ -24,11 +24,13 @@ function avi_enqueue() {
 
 	//jQUERY
     $dependencies = array('jquery');
-	wp_register_script( 'gdgt-base', get_stylesheet_directory_uri() . '/vendor/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), NULL, false );
+	// In the footer: it only wires up collapse/modal/tab components after load,
+	// so it must not block the first paint.
+	wp_register_script( 'gdgt-base', get_stylesheet_directory_uri() . '/vendor/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), '4.6', true );
     wp_enqueue_script( 'gdgt-base' );
 
 	//AKSEKI
-	wp_register_script( 'akseki-js', get_stylesheet_directory_uri() . '/akseki.js' );
+	wp_register_script( 'akseki-js', get_stylesheet_directory_uri() . '/akseki.js', array( 'jquery', 'gdgt-base' ), filemtime( get_stylesheet_directory() . '/akseki.js' ), true );
     wp_enqueue_script( 'akseki-js' );
 
 	//APT DESIGN SYSTEM (loaded last so it wins over bootstrap + style.css)
@@ -1442,8 +1444,10 @@ add_action('parse_query', 'no_nopaging');
 /** Photo of a category's latest statement (or the default image). */
 function apt_latest_photo_html( $cat_id, $size = 'medium_large' ) {
 	$latest = get_posts( array( 'cat' => $cat_id, 'numberposts' => 1, 'post_status' => 'publish', 'fields' => 'ids' ) );
-	$thumb  = ( $latest && has_post_thumbnail( $latest[0] ) ) ? get_post_thumbnail_id( $latest[0] ) : 1007;
-	return wp_get_attachment_image( $thumb, $size, false, array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async' ) );
+	if ( ! $latest ) {
+		return '';
+	}
+	return apt_post_image_html( $latest[0], $size, '(max-width: 767px) 92vw, 360px' );
 }
 
 /**
@@ -1490,9 +1494,8 @@ function akseki_get_recent_posts( $atts ) {
 	}
 	$out = '<ul class="apt-recent-cards">';
 	foreach ( $posts as $p ) {
-		$thumb = has_post_thumbnail( $p->ID ) ? get_post_thumbnail_id( $p->ID ) : 1007;
 		$out  .= '<li><a class="apt-recent-card" href="' . esc_url( get_permalink( $p->ID ) ) . '">'
-			. wp_get_attachment_image( $thumb, 'medium', false, array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async' ) )
+			. apt_post_image_html( $p->ID, 'medium', '(max-width: 600px) 45vw, 180px' )
 			. '<span class="apt-recent-name">' . akseki_get_shortname( $p->post_title, $p->ID, 3 ) . '</span>'
 			. '<span class="akseki-meta">' . akseki_get_the_meta( $p->ID ) . '</span></a></li>';
 	}
@@ -1935,12 +1938,19 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 	$card_class = 'news-card-summit';
 	}
 	$st = ( $latest['shortname'] !== $latest['title'] ) ? '<p class="news-card-subtitle">' . $latest['title'] . '</p>' : '';
-	$thethumb = has_post_thumbnail() ? get_the_post_thumbnail_url( $latest['id'], 'medium_large' ) : wp_get_attachment_image_url( 1007, 'medium_large' );
+	// Backdrop (blurred): the small thumbnail is enough. Photo: responsive; no photo: category cover.
+	if ( has_post_thumbnail( $latest['id'] ) ) {
+		$thethumb = get_the_post_thumbnail_url( $latest['id'], 'thumbnail' );
+	} else {
+		$apt_cover = apt_fallback_cover( $latest['id'] );
+		$thethumb  = $apt_cover['url'];
+	}
+	$apt_img = apt_post_image_html( $latest['id'], 'medium_large', '(max-width: 600px) 92vw, 380px', array( 'class' => 'news-card-image' ) );
 	$topic = ( $latest['category'] && ! is_wp_error( $latest['category'] ) )
 	? '<div class="news-meta-item"><dt class="meta-label">Topic:</dt> <dd><a href="' . esc_url( get_category_link( $latest['category'] ) ) . '">' . $latest['category']->description . '</a></dd></div>'
 	: '';
 	return '<article class="news-card ' . $card_class . '" id="card_com-' . get_the_ID() . '"' . ( $thethumb ? ' style="--card-img: url(&quot;' . esc_url( $thethumb ) . '&quot;)"' : '' ) . '>'
-	. ( $thethumb ? '<img src="' . esc_url( $thethumb ) . '" class="news-card-image" alt="" loading="lazy"/>' : '' )
+	. $apt_img
 	. '<header class="news-card-header">' . $lp . '<' . $heading_tag . ' class="news-card-title">' . $heading . '</' . $heading_tag . '>' . $st
 	. '<p class="news-card-date">' . akseki_get_the_meta( $latest['id'] ) . '</p></header>'
 	. '<dl class="news-meta-grid">' . $ll . $lt . $topic . '</dl>'
@@ -2094,3 +2104,77 @@ function apt_archive_years() {
 	set_transient( 'apt_archive_years', $years, 12 * HOUR_IN_SECONDS );
 	return $years;
 }
+
+/**
+ * Cover for a statement without a photo, chosen by category so the site
+ * doesn't repeat one image: Summit, the three pillars, or a general cover.
+ * Files in img/covers/ (1200x800).
+ *
+ * @return array{url:string,w:int,h:int}
+ */
+function apt_fallback_cover( $post_id ) {
+	$key = 'general';
+	if ( in_category( 41, $post_id ) ) {
+		$key = 'summit';
+	} else {
+		$pillar = get_category( akseki_get_level_from_id( $post_id, 'post', 'pillar' ) );
+		if ( $pillar && ! is_wp_error( $pillar ) ) {
+			$p = apt_pillar_key( $pillar->name );
+			if ( 'other' !== $p ) {
+				$key = $p;
+			}
+		}
+	}
+	return array( 'url' => get_stylesheet_directory_uri() . '/img/covers/cover-' . $key . '.jpg', 'w' => 1200, 'h' => 800 );
+}
+
+/** <img> for a statement: its photo (responsive srcset) or its category cover. */
+function apt_post_image_html( $post_id, $size, $sizes, $attr = array() ) {
+	$attr = array_merge( array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $sizes ), $attr );
+	if ( has_post_thumbnail( $post_id ) ) {
+		return wp_get_attachment_image( get_post_thumbnail_id( $post_id ), $size, false, $attr );
+	}
+	$c    = apt_fallback_cover( $post_id );
+	$html = '<img src="' . esc_url( $c['url'] ) . '" width="' . $c['w'] . '" height="' . $c['h'] . '"';
+	foreach ( $attr as $k => $v ) {
+		if ( 'sizes' !== $k ) {
+			$html .= ' ' . esc_attr( $k ) . '="' . esc_attr( $v ) . '"';
+		}
+	}
+	return $html . '>';
+}
+
+/*
+ * Loading performance (from the live Lighthouse reports)
+ */
+// The icon font (dashicons) is only used for small icons further down the
+// page: load it without blocking the first paint.
+add_filter( 'style_loader_tag', function ( $tag, $handle ) {
+	if ( 'dashicons' === $handle && ! is_admin() && ! is_user_logged_in() ) {
+		$tag = str_replace( "media='all'", "media='print' onload=\"this.media='all'\"", $tag ) . '<noscript>' . $tag . '</noscript>';
+	}
+	return $tag;
+}, 10, 2 );
+
+// The home page has no share buttons: skip the social-sharing plugin's files there.
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! is_front_page() ) {
+		return;
+	}
+	foreach ( array( wp_scripts(), wp_styles() ) as $deps ) {
+		foreach ( (array) $deps->queue as $handle ) {
+			$src = isset( $deps->registered[ $handle ] ) ? (string) $deps->registered[ $handle ]->src : '';
+			if ( false !== strpos( $src, 'sassy-social-share' ) ) {
+				$deps === wp_scripts() ? wp_dequeue_script( $handle ) : wp_dequeue_style( $handle );
+			}
+		}
+	}
+}, 100 );
+
+// Open the connection to the font server early.
+add_filter( 'wp_resource_hints', function ( $urls, $type ) {
+	if ( 'preconnect' === $type ) {
+		$urls[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' );
+	}
+	return $urls;
+}, 10, 2 );

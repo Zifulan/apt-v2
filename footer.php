@@ -3,7 +3,7 @@
 						<div class="apt-footer-top">
 							<a class="apt-brand apt-footer-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="ASEAN Plus Three - Home">
 								<?php echo str_replace( 'id="logo"', 'id="logo-footer"', load_logo_svg() ); ?>
-								<span class="apt-brand-text" aria-hidden="true"><span>ASEAN</span><span>Plus</span><span>Three</span></span>
+								<span class="apt-brand-text" aria-hidden="true"><span>ASEAN</span> <span>Plus</span> <span>Three</span></span>
 							</a>
 							<ul class="apt-social" aria-label="ASEAN Secretariat on social media">
 								<li><a href="https://facebook.com/aseansecretariat" target="_blank" rel="noopener" aria-label="Facebook"><span class="dashicons dashicons-facebook-alt" aria-hidden="true"></span></a></li>

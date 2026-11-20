@@ -35,7 +35,7 @@ function echo_the_topics($pillarobj){
 
 				
 				if($pillarobj->parent == $cl && $topic_cat_obj->category_count > 0){
-					$tpc_topics_echo .= '<h5 class="mb-0"><a href="'.get_category_link($topic_cat_obj).'">'.$topic_cat_obj->name.'</a></h5>';
+					$tpc_topics_echo .= '<h4 class="mb-0 h5"><a href="'.get_category_link($topic_cat_obj).'">'.$topic_cat_obj->name.'</a></h4>';
 					$tpc_topics_echo .= '<em class="mb-2 badge badge-light font-weight-normal">'.$topic_cat_obj->description.'</em>';
 					$emptymarker++;
 				}
@@ -65,10 +65,11 @@ foreach($levels as $key=>$level){
 		$selected = "true";
 	}else{
 		$active = "";
-	}
 		$selected = "false";
-		echo('<li class="col nav-item mx-1 px-0">
-			<a href="javascript:void(0);" class="text-muted bg-light text-muted text-center h-100 nav-link'.$active.'" id="'.$level->term_id.'-tab" data-toggle="tab" data-target="#'.$level->slug.'-tabcontent" role="tab" aria-controls="'.$level->slug.'-tabcontent" aria-selected="'.$selected.'">'.$level->cat_name.'</a>
+	}
+		// role="presentation" on <li> and an id matching the panel's aria-labelledby
+		echo('<li class="col nav-item mx-1 px-0" role="presentation">
+			<a href="javascript:void(0);" class="text-muted bg-light text-muted text-center h-100 nav-link'.$active.'" id="'.$level->slug.'-tab" data-toggle="tab" data-target="#'.$level->slug.'-tabcontent" role="tab" aria-controls="'.$level->slug.'-tabcontent" aria-selected="'.$selected.'">'.$level->cat_name.'</a>
 		</li>');
 }
 echo('</ul>');
@@ -103,7 +104,7 @@ foreach($levels as $key=>$level){
 				$meta = '<small>'.akseki_get_the_meta($obj->ID).'</small>';
 				$echo .= '<li><a href="'.get_permalink($obj->ID).'">'.$obj->post_title.'</a></li>';
 			}
-			$excposts_echo .= '<li class="list-group-item pr-4" style="break-inside:avoid;"><h5 class="mb-0">'.substr($key,0,-2).'</h5>'.$meta.'<ul class="mt-2">';
+			$excposts_echo .= '<li class="list-group-item pr-4" style="break-inside:avoid;"><h4 class="mb-0 h5">'.substr($key,0,-2).'</h4>'.$meta.'<ul class="mt-2">';
 			$excposts_echo .= $echo;
 			$excposts_echo .= '</ul></li>';
 		}
@@ -141,7 +142,7 @@ foreach($levels as $key=>$level){
 				'parent' => $ottcat->term_id
 			) );
 			foreach($ottcatchildren as $ottcatchild){
-				$ott_echo .= '<li class="list-group-item"><h5 class="mb-0"><a href="'.get_category_link($ottcatchild->term_id).'">'.$ottcatchild->name.'</a></h5><em class="mb-2 badge badge-light font-weight-normal">'.$ottcatchild->description.'</em></li>';
+				$ott_echo .= '<li class="list-group-item"><h4 class="mb-0 h5"><a href="'.get_category_link($ottcatchild->term_id).'">'.$ottcatchild->name.'</a></h4><em class="mb-2 badge badge-light font-weight-normal">'.$ottcatchild->description.'</em></li>';
 			}
 			$ott_echo .= '</ul></div></div>';
 		}
@@ -177,25 +178,3 @@ echo('</div>');
 echo('</div>');
 
 ?>
-
-<!--
-<ul class="nav nav-tabs" id="ssTab" role="tablist">
-  <li class="col-2">
-    <label class="btn text-left m-0 p-0">Cooperation level:</label>
-  </li>
-  <li class="nav-item">
-    <a href="javascript:void(0);" class="nav-link active" id="home-tab" data-toggle="tab" data-target="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
-  </li>
-  <li class="nav-item">
-    <a href="javascript:void(0);" class="nav-link" id="profile-tab" data-toggle="tab" data-target="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-  </li>
-  <li class="nav-item">
-    <a href="javascript:void(0);" class="nav-link" id="contact-tab" data-toggle="tab" data-target="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-  </li>
-</ul>
-<div class="tab-content" id="ssTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">1...</div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">2...</div>
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">3...</div>
-</div>
--->
