@@ -2,7 +2,6 @@
 
 //CHILD THEMING FROM TWENTY NINETEEN
 
-
 function avi_enqueue() {
     //BOOTSTRAP
 	wp_register_style('bootstrap', get_stylesheet_directory_uri() . '/vendor/bootstrap/css/bootstrap.min.css' );
@@ -10,12 +9,12 @@ function avi_enqueue() {
     $theme = wp_get_theme();
 	$ver = $theme->Version; //gets version written in your style.css
     wp_enqueue_style( 'bootstrapstarter-style', get_stylesheet_uri(), $dependencies, $ver ); 
-	
+
 	//jQUERY
     $dependencies = array('jquery');
 	wp_register_script( 'gdgt-base', get_stylesheet_directory_uri() . '/vendor/bootstrap/js/bootstrap.bundle.min.js', array( 'jquery' ), NULL, false );
     wp_enqueue_script( 'gdgt-base' );
-	
+
 	//AKSEKI
 	wp_register_script( 'akseki-js', get_stylesheet_directory_uri() . '/akseki.js' );
     wp_enqueue_script( 'akseki-js' );
@@ -548,55 +547,15 @@ function add_custom_taxonomies() {
   ));
 }
 
-/*add_action('add_meta_boxes', 'wporg_add_custom_box');
-add_action('save_post', 'alm_save_postdata');
-
-function wporg_add_custom_box()
-{
-    $screens = ['post', 'wporg_cpt'];
-    foreach ($screens as $screen) {
-        add_meta_box(
-            'akseki_location_meta',           // Unique ID
-            'Location Meta',  // Box title
-            'alm_custom_box_html',  // Content callback, must be of type callable
-            $screen                   // Post type
-        );
-    }
-}
-function alm_custom_box_html($post)
-{
-	$locations = get_terms('mec_location', array('orderby'=>'name', 'hide_empty'=>'0'));
-	$location_id = get_post_meta($post->ID, 'mec_location', true);
-    ?>
-	
-    <label for="alm_field">Select City (Country will be programatically generated)</label>
-    <select name="alm_field" id="alm_field" class="postbox">
-        <?php foreach($locations as $location): ?>
-			<option <?php if($location_id == $location->name) echo 'selected="selected"'; ?> value="<?php echo $location->term_id; ?>"><?php echo $location->name; ?></option>
-		<?php endforeach; ?>
-    </select>
-    <?php
-}
-function alm_save_postdata($post_id)
-{
-    if (array_key_exists('alm_field', $_POST)) {
-        update_post_meta(
-            $post_id,
-            'mec_location',
-            $_POST['alm_field']
-        );
-    }	
-}*/
-
 //load svg
 function load_flags_svg( $filename ) {
     $svg_path = "/img/flags/".strtolower($filename).".svg";	
     if ( file_exists( get_stylesheet_directory() . $svg_path  ) ) {       
-		//echo("found");
+
 		return file_get_contents( get_stylesheet_directory() . $svg_path );
-		//return include get_stylesheet_directory().$svg_path;
+
     }else{
-		//echo("ng: ".get_stylesheet_directory() . $svg_path );
+
 		return '';
     }	    
 }
@@ -614,7 +573,7 @@ function load_logo_svg() {
 
 //display country name and flag
 function get_the_country($city){
-	
+
 	switch ($city) {
 	case "Bandar Seri Begawan":
 	case "Jerudong":
@@ -836,7 +795,7 @@ function get_the_country($city){
 	return ($return);
 }
 function akseki_get_mec_location($postID){
-	
+
 	if(!empty(get_the_terms( $postID, 'mec_location' ))){
 	    $mec_location_obj = get_the_terms( $postID, 'mec_location' )[0];
 	}else{
@@ -850,7 +809,7 @@ function akseki_get_mec_location($postID){
 	return $mec_location;
 }
 function akseki_get_the_meta($postID){
-	//$mec_location = get_post_meta($postID, 'mec_location', true);
+
 	$mec_location = akseki_get_mec_location($postID);
 	$return = '<span class="meta-location">';
 	if($mec_location){
@@ -865,7 +824,7 @@ function akseki_get_the_meta($postID){
 			$return .= '<span class="meta-city">'.$mec_city.'</span>, ';
 		}		
 		$return .= '<span class="meta-country">'.$mec_country['country'].'</span>&ensp;';
-		//get_template_part("img/flags/".strtolower($mec_country).".svg");
+
 		$return .= '<span class="roundflag">'.load_flags_svg($mec_country['flag']).'</span>';
 		$return .= '</span>';
 	}													
@@ -881,13 +840,13 @@ function akseki_get_the_meta($postID){
 	if($futurearticle == true){
 		$return .= '<span class="meta-date">'.akseki_get_sc_noclass($postID).'</span>';
 	}else{
-		//$return .= '<span class="meta-date">'.get_the_date('j F Y',$postID).'</span>';
+
 		$return .= '<span class="meta-date">'.akseki_get_sc($postID).'</span>';
 	}
 	return $return;
 }
 function akseki_get_the_flag($postID){
-	//$mec_location = get_post_meta($postID, 'mec_location', true);
+
 	$mec_location = akseki_get_mec_location($postID);
 	if($mec_location){
 		if(is_numeric($mec_location)){
@@ -1009,9 +968,8 @@ function akseki_get_shortname($longname, $post_ID, $limit=3){
 		$display_output .= '<span class="numberer">';
 		$display_output .= preg_replace('/(st|nd|rd|th)/', '<sup>$1</sup>', $fixedtitle);
 		$display_output .= "</span>";
+
 	    
-	    /*$descats = get_categories(array('child_of' => 7));
-		$view_list =  wp_list_pluck($descats, 'slug');*/
 		$min_list = akseki_get_ministrial_categories();
 		$dg_list = akseki_get_dg_categories();
 		$som_list = akseki_get_som_categories();
@@ -1023,23 +981,7 @@ function akseki_get_shortname($longname, $post_ID, $limit=3){
 		$curcats = get_the_category($post_ID);
 		$curslugs = wp_list_pluck($curcats,'slug');
 		$current_categories = array_intersect($merge_list,$curslugs);
-		/*foreach($current_categories as $cat){
-			if(in_array($cat->slug, $view_list)){
-				$display_output .= ' '.$cat->name;
-			}elseif(in_array($cat->slug, $som_list)){
-				$display_output .= ' '.$cat->name;
-			}elseif(in_array($cat->slug, $otl_list)){
-				$display_output .= ' '.$cat->name;
-			}elseif(in_array($cat->slug, $oth_list)){
-				$display_output .= ' '.$cat->name;
-			}elseif($cat->slug === 'summit-level-statements'){
-				$display_output .= ' APT Summit';
-			}elseif($cat->slug === 'cpr-level'){
-				$display_output .= ' CPR+3';
-			}elseif($cat->slug === 'aptwg'){
-				$display_output .= ' CPRWG';
-			}
-		}*/
+
 		$sm = akseki_get_sm($post_ID);
 		foreach($current_categories as $cat){
 			if($cat === 'summit-level-statements'){
@@ -1087,39 +1029,12 @@ function akseki_get_shortname($longname, $post_ID, $limit=3){
 		}
 		$display_output .= $text;
 	}
-	
+
 	return $display_output;
 }
 
 //list of ministrial level categories slug
-/*function akseki_get_ministrial_categories(){
-	$appear = ['dgicm3','apt-foreign-ministers-meeting','ammtc3','aem3','afmgm3','m-atm3','amaf3','amem3','amme3-emm','ammswd3','ammy3','accsm3','almm3','amca3','amri3','aptemm','ahmm3'];
-	return $appear;
-}
-function akseki_get_som_categories(){
-	$somcatid = 280;//cat id of som categories
-	$appear = [];
-	$children = get_categories(array('parent'=>$somcatid));
-	foreach($children as $child){
-		$grandchildren = get_categories(array('parent'=>$child->term_id));
-		foreach($grandchildren as $grandchild){
-			$appear[] = $grandchild->slug;
-		}		
-	}	
-	return $appear;
-}
-function akseki_get_othlev_categories(){
-	$otlcatid = 295;//cat id of som categories
-	$appear = [];
-	$children = get_categories(array('parent'=>$otlcatid));
-	foreach($children as $child){
-		$grandchildren = get_categories(array('parent'=>$child->term_id));
-		foreach($grandchildren as $grandchild){
-			$appear[] = $grandchild->slug;
-		}		
-	}	
-	return $appear;
-}*/
+
 function akseki_get_ministrial_categories(){
 	$somcatid = 43;//cat id of ministrial categories
 	$appear = [];
@@ -1192,13 +1107,9 @@ function akseki_get_ott_categories(){
 	}	
 	return $appear;
 }
-function akseki_get_sectoral_categories(){
-	$appear = ['economic-cooperations','political-cooperations','socio-cultural-cooperations'];
-	return $appear;
-}
 function akseki_get_commision_categories(){
 	$appear = ['ministerial-level-statements','summit-level-statements'];
-	//$appear = ['ministerial-level-statements'];
+
 	return $appear;
 }
 function akseki_post_is_in_a_subcategory( $categories, $_post = null ) {
@@ -1210,21 +1121,12 @@ function akseki_post_is_in_a_subcategory( $categories, $_post = null ) {
     }
     return false;
 }
-function akseki_get_other_categories(){
-	$othcatid = 45;//cat id of other categories
-	$appear = [];
-	$children = get_categories(array('parent'=>$othcatid));
-	foreach($children as $child){
-		$appear[] = $child->slug;
-	}	
-	return $appear;
-}
 
 //get category descendents of statements category
 function akseki_get_descat($curcatidarr){
 	$descats = get_categories(array('child_of' => 7));
-	$descatspluck =  wp_list_pluck($descats, 'term_id');//print_r($curcatidarr);print_r($descatspluck);
-	$current_cat = array_intersect($curcatidarr, $descatspluck);//print_r($current_cat);
+	$descatspluck =  wp_list_pluck($descats, 'term_id');
+	$current_cat = array_intersect($curcatidarr, $descatspluck);
 	if(!empty($current_cat)){
 		$return = $current_cat[0];
 	}else{
@@ -1238,16 +1140,7 @@ function akseki_get_descat($curcatidarr){
 function akseki_get_theme_from_id($id,$idtype){
 	if($idtype=="post"){
 		$ftn_categories = get_the_category($id);
-		/*$descats = get_categories(array('child_of' => 7));
-		$cats = wp_list_pluck($descats, 'slug');
-		foreach($ftn_categories as $cat){
-			$aa[] = $cat->slug;
-		}		
-		$current_slug = array_intersect($aa, $cats);
-		if(empty($current_slug)){
-			$return = '';
-		}		
-		$target_slug = $current_slug[0];*/
+
 		$sumcat = array("summit-level-statements");
 		$mincat = akseki_get_ministrial_categories();
 		$dgcat = akseki_get_dg_categories();
@@ -1265,7 +1158,7 @@ function akseki_get_theme_from_id($id,$idtype){
 		if(empty($current_slug)){
 			$return = '';
 		}		
-		$target_slug = $current_slug;//print_r($current_slug);
+		$target_slug = $current_slug;
 	}elseif($idtype=="category"){
 		$targetcat = get_category($id);
 		$target_slug = $targetcat->slug;
@@ -1278,7 +1171,7 @@ function akseki_get_theme_from_id($id,$idtype){
 		$tpc_topics = get_post_custom_values( "tpc_topics", $theme->ID);
 		$extos = explode(",",$tpc_topics[0]);
 		foreach($extos as $exto){
-			//$topics_arr[$exto] = $theme->post_title;
+
 			$topics_arr[$exto] = $theme->ID;
 		}		
 	}	
@@ -1286,7 +1179,7 @@ function akseki_get_theme_from_id($id,$idtype){
 		$return = $topics_arr[$target_slug];
 	} else {
 		$return = '';
-	}	//echo("<pre>");print_r($topics_arr);print_r($target_slug);print_r($return);echo("</pre>");
+	}	
 	return $return;
 }
 
@@ -1296,12 +1189,9 @@ function akseki_get_level_from_id($id,$idtype,$pillarorlevel="level"){
 	if($idtype=="post"){
 		$descats = get_categories(array('child_of' => 7));
 		$cats = wp_list_pluck($descats, 'slug');
-		
+
 		$ftn_categories = get_the_category($id);
-		/*$cats = akseki_get_ministrial_categories();
-		$cats[] = akseki_get_som_categories();
-		$cats[] = akseki_get_othlev_categories();
-		$cats[] = 'summit-level-statements';*/
+
 		foreach($ftn_categories as $cat){
 			$aa[] = $cat->slug;
 		}		
@@ -1310,8 +1200,8 @@ function akseki_get_level_from_id($id,$idtype,$pillarorlevel="level"){
 			$return = '';
 		}
 		$gpa = get_category_by_slug($current_slug[0]);
+
 		
-		//echo("<pre>");print_r($levname);echo("</pre>");
 	}elseif($idtype=="category"){
 		$gpa = get_category($id);
 	}else{
@@ -1323,7 +1213,7 @@ function akseki_get_level_from_id($id,$idtype,$pillarorlevel="level"){
 	if($gpa->term_id == 41){//41 is summit level statements
 		$gpa_anc[] = 41;
 	}
-	
+
 	if($pillarorlevel=="pillar"){
 		$parent = get_category($gpa->parent);
 		$pn = $parent->slug;
@@ -1344,7 +1234,7 @@ function akseki_get_level_from_id($id,$idtype,$pillarorlevel="level"){
 		}elseif(in_array(295,$gpa_anc)){//other
 			$levid=295;
 		}
-		
+
 		if(in_array(41,$gpa_anc)){//summit
 			$levid=41;
 		}elseif(in_array(43,$gpa_anc)){//ministerial
@@ -1362,7 +1252,7 @@ function akseki_get_level_from_id($id,$idtype,$pillarorlevel="level"){
 		}elseif(in_array(399,$gpa_anc)){//other tracks
 			$levid=399;
 		}
-		
+
 	}
 	$return = '';
 	if(isset($levid)){
@@ -1425,25 +1315,21 @@ function akseki_aoc($atts){
 			default:
 				$area = $cat->term_id;
 		}
-				
+
 		$return .= '<tr>';
 		//the area column
 		$return .= '<td class="w-25">';
 		$return .= $area;		
 		$return .= '</td>';
 		//the summit collapsible, only call on first iteration		
-		/*if($index == 0){
-			$return .= '<td rowspan='.count($cats).' class="collapse show collapseLeader" data-parent="#accordionLevel">';
-			$return .= '<a href="'.get_category_link(41).'">ASEAN Plus Three Summit (APT Summit)</a>';
-			$return .= '</td>';
-		}*/
+
 		
 		//the ministerial collapsible
 		$return .= '<td class="" data-parent="#accordionLevel">';
 		$return .= '<a href="'.get_category_link($cat->term_id).'">'.$cat->description .' ('.$cat->name.')</a>';
 		$return .= '</td>';
 		$return .= '</tr>';
-		
+
 	}
 	return '<table class="w-100">'.$return.'</table>';	
 }
@@ -1567,7 +1453,7 @@ function akseki_cat_children($atts){
 		$return .= '<div class="m-0 w-100">';
 		foreach($categories as $cat){
 			$latpos = get_posts(array('category' => $cat->term_id, 'numberposts' => 1));
-			//print_r($latpos);
+
 			foreach($latpos as $latpo){
 				if(has_post_thumbnail($latpo->ID)){
 					$thethumb = get_the_post_thumbnail_url( $latpo->ID, "medium-large" );
@@ -1583,7 +1469,7 @@ function akseki_cat_children($atts){
 		$return .= '<div class="w-100 m-0 d-flex flex-wrap align-content-around">';
 		foreach($categories as $cat){
 			$latpos = get_posts(array('category' => $cat->term_id, 'numberposts' => 1));
-			//print_r($latpos);
+
 			foreach($latpos as $latpo){
 				if(has_post_thumbnail($latpo->ID)){
 					$thethumb = get_the_post_thumbnail_url( $latpo->ID, "medium" );
@@ -1629,7 +1515,7 @@ function akseki_get_recent_posts($atts){
 			$return .= '<img class="card-img-top" src="'.$thethumb.'" alt="Card image cap">';
 			$return .= '<div class="card-body p-3 text-center">';
 			$return .= '<h5 class="card-title mb-0"><a href="'.get_permalink($post->ID).'">'.akseki_get_shortname($post->post_title, $post->ID, 3).'</a></h5>';
-			//$return .= '<p class="card-text"></p>';
+
 			$return .= '</div>';
 			$return .= '<ul class="list-group list-group-flush">';
 			$metas = explode('<span class="meta-comma"> </span>',akseki_get_the_meta($post->ID));
@@ -1637,13 +1523,13 @@ function akseki_get_recent_posts($atts){
 				$return .= '<li class="list-group-item bg-light text-center"><small class="text-muted">'.$meta.'</small></li>';
 			}
 			$return .= '</ul>';
-			//$return .= '<div class="card-footer"><small class="text-muted text-muted w-100 d-flex justify-content-between">'.akseki_get_the_meta(get_the_ID()).'</small></div>';
+
 			$return .= '</div>';
 		}
 		$return .= '</div>';		
 	}
     return ($return ? $return : false);
-	
+
 }
 add_shortcode('akseki_get_recent_posts', 'akseki_get_recent_posts');
 
@@ -1704,7 +1590,7 @@ function addExtraFieldToCat(){
     <tr class="form-field">
         <th scope="row" valign="top"><label for="cat_extra"><?php _e('Category Extra Property'); ?></label></th>
         <td>
-        
+
 		<select name="cat_extra" id="cat_extra">
 			<option value="">none</option>
 			<option value="has_no_listing"<?php echo(($cat_extra=="has_no_listing")?" selected":""); ?>>Has no Listing</option>
@@ -1714,7 +1600,7 @@ function addExtraFieldToCat(){
         </td>
     </tr>
     <?php
-	
+
 }
 add_action ( 'edit_category_form_fields', 'addExtraFieldToCat');
 
@@ -1733,8 +1619,7 @@ function archiveAjax() {
       exit("No naughty business please");
 	}
 	$year = $_REQUEST['year'];
-	//$SAA_cats = akseki_get_ministrial_categories();
-	//array_push($SAA_cats,'summit-level-statements','cpr-level');
+
 	$SAA_cats = get_term_children(7,"category");
 	$SAA_query = new WP_Query(array(
 		//'category_name'=> implode( ',', $SAA_cats ),
@@ -1758,10 +1643,7 @@ function archiveAjax() {
 		while($SAA_query->have_posts()):
 			$SAA_query->the_post();
 			//display a random image from query result
-			/*if (has_post_thumbnail(get_the_ID())):
-			  $image = wp_get_attachment_url( get_post_thumbnail_id(get_the_ID()));
-			  $images [] = $image;			  
-			endif;*/
+
 			$firstbuttonaria = "false";
 			$qyear = get_the_date('Y');
 			if($qyear !== $tempyear){
@@ -1772,7 +1654,7 @@ function archiveAjax() {
 					//other elements in the middle
 					$echo .= '</div><div class="agenda-element">';
 				}
-				//$is_dtd .= '<h3 class="font-weight-bold mt-0 pt-3 mb-1">'.$qyear.'</h3>'; 
+
 				$tempyear = $qyear;
 				$tempdtdcount = 1;
 			}
@@ -1781,15 +1663,15 @@ function archiveAjax() {
 				$fy = get_the_date("F Y");
 				$echo .= '<button class="mt-1 border-bottom font-weight-bold text-left w-100 btn mb-1 collapser-button" type="button" data-toggle="collapse" data-target="#collapse'.$qmonth.'" aria-expanded="'.$firstbuttonaria.'" aria-controls="collapse'.$qmonth.'"><span class="ml-1">'.$fy.'</span></button>';
 				$tempmonth = $qmonth;
-				//++$firstbutton;
+
 			}
-			
+
 			if(has_tag("SC_month")){
 				$datedisplay = '<span class="badge badge-secondary">'.get_the_date('F Y').'</span>';
 			}else{
 				$datedisplay = '<span class="badge badge-secondary">'.get_the_date('j F Y').'</span>';
 			}
-			
+
 			$mecloc = akseki_get_mec_location(get_the_ID());
 			if(empty($mecloc) or $mecloc == '' or $mecloc == 'tbd'){
 				$flagdisplay = '';
@@ -1798,10 +1680,10 @@ function archiveAjax() {
 			}
 			$qcats = get_the_category();
 			$qcatsarr = wp_list_pluck( $qcats, 'slug' );
-			
+
 			$intersector = array_merge(akseki_get_ministrial_categories(),akseki_get_dg_categories(),akseki_get_som_categories(),akseki_get_wg_categories(),akseki_get_othlev_categories(),akseki_get_ott_categories());
 			array_push($intersector,'summit-level-statements','cpr-level');
-			//$saacatsarr = wp_list_pluck( $SAA_cats, 'slug' );
+
 			$qcatint = array_intersect($qcatsarr,$intersector);
 			$qcatObj = get_category_by_slug(implode($qcatint));
 			//echo('<pre>');print_r($qcatObj);echo('</pre>');
@@ -1814,21 +1696,19 @@ function archiveAjax() {
 				$border = "";
 			}
 			$catdisplay = '<br/><em class="badge badge-light"><a title="'.$qcatObj->name.' ('.$qcatObj->description.')" class="text-dark font-weight-normal" href="'.get_category_link($qcatObj).'">'.$qcatObj->description.'</a></em>';
-			
+
 			if(has_tag("hasnocontent")){
 				$qitemname = '<span class="bg-white px-1">'.akseki_get_shortname(get_the_title(), get_the_ID()).'</span>';
 			}else{
 				$qitemname = '<a class="bg-white px-1" href="'.get_the_permalink().'">'.akseki_get_shortname(get_the_title(), get_the_ID()).'</a>';
 			}
-			
+
 			$echo .= '<div class="collapse mx-4 p-1'.$border.'" id="collapse'.$qmonth.'">'.$datedisplay.$flagdisplay.'&ensp;'.$qitemname.$catdisplay.'</div>';			
 		endwhile;
 		$echo .= '</div></div>';
+
 		
-		/*$k = array_rand($images);
-		$v = $images[$k];
-		$echo0 .= ' style="background-image:url('.$v.'); background-repeat: no-repeat; background-position: right center; background-size: contain;" ';*/
-		//$image = "|||".implode(",",$images);
+
 		echo($echo);
 	endif;
 	wp_reset_postdata();
@@ -1841,10 +1721,10 @@ function echo_category_descriptor($current_category_id){
 	$catdesc_children = get_children(3236);
 	$current_category_obj = get_category($current_category_id);
 	foreach($catdesc_children as $child):
-	    
+
 	    //if(urlencode(get_queried_object()->name) == urlencode($child->post_title)):
 		if($current_category_obj->name === $child->post_title):
-		    
+
 			$catdesc_content = $child->post_content;
 			if ( has_post_thumbnail($child->ID) ) :
 				$catdesc_echo .= '
@@ -1884,16 +1764,16 @@ function akseki_get_level_resources($level_id){
 		foreach($topics as $topic){
 			//handle no listing categories
 			$cat_extra = get_term_meta( $topic->term_id, '_catextra', true );
-			//print_r($cat_extra);
+
 			$extra_title = '<h5><u>'.$topic->name.'</u></h5>';
 			if($cat_extra == "has_no_listing"){
 				$sc5 = echo_category_descriptor($topic->term_id).'<em class="float-right"><a href="'.get_category_link($topic->term_id).'">more about '.$topic->name.'&hellip;</a></em>';
 			}else{
 				$sc5 = '[catlist id='.$topic->term_id.' template=akseki_lcptemplate2 numberposts=-1]';
-				
+
 			}
 			$sc4 .= '[su_tab title="<h5>'.$topic->name.'</h5><em>'.$topic->description.'</em>" disabled="no" anchor="" url="" target="blank" class=""]'.$sc5.'[/su_tab]';
-			
+
 		}
 		$sc3 = '';
 		$te_arr = akseki_get_themes_in_pillar($pillar->term_id);
@@ -1908,11 +1788,11 @@ function akseki_get_level_resources($level_id){
 		}
 		$sc3 .= '[su_tabs style="default" active="1" vertical="yes" class=""]'.$sc4.'[/su_tabs]';
 		//themes
-		
+
 		$sc2 .= '[su_spoiler title="'.$pillar->name.'" open="no" style="default" icon="plus" anchor=""]'.$sc3.'[/su_spoiler]<hr class="my-2">';
 	}
 	$spoilercontent = do_shortcode('[su_accordion class="b_acc ml-4 '.$level_obj->slug.'"]'.$sc2.'[/su_accordion]');
-	
+
 	return $spoilercontent;
 }
 
@@ -1924,37 +1804,29 @@ function akseki_get_themes_in_pillar($pillar_id){
 	$themes_arr = [];
 	foreach($themes as $themepage){
 		$tpc_pillar = get_post_custom_values( "tpc_pillar", $themepage->ID);
-		//$tpc_topics = get_post_custom_values( "tpc_topics", $themepage->ID);
-		//print_r($tpc_pillar[0]);
-		//print_r($pil_obj->slug);
+
 		if(str_starts_with($pil_obj->slug,$tpc_pillar[0])){
 			$themes_arr[$themepage->ID] = $themepage->post_title;
 		}
 	}
-	/*if(!empty($themes_arr)){
-		foreach($themes_arr as $keytheme=>$theme){
-			$return .= '<a class="badge badge-secondary" href="'.get_permalink($keytheme).'">'.$theme.'</a>&ensp;';
-		}
-		
-	}*/
-	return $themes_arr;
-	//return $return;
-}
 
+	return $themes_arr;
+
+}
 
 function notifyauthor($post_id) {
     // Check if notification already sent for this post
     if (get_post_meta($post_id, '_notification_sent', true)) {
         return; // Email already sent, exit
     }
-    
+
     $postm = get_post($post_id);
-    
+
     // Only send for published posts
     if ($postm->post_status !== 'publish' || $postm->post_type !== 'post') {
         return;
     }
-    
+
     if(has_tag("hasnocontent",$post_id)){
         $hastag = "<li>This post has no content. It will display only its title, location and date.</li>";
     }elseif(has_tag("hyperlinked",$post_id)){
@@ -1962,21 +1834,21 @@ function notifyauthor($post_id) {
     }else{
         $hastag = "";
     }
-    
+
     // FIX: Use $postm instead of undefined $post
     $author = get_userdata($postm->post_author);
-    
+
     $subject = "[Notification] A post has been published on the ASEAN Plus Three website: ".$postm->post_title;
-    
+
     $multiple_recipients = array(
         'fifi@asean.org',
         'pham.thu@asean.org',
         'andi.rozin@asean.org',
         'fatahillah.rachman@asean.org'
     );
-    
+
     $headers = array('Content-Type: text/html; charset=UTF-8');
-    
+
     $message = "
         <p>Good day,</p>
         <p>This is an automated notification e-mail. Please do not reply to sender.</p>
@@ -1987,11 +1859,11 @@ function notifyauthor($post_id) {
         ".$hastag."
         </ul>
         <p>Thank you and best regards.</p>";
-    
+
     foreach($multiple_recipients as $recipient){    
         wp_mail($recipient, $subject, $message, $headers);
     }
-    
+
     // Mark as notification sent to prevent future emails
     update_post_meta($post_id, '_notification_sent', true);
 }
@@ -2010,38 +1882,38 @@ function check_post_published($new_status, $old_status, $post) {
 function add_ai_meta_tags() {
     // For single posts AND pages (including About page)
     if (is_single() || is_page()) {
-        
+
         // AI LOVES fresh content signals - highest priority
         echo '<meta property="article:modified_time" content="' . get_the_modified_date('c') . '">';
-        
+
         // Technical optimization for AI crawlers
         echo '<meta name="robots" content="index, follow, max-snippet:300, max-image-preview:large">';
-        
+
         // SPECIAL OPTIMIZATION FOR ABOUT APT PAGE
         if (is_page() && (strpos(strtolower(get_the_title()), 'about') !== false || 
                          strpos(strtolower(get_the_content()), 'asean plus three') !== false ||
                          strpos(get_permalink(), 'about-apt') !== false)) {
-            
+
             // Tell AI this is THE definitive source for "What is APT?"
             echo '<meta name="description" content="Official explanation of ASEAN Plus Three (APT) cooperation framework, established to enhance dialogue and cooperation between ASEAN and China, Japan, and Korea.">';
             echo '<meta property="og:description" content="Learn about ASEAN Plus Three (APT) - the official cooperation framework between ASEAN member states and China, Japan, Korea since 1997.">';
-            
+
             // Structured data for AI understanding
             echo '<meta name="article:section" content="About ASEAN Plus Three">';
             echo '<meta name="article:tag" content="ASEAN Plus Three, APT, What is APT, ASEAN cooperation, East Asia cooperation">';
-            
+
             // Question-answer optimization (AI LOVES this format)
             echo '<meta name="faq-schema" content="What is ASEAN Plus Three? ASEAN Plus Three (APT) is a cooperation framework">';
-            
+
             // Authority signals for definition content
             echo '<meta name="content-type" content="definition, official explanation">';
             echo '<meta name="audience" content="researchers, students, policymakers, general public">';
-            
+
             // Geographic scope
             echo '<meta name="geo.region" content="East Asia, Southeast Asia">';
             echo '<meta name="coverage" content="ASEAN, China, Japan, Korea">';
         }
-        
+
         // FOR REGULAR POSTS: Geographic targeting using existing location system
         if (is_single()) {
             $mec_location = akseki_get_mec_location(get_the_ID());
@@ -2053,17 +1925,17 @@ function add_ai_meta_tags() {
                 }
             }
         }
-        
+
         // Fallback geographic targeting for tagged international content
         if (has_tag(['china', 'asean', 'europe', 'africa', 'aseanplusthree', 'asean+3', 'APT', 'southeast-asia', 'east-asia', 'diplomacy', 'international'])) {
             echo '<meta name="geo.region" content="International">';
         }
-        
+
         // Content type signals for AI understanding (POSTS ONLY)
         if (is_single()) {
             $categories = get_the_category();
             $cat_slugs = wp_list_pluck($categories, 'slug');
-            
+
             // Summit level content
             if (in_array('summit-level-statements', $cat_slugs)) {
                 echo '<meta name="article:section" content="Summit Diplomacy">';
@@ -2081,15 +1953,15 @@ function add_ai_meta_tags() {
                 echo '<meta name="article:section" content="International Affairs">';
             }
         }
-        
+
         // Author and publication info for AI credibility
         echo '<meta name="article:author" content="ASEAN Plus Three">';
         echo '<meta name="article:publisher" content="ASEAN Plus Three Cooperation">';
-        
+
         // Language and audience targeting
         echo '<meta name="content-language" content="en">';
         echo '<meta name="audience" content="policymakers, diplomats, researchers">';
-        
+
         // AI citation optimization
         echo '<meta name="citation-style" content="academic">';
         echo '<meta name="source-credibility" content="official, governmental">';
@@ -2151,7 +2023,7 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 	$latest['category'] = get_category(akseki_get_descat($catspluck));
 	$latest['permalink'] = get_the_permalink();
 	$latest['shortname'] = akseki_get_shortname($latest["title"],$latest["id"],0);
-	
+
 	// Level
 	$levobj=get_category(akseki_get_level_from_id($latest['id'],'post'));
 	if($levobj){
@@ -2159,7 +2031,7 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 	}else{
 		$ll='';
 	}
-	
+
 	// Pillar
 	$pilobj=get_category(akseki_get_level_from_id($latest['id'],'post','pillar'));
 	if($pilobj && '' !== trim($pilobj->name)){
@@ -2167,7 +2039,7 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 	}else{
 		$lp='';
 	}
-	
+
 	// Theme
 	$thmid = akseki_get_theme_from_id($latest['id'],'post');
 	if(!empty($thmid)){
@@ -2176,7 +2048,7 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 	}else{
 		$lt='';
 	}
-	
+
 	// Read more button
 	// Cards with content get a heading link (stretched over the card) and a
 	// "Read more" whose accessible name says what it is about.
@@ -2188,7 +2060,7 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 		$heading = $card_title;
 		$readmore = '';
 	}
-	
+
 	$card_class = 'news-card-default';
 	if ( $levobj && 'Ministerial-level Statements' === $levobj->name ) {
 	$card_class = 'news-card-ministerial';

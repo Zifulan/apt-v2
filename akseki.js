@@ -1,14 +1,5 @@
 jQuery(function($) {
 	
-	/*popup image in detail post
-	
-	$(".popup-image").click(function() {
-		preventDefault();
-		alert('te');
-	   $('#imagepreview').attr('src', $('#imageresource').attr('src')); // here asign the image to the modal when the user click the enlarge link
-	   $('#imagemodal').modal('show'); // imagemodal is the id attribute assigned to the bootstrap modal, then i use the show function
-	});*/
-
 	$( ".popup-image" ).click(function(e) {
 		e.preventDefault(); // href="#" would otherwise jump to the top
 		$imgsrc = $(this).find('> img').attr('src');

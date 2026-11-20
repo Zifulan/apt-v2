@@ -1,15 +1,3 @@
-<?php
-function gcc2($catid){
-	$categories=get_categories(array('parent' => $catid));
-	$ret = '<ul class="resource-list">';
-	foreach ($categories as $c) {
-		$ret .= '<li><a title="'.$c->description.'" href="'.get_category_link($c->term_id).'" class="resource-link">'.$c->cat_name.'</a></li>';
-	}
-	$ret .= '</ul>';
-	return $ret;
-}
-?>
-
 <section class="modern-resources-section apt-section" id="front-resources">
 	<div class="container">
 		<div class="apt-section-head">

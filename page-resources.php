@@ -21,7 +21,7 @@ jQuery(function($) {
 	<div class="container pt-4" id="resourcesnew">
 		<div class="row">
 			<?php
-			//echo do_shortcode('[su_accordion class="b_acc"]');
+
 			$rn_overview_content = '<img src="https://aseanplusthree.asean.org/wp-content/uploads/2022/07/android-chrome-512x512-1.png" style="float:left;height:190px;" alt="">
 			<p>The ASEAN Plus Three (APT) cooperation process began in December 1997 with the convening of an Informal Summit among the Leaders of ASEAN and China, Japan and the ROK at the sidelines of the 2nd ASEAN Informal Summit in Malaysia. The APT Summit was institutionalised in 1999 when the Leaders issued a Joint Statement on East Asia Cooperation at the 3rd APT Summit in Manila. The Joint Statement for the first time determined the main objectives, principles and further directions of APT countries cooperation. In the Joint Statement, the APT Leaders resolved to strengthen and deepen East Asia cooperation at various levels and in various areas, particularly in economic and social, political and other fields.</p>
 			<a href="https://aseanplusthree.asean.org/wp-content/uploads/2024/06/APT-Overview-Paper-12-June-2024.pdf" class="btn btn-secondary mb-2">Download the Overview in PDF&nbsp;<i class="ml-2 fas fa-file-pdf"></i></a>
@@ -50,12 +50,12 @@ jQuery(function($) {
 			?>
 		</div>
 		<hr class="wp-block-separator has-css-opacity my-3">
-		
+
 		<?php
 		$levels=get_categories(array('parent'=>7));
 		foreach($levels as $level){
 			if($level->slug == "summit-level-statements"){
-				//$spoilercontent = "summit";
+
 				$spoilercontent = '[catlist id='.$level->term_id.' template=akseki_lcptemplate2 numberposts=-1]';
 			/*}elseif($level->slug == "director-general-level"){
 				$spoilercontent = "dg";*/
@@ -63,41 +63,19 @@ jQuery(function($) {
 				$spoilercontent = '[catlist id='.$level->term_id.' template=akseki_lcptemplate2 numberposts=-1]';
 			}else{
 				$spoilercontent = akseki_get_level_resources($level->term_id);
-				/*$pillars=get_categories(array('parent'=>$level->term_id));
-				$sc2 = '';
-				foreach($pillars as $pillar){
-					$topics=get_categories(array('parent'=>$pillar->term_id));
-					$sc4 = '';
-					foreach($topics as $topic){
-						//handle no listing categories
-						$cat_extra = get_term_meta( $topic->term_id, '_catextra', true );
-						//print_r($cat_extra);
-						$extra_title = '<h5><u>'.$topic->name.'</u></h5>';
-						if($cat_extra == "has_no_listing"){
-							$sc5 = echo_category_descriptor($topic->term_id).'<em class="float-right"><a href="'.get_category_link($topic->term_id).'">more about '.$topic->name.'&hellip;</a></em>';
-						}else{
-							$sc5 = '[catlist id='.$topic->term_id.' template=akseki_lcptemplate2 numberposts=-1]';
-						}
-						$sc4 .= '[su_tab title="<h5>'.$topic->name.'</h5><em>'.$topic->description.'</em>" disabled="no" anchor="" url="" target="blank" class=""]'.$sc5.'[/su_tab]';					}
-					$sc3 = '[su_tabs style="default" active="1" vertical="yes" class=""]'.$sc4.'[/su_tabs]';
-					$sc2 .= '[su_spoiler title="'.$pillar->name.'" open="no" style="default" icon="plus" anchor=""]'.$sc3.'[/su_spoiler]<hr class="my-2">';
-				}
-				$spoilercontent = do_shortcode('[su_accordion class="b_acc ml-4 '.$level->slug.'"]'.$sc2.'[/su_accordion]');*/				
+
 			}
-			
+
 			echo('<div class="row" id="resources-'.$level->slug.'">');
 			echo do_shortcode('[su_spoiler title="'.$level->name.'" open="no" style="wood" icon="plus" anchor="" class="col-12"]'.$spoilercontent.'[/su_spoiler]');
 			echo('</div>');
 			echo('<hr class="wp-block-separator has-css-opacity my-3">');
 		}
-		//echo('<pre>');print_r($levels);echo('</pre>');
+
 		?>
-		
+
 		<!--div class="row">
-		<?php /*
-		$rn_otd_content = do_shortcode('[catlist name="other-documents"]');
-		echo do_shortcode('[su_spoiler title="Other Documents" open="no" style="wood" icon="plus" anchor="" class="col-12"]'.$rn_otd_content.'[/su_spoiler]');
-		*/ ?>
+		<?php  ?>
 		</div-->		
 	</div>
 </main>

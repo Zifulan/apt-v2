@@ -221,7 +221,7 @@ if($catlev == "pillar"){
 	.hec-'.$catpil.'{background-image: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)), url('.$headerbgimage.');}
 	</style>
 	');
-	//print_r($catlev);
+
 }
 //category descriptors
 //handle category description page here
@@ -241,7 +241,7 @@ switch($catancgroup){
 	default:		
 		break;
 }
-		
+
 //children category for other-documents or ministerial level topic
 $childcattop = "";
 if($current_category == 'other-documents'){				
@@ -280,7 +280,7 @@ if($current_category == 'other-documents'){
 			?>
 		</header><!-- .page-header -->
 		<div class="listings-wrapper row">		
-			
+
 			<?php //children xcategory for other-documents
 			if($current_category == 'other-documents'){				
 				$term = get_queried_object();
@@ -302,7 +302,7 @@ if($current_category == 'other-documents'){
 				}				
 			}
 			?>
-			
+
 			<!--control the columns-->
 			<div class="<?php echo($maincol);?> order-2">
 			<!--#########################################-->			
@@ -332,7 +332,7 @@ if($current_category == 'other-documents'){
 					echo('<div id="pillars_accordion">');
 					$plevels=get_categories(array('parent'=>7));
 					foreach($plevels as $pkey=>$plevel){
-						
+
 						$plevelchildren = get_terms([
 							'taxonomy' => 'category',
 							'name' => $current_category_name,
@@ -345,12 +345,12 @@ if($current_category == 'other-documents'){
 							echo('<button class="collapser-button btn w-100 text-left" data-toggle="collapse" data-target="#collapse-'.$plevel->slug.'" aria-expanded="'.(($pkey==1)?"true":"false").'" aria-controls="collapse-'.$plevel->slug.'">');
 							echo('<h4 class="m-0 px-2 py-1">'.$plevel->name.'</h4>');
 							echo('</button></div>');
-							//echo('<div id="collapse-'.$plevel->slug.'" class="collapse" aria-labelledby="heading-'.$plevel->slug.'" data-parent="#pillars_accordion"><div class="card-body">');
+
 						}
 						foreach($plevelchildren as $plkey=>$plchild){							
 							$plgcs=get_categories(array('parent'=>$plchild->term_id));
 							if(!empty($plgcs)){
-								//echo($pkey);
+
 								echo('<div id="collapse-'.$plevel->slug.'" class="collapse'.(($pkey==1)?" show":"").'" aria-labelledby="heading-'.$plevel->slug.'" data-parent="#pillars_accordion">');
 								echo('<div class="card-body py-1">');
 								echo('<ul class="list-group list-group-flush ml-2">');
@@ -363,39 +363,24 @@ if($current_category == 'other-documents'){
 								echo('</div>');//close .card-body
 								echo('</div>');//close .collapse
 							}
-							//echo('<pre>');print_r($plgcs);echo('</pre>');
+
 							
 						}
 						if(!empty($plevelchildren)){
-							//echo('</div>');//close .card-body
+
 							echo('</div>');//close .card
 						}
-					
+
 					}
 					echo('</div>');
+
 					
-					
-					/*$terms = get_terms([
-						'taxonomy' => 'category',
-						'name' => $current_category_name,
-						'hide_empty' => false,
-					]);
-					
-					foreach($terms as $term){						
-						echo('<h3 class="mt-4">'.get_cat_name($term->parent).'</h3>');
-						$termchildren = get_term_children($term->term_id,"category");
-						echo('<ul class="m-0 p-0" style="columns:2;-webkit-columns:2;-moz-columns:2;list-style-type: none;">');
-						foreach($termchildren as $termchild){
-							$tco = get_term_by('id', $termchild, "category");
-							echo '<li class=""><a class="pillar-list-link btn btn-primary w-100 m-2" title="'.$tco->description.'" href="' . get_term_link($termchild, "category") . '">' . $tco->name . '</a></li>';
-						}
-						echo('</ul>');						
-					}*/
+
 										
 				}else{
 					//it list of articles, use this one
 					echo($articlecontainer);		
-					
+
 					//codes to apply before the loop
 					if($catanc == "summit"){
 						$summit_content = '';
@@ -406,10 +391,10 @@ if($current_category == 'other-documents'){
 						$_has_grp = false; // TRUE if a group was opened
 						$newgroups = [];
 					}
-					
+
 					//custom loop					
 					$cl = new WP_Query($clargs);
-								
+
 					if( $cl->have_posts() ) {
 					    $counter = 1;
 						while ( $cl->have_posts() ):
@@ -424,7 +409,7 @@ if($current_category == 'other-documents'){
 										$mon = get_the_date("m");
 										$year_mon = $year.$mon;
 										$newgroups[$year_mon][] = $theid;
-										
+
 										if ( has_tag("marker") ) {
 											$default_thumbnail = wp_get_attachment_image(1007, 'medium', '', array('class' => 'rounded img-fluid float-left'));
 											if(get_post_status($theid) == 'future'){
@@ -510,7 +495,7 @@ if($current_category == 'other-documents'){
 										}else{
 											get_template_part( 'template-parts/listings', 'wglist' );
 										}
-										
+
 									}else{
 										get_template_part( 'template-parts/listings' );
 									}
@@ -532,10 +517,10 @@ if($current_category == 'other-documents'){
 							}
 							// End the loop.
 						endwhile;
-						
+
 						//codes to execute right after the loop
 						if($catanc == "summit"){
-							
+
 							//tabContents
 							$ngcounter = 0;
 							echo('<div class="tab-content" id="pills-tabContent">');
@@ -588,7 +573,7 @@ if($current_category == 'other-documents'){
 								$buttons .= '<a title="'.strip_tags($ngshortname).'" type="button" class="btn btn-light m-1 nav-link border-bottom-0'.$active.'" id="pills-'.$key.'-tab" data-toggle="pill" href="#pills-'.$key.'" role="tab" aria-controls="pills-'.$key.'" aria-selected="true">'.($futurearticle?"<small class='text-muted'><em>upcoming</em></small>":$nglabel).'</a>';
 							}
 							echo('</div>');
-							
+
 							echo("<style>
 							li.summitlisting:before {
 								border: solid #98294b;
@@ -608,16 +593,16 @@ if($current_category == 'other-documents'){
 							}
 							</style>");
 						}						
-						
+
 						//reset the loop for efficiency
 						wp_reset_postdata();
 					}
 					echo($articlecontainerend);
 				}
 			?>
-			
+
 			<!--#########################################-->
-			
+
 		<?php
 			// If no content, include the "No posts found" template.
 		else :
@@ -626,7 +611,7 @@ if($current_category == 'other-documents'){
 		?>
 			</div>
 			<!--##################SIDEBARS#######################-->
-			
+
 			<!--leftsidebar-->
 			<?php if($columns == "setup3"):?>
 			<div class="<?php echo($leftsidebarcol);?> order-1">
@@ -635,7 +620,7 @@ if($current_category == 'other-documents'){
 				</div>
 			</div>
 			<?php endif;?>
-			
+
 			<?php if($columns == "setup2" or $columns == "setup4"):?>
 			<?php 
 			if($catlev == "pillar"){
@@ -672,7 +657,7 @@ if($current_category == 'other-documents'){
 					echo('<div id="accordionPillarSidelist">');
 					//themes in pillar
 					$te_arr = akseki_get_themes_in_pillar($current_category_id);
-					//print_r($te_arr);
+
 					if(!empty($te_arr)){						
 						echo('<div class="card border-0">');
 						echo('<button class="mt-1 border-bottom collapser-button btn bg-white w-100 text-left" data-toggle="collapse" data-target="#collapse'.$sidelist.'" aria-expanded="true" aria-controls="collapse'.$sidelist.'"><h5 class="mt-4">Themes in '.get_cat_name($current_category_id).'</h5></button>');
@@ -689,7 +674,7 @@ if($current_category == 'other-documents'){
 						echo('<button class="mt-1 border-bottom collapser-button btn bg-white w-100 text-left" data-toggle="collapse" data-target="#collapse'.$sidelist.'" aria-expanded="false" aria-controls="collapse'.$sidelist.'"><h5 class="mt-4">Cooperation '.$sidelist.'s</h5></button>');
 						if($sidelist == "Level"){
 							$qterm = 7;
-							//$otherbutton = get_term(45);
+
 							$otherbutton = "";
 						}elseif($sidelist=="Pillar"){
 							$qterm = get_queried_object()->parent;
@@ -748,51 +733,16 @@ if($current_category == 'other-documents'){
 				endif;
 				//other topics in ministerial or som in topic
 				if($catlev == "topic" and in_array($catanc,['ministerial','dg','som','wg','othlev'])):
-				
+
 					//vertical breadcrumb
 					get_template_part( 'template-parts/sidebar', 'breadcrumb', $args = array('the_curcat'=>$current_category_id) );
 					//same theme
 					get_template_part( 'template-parts/sidebar', 'akseki_same-theme', $args = array('current_category'=>$current_category_id));
-					
+
 					//same level
-					/*$minsomtit = "";
-					$minsomanc = -1;
-					if($catanc == "ministerial"){
-						$minsomtit = "Ministerial";
-						$minsomanc = $catid_ministerial;
-					}elseif($catanc == "som"){
-						$minsomtit = "SOM";
-						$minsomanc = $catid_som;
-					}elseif($catanc == "othlev"){
-						$minsomtit = "Other";
-						$minsomanc = $catid_otl;
-					}
-					echo('<h3 class="w-100 btn btn-primary"><i class="fas fa-arrow-right mr-2"></i>'.$minsomtit.'-level</h3>
-					<ul class="list-group list-group-flush">');
-					$wlc1_args = array(
-						'echo' => true,
-						'child_of' => $minsomanc,
-						'hide_empty' => 1,
-						'title_li' => '',
-						'current_category' => $current_category_id,
-					);
-					wp_list_categories($wlc1_args);
-					echo('</ul>');*/
+
 					//statements
-					/*echo('<h3 class="w-100 btn btn-secondary text-left mt-4"><i class="fas fa-arrow-right mr-2"></i>See Also:</h3>');
-					echo('<ul class="list-group list-group-flush see-also">');
-					echo('<li class="cat-item"><a href="'.get_permalink(299).'">Resources</li>');
-					$wlc2_args = array(
-						'echo' => true,
-						'depth'               => 2,
-						'hide_empty' => 1,
-						'title_li' => '',
-						//'exclude_tree'        => 43,
-						'exclude'             => '44,1,10,7',
-					);
-					wp_list_categories($wlc2_args);				
-					echo('<li class="cat-item"><a href="'.get_permalink(5733).'">Cooperation themes</a></li>');					
-					echo('</ul>');*/
+
 					echo("<script type='text/javascript'>
 						/*modifying the sidebar list*/
 						jQuery(document).ready(function($){

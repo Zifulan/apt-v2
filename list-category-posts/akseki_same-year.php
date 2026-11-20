@@ -68,7 +68,7 @@ while ( have_posts() ):
 	the_post();
 	$SM = akseki_get_sm(get_the_ID());
 	$longtitle = strip_tags(get_the_title());
-	//echo($current_post_ID).' - ' . get_the_ID() . '<br/>';
+
 	$lcp_display_output .= '<li class="list-group-item p-1'.($current_post_ID == get_the_ID()?" list-group-item-warning":"").'">';
 	$noshorttitle = false;
 	$shorttitle3 = '';
@@ -139,7 +139,7 @@ while ( have_posts() ):
 	}else{
 		$lcp_display_output .= preg_replace('/(\d)(st|nd|rd|th)/', '$1<sup>$2</sup>', $fixedtitle);
 	}
-	
+
 	$appear = ['apt-foreign-ministers-meeting','ammtc3','aem3','afmgm3','m-atm3','amaf3','amem3','amme3-emm','ammswd3','ammy3','accsm3','almm3','amca3','amri3','aptemm','ahmm3','summit-level-statements'];
 	foreach($appear as $thecat){
 		if(has_category($thecat,get_the_ID())){
@@ -158,10 +158,10 @@ while ( have_posts() ):
 		$lcp_display_output .= '</a>';
 	}
 	$lcp_display_output .= ' <span class="badge badge-secondary">' . get_the_date("F") . '</span>';
-	
+
 	
 	$lcp_display_output .= ' <span class="roundflag">'.akseki_get_the_flag(get_the_ID()).'</span>';
-	
+
 	$lcp_display_output .= '</li>';
 
 endwhile;

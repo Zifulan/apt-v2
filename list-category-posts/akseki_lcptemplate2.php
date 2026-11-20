@@ -71,8 +71,8 @@ if(!empty($future_posts)){
 	foreach($future_posts as $ft){
 		$ft_obj = get_post($ft);
 		$shortname = akseki_get_shortname($ft_obj->post_title,$ft);
+
 		
-		//$lcp_display_output .= $this->get_post_title($ft_obj, 'li', 'lcp_post');
 		$lcp_display_output .= '<li class="lcp_post text-muted mb-2"><em>'.$shortname.'</em><br>';
 		$lcp_display_output .= '<em class="badge badge-light font-weight-normal">'.akseki_get_the_meta(get_the_ID()).'</em>';
 		$lcp_display_output .= '</li>';
@@ -87,15 +87,13 @@ while ( have_posts() ):
 	  if (!is_null($prev_year)) {
 		 $lcp_display_output .= '</ul><hr/>';		 
 	  }
-	  //$lcp_display_output .= '<div class="lcp_ul_container">';
+
 	  $lcp_display_output .= '<strong class="lcp_s_ul bg-secondary py-0 px-2 rounded">'.$this_year.'</strong>';
 	  $lcp_display_output .= '<ul class="lcp_b_ul ml-3">';
   }
 
     //handle no content articles
-  
 
-  
 	//Show the title and link to the post:
 	//$lcp_display_output .= $this->get_post_title($post, 'li', 'lcp_post');
 	//handle shortnames and no shortnames
@@ -106,17 +104,17 @@ while ( have_posts() ):
 	}else{
 		$lcp_display_output .= '<a href="'.get_the_permalink().'">'.$shortname.'</a>';
 	}
-	//$lcp_display_output .= '<a title="'.strip_tags(get_the_title()).'" href="'.get_the_permalink().'">'.$shortname.'</a>';
+
 	$lcp_display_output .= '<br>';
 	$lcp_display_output .= '<em class="badge badge-light font-weight-normal">'.akseki_get_the_meta(get_the_ID()).'</em>';
 	$lcp_display_output .= '</li>';
   if (!get_next_post_link()) { 
     $lcp_display_output .= '</ul>';
   }
-  
+
   
   $prev_year = $this_year;
-  
+
 endwhile;
 
 $lcp_display_output .= '

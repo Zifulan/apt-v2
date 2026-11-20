@@ -1,9 +1,9 @@
 <?php
-		
+
 	//new method to determine post's category level
 	$curcat = get_the_category(get_the_ID());
 	$curcat_slugs = wp_list_pluck($curcat, 'slug');
-	
+
 	$sumcat = array("summit-level-statements");
 	$mincat = akseki_get_ministrial_categories();
 	$dgcat = akseki_get_dg_categories();
@@ -12,9 +12,9 @@
 	$wgcat = akseki_get_wg_categories();
 	$otlcat = akseki_get_othlev_categories();
 	$ottcat = akseki_get_ott_categories();
-	
+
 	if(array_intersect($sumcat, $curcat_slugs)){
-		//echo ('it is summit');
+
 		$cat_intersect = array_intersect($sumcat, $curcat_slugs);
 		$cat_ancestor = "summit";
 	}else if(array_intersect($mincat, $curcat_slugs)){
@@ -50,7 +50,7 @@
 		$cat_intersect = array("-1");
 		$cat_ancestor = "other";
 	}
-	
+
 	$cat_intersect = reset($cat_intersect);
 	$the_curcat_obj = get_category_by_slug($cat_intersect);
 	if(in_array("work-plans-and-plans-of-action",$curcat_slugs)){
@@ -58,7 +58,7 @@
 	}else{
 		$the_curcat = $the_curcat_obj->term_id;
 	}
-	
+
 	//if has tag "hasnocontent" redirect to its listing
 	if(has_tag("hasnocontent") && $cat_ancestor !== "other"){
 		$listing_page = get_category_link($the_curcat);
@@ -68,7 +68,7 @@
 				});
 			</script>');
 	}
-	
+
 	//if has tag "hyperlinked" redirect to its source
 	$the_source = get_post_custom_values("source");
 	if(has_tag("hyperlinked")){
@@ -76,10 +76,9 @@
 			echo('<script type="text/javascript">jQuery(function($){window.location.replace("'.$the_source[0].'");});</script>');
 		}
 	}
-	
+
 ?>
 
- 
 		<article id="post-<?php the_ID(); ?>" <?php post_class( 'apt-post akseki-detail-style1' ); ?>>
 			<header class="apt-post-header">
 				<?php

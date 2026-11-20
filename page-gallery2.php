@@ -26,8 +26,7 @@ get_header();
 							$cats1 = akseki_get_ministrial_categories();
 							$cats2 = akseki_get_commision_categories();
 							$cats = array_merge($cats1,$cats2);
-							//echo('<pre>');print_r($cats);echo('</pre>');
-							//echo(implode(',',$cats));
+
 							$gq = new WP_Query(array(
 												'posts_per_page' => -1,
 												'category_name'=>implode(',',$cats),
@@ -36,19 +35,13 @@ get_header();
 							if( $gq->have_posts() ) :
 								while ( $gq->have_posts() ):
 									$gq->the_post();
-									/*if(has_post_thumbnail()){
-										echo '<img src="'.get_the_post_thumbnail_url( get_the_id(), "medium" ).'" class="card-img-top p-3" alt="'.get_the_title().'"/>';
-									}else{
-										echo "no image";
-									}
-									echo(get_the_title());
-									echo('<hr/><br/>');*/
-									//get_template_part( 'template-parts/listings', 'gallery2' );
+
+									
 									if(has_post_thumbnail()):
 										echo '<article id="post-'.get_the_id().'" class="col-md-4">';
-										
+
 										$thumb = '<img src="'.get_the_post_thumbnail_url( get_the_id(), "medium" ).'" class="card-img-top p-3" alt="'.get_the_title().'"/>';			
-									
+
 										echo '	<div class="latest-item m-1 pb-3">
 													<div class="card w-100 h-100 shadow-sm" id="card_com-'.get_the_id().'">
 														<a href="#" class="popup-image">';

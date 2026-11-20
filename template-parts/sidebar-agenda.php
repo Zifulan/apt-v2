@@ -28,10 +28,10 @@
 			}else{
 				$firstbuttonaria = "false";
 			}
-			
+
 			$numelement = $SE_query->post_count;
 			$SE_query->the_post();		
-			
+
 			$flagdisplay = '';
 			$mecloc = akseki_get_mec_location(get_the_ID());
 			if(empty($mecloc) or $mecloc == '' or $mecloc == 'tbd'){
@@ -43,18 +43,18 @@
 			$qcatsarr = wp_list_pluck( $qcats, 'term_id' );
 			$qcatint = array_intersect($qcatsarr,$SE_cats);
 			$qcatObj = get_category(implode($qcatint)); 
-			
+
 			//border, if item is ministerial>secondary, if summit>primary
 			$thelevel = akseki_get_level_from_id(get_the_ID(),"post","level");
 			$thelevelObj = get_category($thelevel);
 			$border = '';
 			if($thelevelObj->slug == "summit-level-statements"){
-				//echo('<pre>');print_r($thelevelObj);echo('</pre>');
+
 				$border = " border border-primary rounded ";
 			}elseif($thelevelObj->slug == "ministerial-level-statements"){
 				$border = " border border-dark rounded ";
 			}
-			
+
 			if($qcatObj->count == 0){
 				$catdisp = "";
 			}else{
@@ -68,7 +68,7 @@
 								<div class="col-auto"><em class="badge badge-light">'.$catdisp.'</em></div>
 							</div>';
 			} else {
-				
+
 				//for ones have year
 				$qyear = get_the_date('Y');
 				if($qyear !== $tempyear){
@@ -89,7 +89,7 @@
 				}else{
 					$qmonth = '13'.get_the_date('y');
 				}
-				
+
 				if(has_tag('SC_year')){
 					$datedisplay = '<span class="bg-light">&ensp;</span>&ensp;<span class="badge badge-light">'.get_the_date('Y').'</span>';
 					$collapser = "collapse13".get_the_date('Y');
@@ -104,7 +104,7 @@
 					$printmonth = True;
 					$collapser = "collapse".get_the_date('Ym');
 				}
-				
+
 				if($qmonth !== $tempmonth and $printmonth == True){
 					if(!has_tag("SC_year")){
 						$fy = get_the_date("F Y");
@@ -117,10 +117,8 @@
 					$tempmonth = $qmonth;
 					++$firstbutton;
 				}
+
 				
-				/*if(has_tag("SC_year") and $prevtagSCyear == false){
-					$is_dtd .= '<hr class="my-2 mx-4 w-50">';
-				}*/
 				if(has_tag("SC_year")){
 					$prevtagSCyear = true;
 				}else{
@@ -132,19 +130,17 @@
 								<div class="col-auto"><em class="badge badge-light">'.$catdisp.'</em></div>
 							</div>';
 			}
-			
+
 			++$whileelement;
 		endwhile;
 
 	endif;
 	wp_reset_postdata();
 	?>
-	
+
 <section class="w-100">	
 
 	<!--EVENTS-->
-
-	
 
 	<div class="container" id="agenda-content">				
 
@@ -152,19 +148,17 @@
 		    <?php echo($is_dtd);?>
 		    </div><!--close the last element in dtd-->
 			<?php if($is_tbd !== ""):?>
-				
+
 				<div class="agenda-element">
 					<h3 class="mt-0 pt-3 mb-1">to be determined</h3>
 						<button class="font-weight-bold text-left w-100 btn btn-secondary mb-1 collapser-button" type="button" data-toggle="collapse" data-target="#collapsetbd" aria-expanded="false" aria-controls="collapsetbd"><span>tbd</span></button>
-					
+
 					<div class="row ml-4 mb-1 collapse" id="collapsetbd">
 						<?php echo($is_tbd);?>
 					</div>
 				</div>
 			<?php endif;?>
 		</div>
-
-											
 
 	</div>
 
@@ -180,9 +174,8 @@
 	#agenda-inner-content .agenda-element{break-inside: avoid;margin-bottom:1em;}
 }
 
-
 	/* plus minus in accordion */
-    
+
     .collapser-button[aria-expanded="true"] > span::after {
       content: "\00a0\00a0";
 	  float:right;

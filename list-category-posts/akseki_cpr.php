@@ -12,7 +12,7 @@ global $post;
 while ( have_posts() ):
   the_post();
   //Show the title and link to the post:
-  
+
   $lcp_display_output .= '<li class="list-group-item w-100 d-flex'.($futurearticle?" futurearticle pt-0 pb-2":" py-2").'">
 
 			<div class="col pl-2 my-auto">
@@ -22,11 +22,10 @@ while ( have_posts() ):
 			</div>
 
 		</li>';
-  
+
   
 endwhile;
 
-//$lcp_display_output .= '<li class="lcp_post"><em>'.$this->get_morelink().'&nbsp;&nearr;</em></li>';
 $lcp_display_output .= '</ul>';
 $lcp_display_output .= '<style>
 						.akseki-detail-style1 .meta-date::before {

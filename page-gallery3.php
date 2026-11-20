@@ -15,7 +15,7 @@ get_header();
 		//prevent default on click
 		jQuery( ".popup-image" ).click(function( event ) {
 			event.preventDefault();
-			
+
 		});
 	</script>	
 		<main id="main" class="site-main">	
@@ -33,7 +33,7 @@ get_header();
 							$catsa = get_term_children(7,"category");
 							$catsb = get_term_children(45,"category");
 							$catsc = array_merge($catsa,$catsb);
-							
+
 							$gq = new WP_Query(array(
 												'posts_per_page' => -1,
 												'cat'=> $catsc,
@@ -56,12 +56,12 @@ get_header();
 									$ftn_meta = akseki_get_the_meta($ftn_ID);
 									//print the masonry
 									if(has_post_thumbnail()):
-										//$thumb = '<div class="masonryInner" id="card_com-'.get_the_id().'">';
+
 										$thumb = '<a id="card_com-'.get_the_id().'" href="##" class="popup-image">';
 										$thumb .= '<img data-src="'.get_the_post_thumbnail_url( get_the_id(), "medium_large" ).'" class="masonryImg lazyload" alt="'.get_the_title().'"/>';
 										$thumb .= '<div class="innerText text-light p-2"><h5 class="m-0">'.$ftn_smornot.'</h5><small>'.$ftn_meta.'</small></div>';
 										$thumb .= '</a>';
-										//$thumb .= '</div>';
+
 										echo($thumb);
 									endif;
 								endwhile;

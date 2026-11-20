@@ -14,7 +14,7 @@ get_header();
 
 	<main id="main" class="site-main site-single">
 		<div class="container">
-			
+
 			<?php
 
 			/* Start the Loop */
@@ -22,7 +22,7 @@ get_header();
 				the_post();
 
 				$theme_page_children = get_children(5733);
-				//print_r($theme_page_children);
+
 				$tpc_ids = wp_list_pluck( $theme_page_children, 'ID' ); 
 				//print_r($tpc_ids);
 				//for themes pages

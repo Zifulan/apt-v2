@@ -49,7 +49,7 @@ while ( have_posts() ):
 	$fixedtitle = '';
 	$noshorttitle = false;
 	preg_match('/\d\d*(:?st|nd|rd|th)/', $longtitle, $shorttitle);
-	
+
 	if(!empty($SM)){
 	    $shorttitle3 = substr($SM,3);
 	}elseif(!empty($shorttitle)){
@@ -115,8 +115,7 @@ while ( have_posts() ):
 	if($noshorttitle){
 		$lcp_display_output .= $shorttitle3 . ' - ';
 	}else{
-		//$lcp_display_output .= preg_replace('/(st|nd|rd|th)/', '<sup>$1</sup>', $fixedtitle);
-		//$lcp_display_output .= preg_replace('/(\d\d*)(st|nd|rd|th)/', '$1<sup>$2</sup> APT', $fixedtitle);
+
 		$lcp_display_output .= preg_replace('/(\d\d*)(st|nd|rd|th)/', '$1<sup>$2</sup> ', $fixedtitle);
 	}
 	if(empty($SM)){
@@ -126,10 +125,10 @@ while ( have_posts() ):
 		$lcp_display_output .= '</a>';
 	}
 	$lcp_display_output .= ' <span class="badge badge-secondary">' . date('Y', strtotime($this->get_date($post))) . '</span>';
-	
+
 	
 	$lcp_display_output .= ' <span class="roundflag">'.akseki_get_the_flag(get_the_ID()).'</span>';
-	
+
 	$lcp_display_output .= '</li>';
 
 endwhile;

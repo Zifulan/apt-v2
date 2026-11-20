@@ -28,9 +28,9 @@
 		$fbg = $fstyle = '';
 		$echothelink = '<a href="'.get_the_permalink().'">'.get_the_title().'</a>';
 	}
-	
+
 	if($thefuturepost && $SC == "SC_year"){
-		//$echothemeta =  akseki_get_the_meta(get_the_id()).'|'.akseki_get_sc(get_the_id());
+
 		$echothemeta = preg_replace('/<span class="meta-date">.+?<\/span>/', akseki_get_sc(get_the_id()), akseki_get_the_meta(get_the_id()) );
 	}elseif($thefuturepost && $SC == "SC_month"){
 		$echothemeta = preg_replace('/<span class="meta-date">.+?<\/span>/', get_the_date( 'F Y' ), akseki_get_the_meta(get_the_id()) );
@@ -49,6 +49,4 @@
 			</div>
 		</li>';
 ?>
-	
-
 
