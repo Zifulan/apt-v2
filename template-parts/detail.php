@@ -111,7 +111,7 @@
 								if(has_post_thumbnail()):
 									echo the_post_thumbnail( 'medium_large' );
 								else:
-									echo apt_post_image_html( get_the_ID(), 'medium_large', '(max-width: 768px) 100vw, 768px', array( 'class' => 'wp-post-image', 'loading' => 'eager' ) ); // category cover
+									echo apt_post_image_html( get_the_ID(), 'medium_large', '(max-width: 768px) 100vw, 768px', array( 'class' => 'wp-post-image', 'loading' => 'eager' ) ); // flags image when there is no photo
 								endif;
 							?>
 						</a>

@@ -320,7 +320,7 @@ switch($catancgroup){
 										$newgroups[$year_mon][] = $theid;
 
 										if ( has_tag("marker") ) {
-											$default_thumbnail = apt_post_image_html( $theid, 'medium', '300px', array( 'class' => 'rounded img-fluid float-left' ) ); // category cover
+											$default_thumbnail = apt_post_image_html( $theid, 'medium', '300px', array( 'class' => 'rounded img-fluid float-left' ) ); // flags image when there is no photo
 											if(get_post_status($theid) == 'future'){
 												$newgroups[$year_mon]["markerimage"] = $default_thumbnail;
 											}else{

@@ -15,7 +15,9 @@ Fixed in the theme after these runs (commit after 2026-11-20):
   plugin's files are not loaded on the home page; early connection to the
   font server.
 - Hero and news images: responsive sizes (phones no longer download the
-  1024px image); statements without a photo get a small category cover.
+  1024px image); statements without a photo keep the flags image.
+- WordPress 6.7 "auto sizes" turned off: it reserved 3000x1500px for each
+  lazy image until it loaded, which stretched the news cards.
 - Accessibility: Mechanisms tabs (roles, ids, selected state), heading
   order, logo link name.
 

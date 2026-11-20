@@ -1938,13 +1938,8 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 	$card_class = 'news-card-summit';
 	}
 	$st = ( $latest['shortname'] !== $latest['title'] ) ? '<p class="news-card-subtitle">' . $latest['title'] . '</p>' : '';
-	// Backdrop (blurred): the small thumbnail is enough. Photo: responsive; no photo: category cover.
-	if ( has_post_thumbnail( $latest['id'] ) ) {
-		$thethumb = get_the_post_thumbnail_url( $latest['id'], 'thumbnail' );
-	} else {
-		$apt_cover = apt_fallback_cover( $latest['id'] );
-		$thethumb  = $apt_cover['url'];
-	}
+	// Backdrop (blurred): the small thumbnail is enough. Photo: responsive; no photo: the flags image.
+	$thethumb = has_post_thumbnail( $latest['id'] ) ? get_the_post_thumbnail_url( $latest['id'], 'thumbnail' ) : wp_get_attachment_image_url( 1007, 'thumbnail' );
 	$apt_img = apt_post_image_html( $latest['id'], 'medium_large', '(max-width: 600px) 92vw, 380px', array( 'class' => 'news-card-image' ) );
 	$topic = ( $latest['category'] && ! is_wp_error( $latest['category'] ) )
 	? '<div class="news-meta-item"><dt class="meta-label">Topic:</dt> <dd><a href="' . esc_url( get_category_link( $latest['category'] ) ) . '">' . $latest['category']->description . '</a></dd></div>'
@@ -2106,43 +2101,19 @@ function apt_archive_years() {
 }
 
 /**
- * Cover for a statement without a photo, chosen by category so the site
- * doesn't repeat one image: Summit, the three pillars, or a general cover.
- * Files in img/covers/ (1200x800).
- *
- * @return array{url:string,w:int,h:int}
+ * <img> for a statement: its photo, or the site's default image (the
+ * countries' flags, attachment 1007) when it has none. Responsive srcset/sizes.
  */
-function apt_fallback_cover( $post_id ) {
-	$key = 'general';
-	if ( in_category( 41, $post_id ) ) {
-		$key = 'summit';
-	} else {
-		$pillar = get_category( akseki_get_level_from_id( $post_id, 'post', 'pillar' ) );
-		if ( $pillar && ! is_wp_error( $pillar ) ) {
-			$p = apt_pillar_key( $pillar->name );
-			if ( 'other' !== $p ) {
-				$key = $p;
-			}
-		}
-	}
-	return array( 'url' => get_stylesheet_directory_uri() . '/img/covers/cover-' . $key . '.jpg', 'w' => 1200, 'h' => 800 );
+function apt_post_image_html( $post_id, $size, $sizes, $attr = array() ) {
+	$attr  = array_merge( array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $sizes ), $attr );
+	$image = has_post_thumbnail( $post_id ) ? get_post_thumbnail_id( $post_id ) : 1007;
+	return wp_get_attachment_image( $image, $size, false, $attr );
 }
 
-/** <img> for a statement: its photo (responsive srcset) or its category cover. */
-function apt_post_image_html( $post_id, $size, $sizes, $attr = array() ) {
-	$attr = array_merge( array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $sizes ), $attr );
-	if ( has_post_thumbnail( $post_id ) ) {
-		return wp_get_attachment_image( get_post_thumbnail_id( $post_id ), $size, false, $attr );
-	}
-	$c    = apt_fallback_cover( $post_id );
-	$html = '<img src="' . esc_url( $c['url'] ) . '" width="' . $c['w'] . '" height="' . $c['h'] . '"';
-	foreach ( $attr as $k => $v ) {
-		if ( 'sizes' !== $k ) {
-			$html .= ' ' . esc_attr( $k ) . '="' . esc_attr( $v ) . '"';
-		}
-	}
-	return $html . '>';
-}
+// WordPress 6.7+ "auto sizes": lazy images get sizes="auto" plus a style that
+// reserves 3000x1500px until they load, which stretched the news cards. The
+// theme gives every image its own sizes, so the feature is turned off.
+add_filter( 'wp_img_tag_add_auto_sizes', '__return_false' );
 
 /*
  * Loading performance (from the live Lighthouse reports)

@@ -2030,3 +2030,7 @@ main.site-single {
 .site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism { display: grid; grid-template-columns: 88px 1fr; grid-template-rows: auto 1fr; column-gap: 14px; padding: 10px 14px 10px 10px; }
 .site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism img { grid-row: 1 / span 2; width: 88px; height: 88px; aspect-ratio: 1; margin: 0; border-radius: 10px !important; }
 .site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism > span { padding: 0; }
+
+/* Images never reserve placeholder space before loading (WordPress's
+   auto-sizes adds contain-intrinsic-size: 3000px 1500px to lazy images). */
+:is(.news-card, .apt-gallery-link, .apt-recent-card, .apt-mechanism, .apt-hero-feature) img { contain-intrinsic-size: none !important; }
