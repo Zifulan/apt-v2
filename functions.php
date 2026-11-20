@@ -34,9 +34,9 @@ function avi_enqueue() {
     wp_enqueue_script( 'akseki-js' );
 
 	//APT DESIGN SYSTEM (loaded last so it wins over bootstrap + style.css)
-	wp_enqueue_style( 'apt-font-outfit', 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap', array(), null );
+	// The Outfit font is self-hosted: @font-face at the top of apt-design.css.
 	$apt_css = '/assets/css/apt-design.css';
-	wp_enqueue_style( 'apt-design', get_stylesheet_directory_uri() . $apt_css, array( 'bootstrapstarter-style', 'apt-font-outfit' ), filemtime( get_stylesheet_directory() . $apt_css ) );
+	wp_enqueue_style( 'apt-design', get_stylesheet_directory_uri() . $apt_css, array( 'bootstrapstarter-style' ), filemtime( get_stylesheet_directory() . $apt_css ) );
 	$apt_js = '/assets/js/apt-nav.js';
 	wp_enqueue_script( 'apt-nav', get_stylesheet_directory_uri() . $apt_js, array(), filemtime( get_stylesheet_directory() . $apt_js ), true );
 	$apt_carousel = '/assets/js/apt-carousel.js';
@@ -2251,10 +2251,9 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 }, 100 );
 
-// Open the connection to the font server early.
-add_filter( 'wp_resource_hints', function ( $urls, $type ) {
-	if ( 'preconnect' === $type ) {
-		$urls[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' );
-	}
-	return $urls;
-}, 10, 2 );
+// Start downloading the (self-hosted) Latin font file with the page, instead
+// of only once the stylesheet has been read. The extended-Latin file is only
+// fetched on pages that need it.
+add_action( 'wp_head', function () {
+	echo '<link rel="preload" href="' . esc_url( get_stylesheet_directory_uri() . '/assets/fonts/outfit-latin.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+}, 1 );
