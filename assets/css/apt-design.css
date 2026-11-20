@@ -1407,15 +1407,13 @@ main.site-single {
 .site-main:not(.front-main) article.type-page > .entry-header > hr,
 .site-main:not(.front-main) #avi-content > .page-header > hr { display: none; }
 /* Long full name under a category title (was a maroon badge) */
-.site-main:not(.front-main) .category-subtitle,
-.site-main:not(.front-main) .category-subtitle.badge {
+.site-main:not(.front-main) .category-subtitle {
 	font-family: var(--font) !important; letter-spacing: 0;
 	display: block; margin: 10px 0 0; padding: 0 !important;
 	background: none !important; color: var(--ink-2) !important;
 	font-size: clamp(1rem, 0.95rem + 0.3vw, 1.2rem); font-weight: 500; text-align: left; white-space: normal;
 	border-radius: 0; transform: none;
 }
-.site-main:not(.front-main) .category-subtitle .dashicons { display: none; }
 .apt-page-head p { margin: 8px 0 0; color: var(--ink-2); }
 
 /* ---------- Inner pages: Bootstrap colours remapped to the APT palette ---- */
@@ -1498,8 +1496,7 @@ main.site-single {
 .site-main:not(.front-main) .meta-location,
 .site-main:not(.front-main) .meta-date { font-style: normal; }
 .site-main:not(.front-main) .listings-wrapper article .akseki-meta { color: var(--ink-2); }
-.site-main:not(.front-main) .listings-wrapper .akseki-meta::before,
-.site-main:not(.front-main) .futureitem .akseki-meta::before { content: none; }
+.site-main:not(.front-main) .listings-wrapper .akseki-meta::before { content: none; }
 .site-main:not(.front-main) .akseki-meta .roundflag { margin-left: 4px; }
 
 /* Year / level pills (nav-pills, e.g. Summit Level Statements) */
@@ -1828,3 +1825,76 @@ main.site-single {
 .apt-areas-list li { border-top: 1px solid var(--rule-soft); }
 .apt-areas-list a { display: flex; align-items: center; min-block-size: var(--target-size); padding: 6px 0; color: var(--ink); text-decoration: none; }
 .apt-areas-list a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Inner pages: remaining Bootstrap patterns from old templates ---------- */
+/* "More … statements" and "Activities at other levels": outline pills, not shadowed boxes */
+.site-main:not(.front-main) a.btn-light {
+	display: inline-flex !important; width: auto !important; max-width: 100%; flex: 0 0 auto !important;
+	align-items: center; justify-content: center; min-block-size: var(--target-size);
+	margin: 8px 0 0 !important; padding: 8px 18px !important;
+	border: 1px solid var(--rule) !important; border-radius: var(--radius-pill) !important;
+	background: var(--paper) !important; box-shadow: none !important;
+	color: var(--ink) !important; font-weight: 600; font-size: 0.95rem; text-align: center;
+}
+.site-main:not(.front-main) a.btn-light em { font-style: normal; }
+.site-main:not(.front-main) a.btn-light:hover { border-color: var(--ink) !important; background: var(--paper-2) !important; }
+.site-main:not(.front-main) .container:has(> .row > a.btn-light) { padding: 0; }
+.site-main:not(.front-main) .container > .row:has(> a.btn-light) { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+
+/* List groups in content: plain rows divided by a rule, no grey rounded boxes */
+.site-main:not(.front-main) .list-group:not(.detail-sidebar .list-group) > .list-group-item:not(.list-group-item-primary):not(.list-group-item-warning) {
+	background: transparent !important; border-radius: 0 !important;
+	border-width: 0 0 1px !important; border-style: solid !important; border-color: var(--rule-soft) !important;
+	color: var(--ink);
+}
+.site-main:not(.front-main) .list-group:not(.detail-sidebar .list-group) > .list-group-item-action:not(.list-group-item-primary):hover { background: var(--paper-2) !important; }
+.site-main:not(.front-main) .list-group > .list-group-item-primary { border-radius: var(--radius-pill) !important; margin-bottom: 8px; text-align: center; }
+.site-main:not(.front-main) .list-group > .list-group-item-secondary { text-align: left; }
+
+/* "Themes in …" line on level pages (akseki_get_level_resources) */
+.apt-pillar-themes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 16px; }
+.apt-pillar-themes > span { color: var(--ink-2); margin-right: 4px; }
+
+/* Shortcodes Ultimate tabs (meetings within a pillar): pill tabs */
+.site-main:not(.front-main) .su-tabs { background: none !important; padding: 0 !important; border-radius: 0 !important; }
+.site-main:not(.front-main) .su-tabs-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px !important; padding: 0 !important; background: none !important; }
+.site-main:not(.front-main) .su-tabs-vertical .su-tabs-nav { float: none !important; width: auto !important; }
+.site-main:not(.front-main) .su-tabs-vertical .su-tabs-panes { float: none !important; width: auto !important; }
+.site-main:not(.front-main) .su-tabs-nav > span {
+	display: inline-flex !important; flex-direction: column; align-items: flex-start; float: none !important;
+	min-block-size: var(--target-size); margin: 0 !important; padding: 8px 16px !important;
+	border: 1px solid var(--rule-soft) !important; border-radius: 14px !important;
+	background: var(--paper) !important; color: var(--ink) !important; cursor: pointer; text-align: left;
+}
+.site-main:not(.front-main) .su-tabs-nav > span h5 { margin: 0; font-size: 1rem; font-weight: 700; }
+.site-main:not(.front-main) .su-tabs-nav > span em { font-style: normal; font-size: 0.82rem; color: var(--ink-2); }
+.site-main:not(.front-main) .su-tabs-nav > span.su-tabs-current { background: var(--ink) !important; border-color: var(--ink) !important; color: var(--paper) !important; }
+.site-main:not(.front-main) .su-tabs-nav > span.su-tabs-current em { color: rgba(255, 255, 255, 0.85); }
+.site-main:not(.front-main) .su-tabs-pane { padding: 0 !important; background: none !important; }
+
+/* Cards in listings (agreements etc.): no grey header/footer bands */
+.site-main:not(.front-main) .card-header,
+.site-main:not(.front-main) .card-footer { background: transparent !important; border-color: var(--rule-soft) !important; }
+.site-main:not(.front-main) .card small.font-italic,
+.site-main:not(.front-main) .card .font-italic { font-style: normal !important; }
+
+/* Sidebar category lists (CPR page): no grey box */
+
+/* Bootstrap accordions (latest summit statements): rows divided by a rule, not boxed cards */
+.site-main:not(.front-main) .accordion > .card { border: 0 !important; border-bottom: 1px solid var(--rule-soft) !important; border-radius: 0 !important; background: none; }
+.site-main:not(.front-main) .accordion > .card > .card-header { padding: 0 !important; border: 0 !important; }
+.site-main:not(.front-main) .accordion > .card > .card-header .btn-link {
+	display: flex; align-items: baseline; gap: 0.3em; width: 100%;
+	min-block-size: var(--target-size); padding: 10px 0 !important; color: var(--ink) !important; font-weight: 600; text-decoration: none !important;
+}
+.site-main:not(.front-main) .accordion > .card > .card-header .btn-link em { margin-left: auto; float: none !important; font-style: normal; font-weight: 400; color: var(--ink-2); }
+.site-main:not(.front-main) .accordion > .card > .card-header .btn-link:hover { color: var(--apt-blue) !important; }
+.site-main:not(.front-main) .accordion .card-body { padding: 0 0 12px !important; }
+
+/* Sidebar list of other levels and documents (CPR+3 page) */
+.apt-sidebar-list ul { list-style: none; margin: 0; padding: 0; }
+.apt-sidebar-list li { border-top: 1px solid var(--rule-soft); }
+.apt-sidebar-list li a { display: flex; align-items: center; min-block-size: var(--target-size); padding: 6px 0; color: var(--ink); text-decoration: none; }
+.apt-sidebar-list li a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
+.apt-sidebar-list .children { padding-left: 14px; }
+.apt-sidebar-list .current-cat > a { font-weight: 700; }

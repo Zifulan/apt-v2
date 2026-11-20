@@ -1770,7 +1770,7 @@ function akseki_get_level_resources($level_id){
 			}
 		}
 		if(!empty($themesecho)){
-			$sc3 .= '<div class="w-100 p-2 text-right" style="background-color:#eee!important;"><em>&#10150; Themes in '.$pillar->name.' :</em>&emsp;'.$themesecho.'</div>';
+			$sc3 .= '<p class="apt-pillar-themes"><span>Themes in '.$pillar->name.':</span> '.$themesecho.'</p>';
 		}
 		$sc3 .= '[su_tabs style="default" active="1" vertical="yes" class=""]'.$sc4.'[/su_tabs]';
 		//themes

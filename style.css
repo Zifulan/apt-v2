@@ -213,42 +213,6 @@ ul.navbar-nav li.dropdown{
 	}
 }
 /*flags section*/
-#flags{
-	background: url(img/ortho.png) no-repeat center center;
-	background-size:contain;
-}
-@media only screen and (max-width: 992px) {
-	#flags{margin-top:2em;}
-}
-#flags h3{
-	margin-bottom:1em;
-}
-#flags h3 span{
-	font-weight:bold;
-	box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
-    background:rgba(255,255,255,.5);
-	padding:0 .5em;
-}
-.country-flags svg{
-	width:100px;
-    height: auto;
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
-    background:rgba(255,255,255,.5);
-    padding: 3px;
-    margin: 3px;
-	transition:.4s;
-}
-.country-flags svg:hover{
-    background:rgba(255,255,255,1);
-	width:110px;
-	height:auto;
-}
-.ab-items i{
-	font-size:2em;
-}
-.ab-items p{
-	margin-bottom:0;
-}
 #theplus{
 	font-weight:bold;
 	font-size:3em;
@@ -420,11 +384,6 @@ ul.navbar-nav li.dropdown{
     position: relative;
     display: inline-block;
     line-height: 1.25;
-}
-.category-subtitle i{
-	position: absolute;
-    left: .5em;
-    top: .4em;
 }
 /*sectoral listing*/
 #v-pills-tab a.nav-link h4{
@@ -684,22 +643,6 @@ span.paragraph-number{
 }
 /*SUMMIT LISTING PAGE*/
 /*BREADCRUMB*/
-.akseki_breadcrumb .ab-item{
-  display: inline-block;
-  padding: 8px 1em;
-  transform: skew(-12deg);
-  cursor: pointer;			  
-}
-.akseki_breadcrumb .ab-item.first-item{				
-	font-weight:bold;
-	background-color:white;
-}
-.akseki_breadcrumb .ab-item.last-item{				
-	font-weight:bold;
-}
-.akseki_breadcrumb .dropdown-menu.show{
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px
-}
 /*QUICK FIXES*/
 .b_acc .su-tabs-pane{font-size:1rem;}
 .b_acc .su-spoiler-icon{
@@ -936,10 +879,6 @@ height: 225px;
 .topic-sidebar .same-theme .toggler-title{
 	text-align:left;
 }
-.akseki_breadcrumb>div:last-child a small{
-	font-weight: bold;
-}
-.topic-sidebar .akseki_breadcrumb>div:last-child a,
 .topic-sidebar .same-theme .list-group-item-warning a{
 	pointer-events: none;
     cursor: default;

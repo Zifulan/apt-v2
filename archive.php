@@ -64,60 +64,6 @@ if(in_array($catanc,["ministerial","dg","cpr","som","ott","othlev"]) and !empty(
 	$catlev = "na";
 }
 
-//get all categories with similar pillar names
-$pillar_political = get_terms([
-    'taxonomy' => 'category',
-    'name__like' => 'political cooperations',
-    'hide_empty' => false,
-]);
-$pillar_political = wp_list_pluck( $pillar_political, 'term_id' );
-
-$pillar_economic = get_terms([
-    'taxonomy' => 'category',
-    'name__like' => 'economic cooperations',
-    'hide_empty' => false,
-]);
-$pillar_economic = wp_list_pluck( $pillar_economic, 'term_id' );
-
-$pillar_socio = get_terms([
-    'taxonomy' => 'category',
-    'name__like' => 'socio-cultural cooperations',
-    'hide_empty' => false,
-]);
-$pillar_socio = wp_list_pluck( $pillar_socio, 'term_id' );
-
-switch($catlev){
-	case "level":
-		$catpil = "na";
-		break;
-	case "pillar":
-		if(in_array($current_category_id,$pillar_political)){
-			$catpil = "political";
-		}elseif(in_array($current_category_id,$pillar_economic)){
-			$catpil = "economic";
-		}elseif(in_array($current_category_id,$pillar_socio)){
-			$catpil = "socio";
-		}else{
-			$catpil = "na";
-		}
-		break;
-	case "topic":
-		if(($catanc == "ministerial" or $catanc == "som") and !empty($curcatanc)){
-			if(array_intersect($curcatanc,$pillar_political)){
-				$catpil = "political";
-			}elseif(array_intersect($curcatanc,$pillar_economic)){
-				$catpil = "economic";
-			}elseif(array_intersect($curcatanc,$pillar_socio)){
-				$catpil = "socio";
-			}else{
-				$catpil = "na";
-			}
-		}
-		break;
-	default:
-		$catpil = "na";
-}
-
 //group similar levels
 if($catanc == "cpr" or $catanc == "summit"){
 	$catancgroup = "singlelevel";
@@ -690,27 +636,16 @@ if($current_category == 'other-documents'){
 				}
 				//multilevel links
 				if($catanc == "cpr") :	
-					echo('<div class="ministerial-sidebar p-4 rounded bg-light"><ul class="list-group list-group-flush">');					
-					$wlc2_args = array(
-						'echo' => true,
-						'depth'               => 2,
+					// Other levels and documents, as a plain list (styled in apt-design.css)
+					echo('<nav class="ministerial-sidebar apt-sidebar-list" aria-label="Other statements and documents"><ul>');
+					wp_list_categories( array(
+						'echo'       => true,
+						'depth'      => 2,
 						'hide_empty' => 0,
-						'title_li' => '',
-						//'exclude_tree'        => 43,
-						'exclude'             => '44,1,10,7',
-					);
-					wp_list_categories($wlc2_args);	
-					echo('</ul></div>');
-					echo("<script type='text/javascript'>
-							jQuery(document).ready(function($){
-								$('.ministerial-sidebar > .list-group > li').addClass('list-group-item');
-								$('.ministerial-sidebar > .list-group > li > a').addClass('btn btn-secondary');
-								var currentcat = $('.ministerial-sidebar .current-cat a').html();
-								$('.ministerial-sidebar .current-cat').empty();
-								$('.ministerial-sidebar .current-cat').append('<em>'+currentcat+'</em>');
-							});
-						</script>");
-					echo('<style>.futurearticle .akseki-meta:before{border-color:#ced4da!important;}</style>');
+						'title_li'   => '',
+						'exclude'    => '44,1,10,7',
+					) );
+					echo('</ul></nav>');
 				endif;
 				//other topics in ministerial or som in topic
 				if($catlev == "topic" and in_array($catanc,['ministerial','dg','som','wg','othlev'])):
@@ -718,20 +653,6 @@ if($current_category == 'other-documents'){
 					//same theme
 					get_template_part( 'template-parts/sidebar', 'akseki_same-theme', $args = array('current_category'=>$current_category_id));
 
-					//same level
-
-					//statements
-
-					echo("<script type='text/javascript'>
-						/*modifying the sidebar list*/
-						jQuery(document).ready(function($){
-							$('.ministerial-sidebar > .list-group > li').addClass('list-group-item');
-							$('.ministerial-sidebar > .list-group > li > a').addClass('btn btn-secondary');
-							var currentcat = $('.ministerial-sidebar .current-cat a').html();
-							$('.ministerial-sidebar .current-cat').empty();
-							$('.ministerial-sidebar .current-cat').append('<em>'+currentcat+'</em>');
-						});
-					</script>");
 				endif;
 				?>
 			</div><!--end of sidebar-->
