@@ -40,26 +40,26 @@
 				</header>
 
 				<dialog class="apt-menu" id="apt-menu" aria-label="<?php esc_attr_e( 'Menu', 'akseki-vi' ); ?>">
-					<div class="apt-menu-scroller">
-						<div class="apt-menu-sheet">
-							<nav class="apt-menu-panel" aria-label="<?php esc_attr_e( 'Main', 'akseki-vi' ); ?>">
-								<div class="apt-menu-top">
-									<button type="button" class="apt-menu-close" aria-label="<?php esc_attr_e( 'Close menu', 'akseki-vi' ); ?>" autofocus>
-										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-									</button>
-								</div>
-								<?php
-								wp_nav_menu( array(
-									'theme_location' => 'primary',
-									'depth'          => 3,
-									'container'      => false,
-									'menu_class'     => 'apt-menu-list',
-									'menu_id'        => 'apt-menu-list',
-									'fallback_cb'    => false,
-									'apt_mega'       => true,
-								) );
-								?>
-							</nav>
+					<div class="apt-menu-inner">
+						<div class="apt-menu-top">
+							<a class="apt-menu-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="ASEAN Plus Three - Home">
+								<?php echo load_logo_svg(); // phpcs:ignore WordPress.Security.EscapeOutput -- theme SVG ?>
+								<span aria-hidden="true">ASEAN Plus Three</span>
+							</a>
+							<button type="button" class="apt-menu-close" aria-label="<?php esc_attr_e( 'Close menu', 'akseki-vi' ); ?>" autofocus>
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+							</button>
+						</div>
+						<nav class="apt-menu-nav" aria-label="<?php esc_attr_e( 'Main', 'akseki-vi' ); ?>">
+							<?php echo apt_site_menu_html(); // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in the function ?>
+						</nav>
+						<div class="apt-menu-foot">
+							<form class="apt-menu-search" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+								<label class="screen-reader-text" for="apt-menu-q"><?php esc_html_e( 'Search the site', 'akseki-vi' ); ?></label>
+								<input type="search" id="apt-menu-q" name="s" placeholder="<?php esc_attr_e( 'Search the site', 'akseki-vi' ); ?>" enterkeyhint="search" autocomplete="off">
+								<button type="submit"><?php esc_html_e( 'Search', 'akseki-vi' ); ?></button>
+							</form>
+							<?php echo apt_site_menu_latest_html(); // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in the function ?>
 						</div>
 					</div>
 				</dialog>

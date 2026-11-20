@@ -87,6 +87,115 @@ function apt_mega_menu_items( $items, $args ) {
 add_filter( 'wp_nav_menu_objects', 'apt_mega_menu_items', 10, 2 );
 
 /**
+ * The full-screen site menu (header.php): numbered sections from the
+ * "primary" menu (Appearance > Menus), each with a panel of its links.
+ * Desktop: sections on the left, the open section's links on the right.
+ * Phones: an accordion. Descriptions come from the menu item's Description
+ * field, else from the linked category's description.
+ */
+function apt_site_menu_html() {
+	$locations = get_nav_menu_locations();
+	if ( empty( $locations['primary'] ) ) {
+		return '';
+	}
+	$items = wp_get_nav_menu_items( $locations['primary'], array( 'update_post_term_cache' => false ) );
+	if ( ! $items ) {
+		return '';
+	}
+	if ( function_exists( '_wp_menu_item_classes_by_context' ) ) {
+		_wp_menu_item_classes_by_context( $items ); // sets ->current, ->current_item_ancestor
+	}
+	$items = apt_mega_menu_items( $items, (object) array( 'apt_mega' => true ) );
+
+	$kids = array();
+	foreach ( $items as $item ) {
+		$kids[ (int) $item->menu_item_parent ][] = $item;
+	}
+	if ( empty( $kids[0] ) ) {
+		return '';
+	}
+	$is_here = function ( $item ) {
+		return ! empty( $item->current ) || ! empty( $item->current_item_ancestor ) || ! empty( $item->current_item_parent );
+	};
+	$desc = function ( $item ) {
+		$text = trim( wp_strip_all_tags( (string) $item->description ) );
+		if ( '' === $text && 'taxonomy' === $item->type && 'category' === $item->object ) {
+			$text = trim( wp_strip_all_tags( (string) category_description( (int) $item->object_id ) ) );
+		}
+		return '' === $text ? '' : wp_trim_words( $text, 12, '…' );
+	};
+
+	// The section open by default on desktop: the one holding this page, else the first with links.
+	$open = 0;
+	foreach ( $kids[0] as $top ) {
+		if ( $is_here( $top ) && ! empty( $kids[ $top->ID ] ) ) {
+			$open = $top->ID;
+			break;
+		}
+	}
+	if ( ! $open ) {
+		foreach ( $kids[0] as $top ) {
+			if ( ! empty( $kids[ $top->ID ] ) ) {
+				$open = $top->ID;
+				break;
+			}
+		}
+	}
+
+	$out = '<ol class="apt-menu-sections" style="--apt-menu-n:' . count( $kids[0] ) . '">';
+	$n   = 0;
+	foreach ( $kids[0] as $top ) {
+		++$n;
+		$num   = '<span class="apt-menu-num" aria-hidden="true">' . sprintf( '%02d', $n ) . '</span>';
+		$title = esc_html( wp_strip_all_tags( $top->title ) );
+		$here  = $is_here( $top ) ? ' is-here' : '';
+		if ( empty( $kids[ $top->ID ] ) ) {
+			$out .= '<li><a class="apt-menu-tab' . $here . '" href="' . esc_url( $top->url ) . '"' . ( ! empty( $top->current ) ? ' aria-current="page"' : '' ) . '>' . $num . '<span>' . $title . '</span></a></li>';
+			continue;
+		}
+		$pid  = 'apt-menu-p' . (int) $top->ID;
+		$out .= '<li data-open-default="' . ( $top->ID === $open ? '1' : '0' ) . '">';
+		$out .= '<button type="button" class="apt-menu-tab' . $here . '" aria-expanded="false" aria-controls="' . $pid . '">' . $num . '<span>' . $title . '</span></button>';
+		$out .= '<div class="apt-menu-panel" id="' . $pid . '" hidden>';
+		// The section's own page, unless it is only a stand-in for its first link.
+		$own  = untrailingslashit( $top->url ) !== untrailingslashit( $kids[ $top->ID ][0]->url );
+		$out .= '<p class="apt-menu-kicker">' . ( $own ? '<a class="apt-arrow" href="' . esc_url( $top->url ) . '"' . ( ! empty( $top->current ) ? ' aria-current="page"' : '' ) . '>' . $title . '</a>' : $title ) . '</p>';
+		$out .= '<ul class="apt-menu-links">';
+		foreach ( $kids[ $top->ID ] as $child ) {
+			$d    = $desc( $child );
+			$out .= '<li><a href="' . esc_url( $child->url ) . '"' . ( ! empty( $child->current ) ? ' aria-current="page"' : '' ) . '><b>' . esc_html( wp_strip_all_tags( $child->title ) ) . '</b>' . ( $d ? '<span>' . esc_html( $d ) . '</span>' : '' ) . '</a>';
+			if ( ! empty( $kids[ $child->ID ] ) ) {
+				$out .= '<ul class="apt-menu-sublinks">';
+				foreach ( $kids[ $child->ID ] as $g ) {
+					$out .= '<li><a href="' . esc_url( $g->url ) . '"' . ( ! empty( $g->current ) ? ' aria-current="page"' : '' ) . '>' . esc_html( wp_strip_all_tags( $g->title ) ) . '</a></li>';
+				}
+				$out .= '</ul>';
+			}
+			$out .= '</li>';
+		}
+		$out .= '</ul></div></li>';
+	}
+	$out .= '</ol>';
+	return $out;
+}
+
+/** The newest homepage feature (tag "front") for the menu's "Latest" line. */
+function apt_site_menu_latest_html() {
+	$q = new WP_Query( array(
+		'tag'                 => 'front',
+		'posts_per_page'      => 1,
+		'post_status'         => 'publish',
+		'ignore_sticky_posts' => true,
+		'no_found_rows'       => true,
+	) );
+	if ( ! $q->posts ) {
+		return '';
+	}
+	$p = $q->posts[0];
+	return '<a class="apt-menu-latest" href="' . esc_url( get_permalink( $p ) ) . '"><span class="apt-menu-latest-k">' . esc_html__( 'Latest', 'akseki-vi' ) . '</span><span class="apt-menu-latest-t">' . esc_html( wp_strip_all_tags( get_the_title( $p ) ) ) . '</span><span class="apt-menu-latest-d">' . esc_html( get_the_date( '', $p ) ) . '</span></a>';
+}
+
+/**
  * Whether a menu address leads somewhere: other websites are assumed fine;
  * on this site it must be the home page, a post or page, a category or tag,
  * or a post type archive. "#" and empty links don't lead anywhere.
