@@ -1788,22 +1788,10 @@ main.site-single {
 /* Links to related pages at the end of About / History / Areas */
 .apt-related-links { display: flex; flex-wrap: wrap; gap: 10px; margin: clamp(28px, 4vw, 44px) 0 clamp(24px, 4vw, 48px); padding-top: 24px; border-top: 1px solid var(--rule-soft); }
 
-/* History timeline (page-history.php) */
-.apt-timeline { list-style: none; margin: 0; padding: 0; max-width: 64rem; }
-.apt-timeline-item { position: relative; display: grid; grid-template-columns: 7rem 1fr; gap: 0 32px; padding-bottom: clamp(24px, 3vw, 36px); }
-.apt-timeline-item::before { content: ''; position: absolute; left: calc(7rem + 15px); top: 10px; bottom: 0; width: 2px; background: var(--rule-soft); }
-.apt-timeline-item:last-child::before { display: none; }
-.apt-timeline-item::after { content: ''; position: absolute; left: calc(7rem + 10px); top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--apt-blue); box-shadow: 0 0 0 4px var(--paper); }
-.apt-timeline-year { margin: 0; font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem); font-weight: 700; line-height: 1; color: var(--ink); text-align: right; }
-.apt-timeline-body { grid-column: 2; padding-left: 24px; }
-.apt-timeline-body p { margin: 0 0 12px; font-size: 1.05rem; line-height: 1.7; max-width: 68ch; }
-@media (max-width: 575.98px) {
-	.apt-timeline-item { grid-template-columns: 1fr; padding-left: 28px; }
-	.apt-timeline-item::before { left: 5px; }
-	.apt-timeline-item::after { left: 0; }
-	.apt-timeline-year { text-align: left; margin-bottom: 8px; }
-	.apt-timeline-body { grid-column: 1; padding-left: 0; }
-}
+/* History (page-history.php): the page text at a readable width */
+.apt-history p { font-size: 1.05rem; line-height: 1.75; max-width: 72ch; }
+.apt-history :is(figure, .wp-block-gallery) { max-width: 100%; margin: 0; }
+.apt-history img { max-width: 100%; height: auto; }
 
 /* Areas of Cooperation (page-areas-of-cooperation.php) */
 .apt-areas-intro { margin-bottom: clamp(28px, 4vw, 40px); }
