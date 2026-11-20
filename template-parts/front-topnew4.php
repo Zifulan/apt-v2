@@ -65,18 +65,31 @@
 			/*
 			 * Flag line-up: ASEAN Member States in alphabetical order with the
 			 * ASEAN flag on the right (ASEAN Flag Guidelines, para 16), then
-			 * China, Japan and the Republic of Korea. Names are in alt/title only.
+			 * China, Japan and the Republic of Korea. Official names are in alt/title only.
 			 * Flags: flag-icons (MIT, img/flags/1x1/LICENSE-flag-icons); ASEAN
 			 * flag: img/flags/asean.svg.
 			 */
 			$apt_flag_dir    = get_stylesheet_directory_uri() . '/img/flags/';
 			$apt_flag_groups = array(
 				'ASEAN'      => array(
-					'bn' => 'Brunei Darussalam', 'kh' => 'Cambodia', 'id' => 'Indonesia', 'la' => 'Lao PDR',
-					'my' => 'Malaysia', 'mm' => 'Myanmar', 'ph' => 'Philippines', 'sg' => 'Singapore',
-					'th' => 'Thailand', 'tl' => 'Timor-Leste', 'vn' => 'Viet Nam', 'asean' => 'ASEAN',
+					'bn'    => 'Brunei Darussalam',
+					'kh'    => 'Kingdom of Cambodia',
+					'id'    => 'Republic of Indonesia',
+					'la'    => "Lao People's Democratic Republic",
+					'my'    => 'Malaysia',
+					'mm'    => 'Republic of the Union of Myanmar',
+					'ph'    => 'Republic of the Philippines',
+					'sg'    => 'Republic of Singapore',
+					'th'    => 'Kingdom of Thailand',
+					'tl'    => 'Democratic Republic of Timor-Leste',
+					'vn'    => 'Socialist Republic of Viet Nam',
+					'asean' => 'Association of Southeast Asian Nations (ASEAN)',
 				),
-				'Plus Three' => array( 'cn' => 'China', 'jp' => 'Japan', 'kr' => 'Republic of Korea' ),
+				'Plus Three' => array(
+					'cn' => "People's Republic of China",
+					'jp' => 'Japan',
+					'kr' => 'Republic of Korea',
+				),
 			);
 			?>
 			<div class="apt-hero-flags" role="group" aria-label="<?php esc_attr_e( 'ASEAN Member States, ASEAN, and China, Japan and the Republic of Korea', 'akseki-vi' ); ?>">
