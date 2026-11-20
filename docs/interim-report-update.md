@@ -326,6 +326,7 @@ renders them.
 ## 6. Performance: original theme vs apt-v2 (20 November)
 
 **Method**
+- **Reports:** the full Lighthouse HTML reports are in `docs/audits/lighthouse/`.
 - **Tool:** Lighthouse 12, Google's standard page-speed test, on its default
   "mobile phone on a 4G connection" simulation. Each page was run 3 times and
   the median taken.
