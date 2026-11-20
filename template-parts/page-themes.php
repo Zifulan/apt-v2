@@ -133,10 +133,11 @@ if($current_id == 5733){
 					<?php elseif($current_id == $ott_themespageid): ?>
 						<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 					<?php else: ?>
-						<?php the_title( '<h1 class="entry-title"><a href="'.get_category_link($tpc_pillar_obj->term_id).'" class="badge badge-secondary">'.$tpc_pillar_obj->name.': </a> ', '</h1>' ); ?>
+						<?php if ( $tpc_pillar_obj ) : // the pillar as a small label above the title, in its colour ?>
+						<a class="apt-eyebrow apt-tag pillar-<?php echo esc_attr( apt_pillar_key( $tpc_pillar_obj->name ) ); ?>" href="<?php echo esc_url( get_category_link( $tpc_pillar_obj->term_id ) ); ?>"><?php echo esc_html( $tpc_pillar_obj->name ); ?></a>
+						<?php endif; ?>
+						<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 					<?php endif;?>
-
-					<hr style="border-bottom:1px gray dotted;margin-bottom:1em;"/>
 				</header>
 					<div class="entry-content">
 						<?php if($current_id == 5733): ?>

@@ -2023,3 +2023,10 @@ main.site-single {
 /* Images never reserve placeholder space before loading (WordPress's
    auto-sizes adds contain-intrinsic-size: 3000px 1500px to lazy images). */
 :is(.news-card, .apt-gallery-link, .apt-recent-card, .apt-mechanism, .apt-hero-feature) img { contain-intrinsic-size: none !important; }
+
+/* Small label above a page title (e.g. the pillar on a theme page) */
+.apt-eyebrow { display: inline-flex; min-block-size: var(--target-size); margin: 0 0 4px; font-size: 0.95rem !important; font-weight: 600 !important; color: var(--ink-2) !important; }
+.apt-eyebrow:hover { color: var(--ink) !important; text-decoration: underline !important; text-underline-offset: 3px; }
+.apt-eyebrow + .entry-title { margin-top: 0 !important; }
+/* Long page titles wrap into even lines instead of leaving one word alone */
+.site-main:not(.front-main) :is(.entry-title, .page-title, .apt-page-head h1, .topic-head h1) { text-wrap: balance; }
