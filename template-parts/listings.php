@@ -6,7 +6,7 @@
 		if ( is_sticky() && is_home() && ! is_paged() ) {
 			printf( '<span class="sticky-post">%s</span>');
 		}
-		the_title( sprintf( '<h4 class="entry-title"><span class="badge badge-secondary btn-secondary">'.akseki_get_shortname(get_the_title(),get_the_id()).'</span><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h4>' );
+		the_title( sprintf( '<h2 class="entry-title h4"><span class="badge badge-secondary btn-secondary">'.akseki_get_shortname(get_the_title(),get_the_id()).'</span><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); // h2 under the page h1; styled as before
 		?>
 	</header><!-- .entry-header -->
 	<div class="row">

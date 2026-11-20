@@ -16,16 +16,7 @@
 			<link rel="profile" href="http://gmpg.org/xfn/11"/>
 			
 			<?php wp_head(); ?>
-			<title>
-			<?php 
-			if(is_front_page()){
-				echo 'ASEAN Plus Three';
-			}else{
-				echo 'APT ';
-				echo wp_title();
-			} 
-			?>
-			</title>
+			<?php // <title> is printed by WordPress / Yoast SEO (title-tag support in functions.php). ?>
 			
 		</head>
 		<body <?php body_class(); ?>>

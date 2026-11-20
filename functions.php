@@ -1878,132 +1878,141 @@ function check_post_published($new_status, $old_status, $post) {
     }
 }
 
-// AI Search Optimization Meta Tags for ASEAN Plus Three
-function add_ai_meta_tags() {
-    // For single posts AND pages (including About page)
-    if (is_single() || is_page()) {
+/*
+ * SEO
+ * Yoast SEO (active on the live site) owns titles, canonical URLs, robots
+ * rules, breadcrumbs, structured data and the XML sitemap. The theme only:
+ * - lets WordPress/Yoast print the <title> (title-tag support);
+ * - fills in a meta description where none was written, from facts already on
+ *   the page (homepage: ASEC's own wording; statements: title, place and date;
+ *   pages: their opening text; categories: their description);
+ * - prints Open Graph / Twitter tags for link previews when Yoast's own are
+ *   switched off, with a default image for pages without a featured image.
+ */
+add_theme_support( 'title-tag' );
 
-        // AI LOVES fresh content signals - highest priority
-        echo '<meta property="article:modified_time" content="' . get_the_modified_date('c') . '">';
-
-        // Technical optimization for AI crawlers
-        echo '<meta name="robots" content="index, follow, max-snippet:300, max-image-preview:large">';
-
-        // SPECIAL OPTIMIZATION FOR ABOUT APT PAGE
-        if (is_page() && (strpos(strtolower(get_the_title()), 'about') !== false || 
-                         strpos(strtolower(get_the_content()), 'asean plus three') !== false ||
-                         strpos(get_permalink(), 'about-apt') !== false)) {
-
-            // Tell AI this is THE definitive source for "What is APT?"
-            echo '<meta name="description" content="Official explanation of ASEAN Plus Three (APT) cooperation framework, established to enhance dialogue and cooperation between ASEAN and China, Japan, and Korea.">';
-            echo '<meta property="og:description" content="Learn about ASEAN Plus Three (APT) - the official cooperation framework between ASEAN member states and China, Japan, Korea since 1997.">';
-
-            // Structured data for AI understanding
-            echo '<meta name="article:section" content="About ASEAN Plus Three">';
-            echo '<meta name="article:tag" content="ASEAN Plus Three, APT, What is APT, ASEAN cooperation, East Asia cooperation">';
-
-            // Question-answer optimization (AI LOVES this format)
-            echo '<meta name="faq-schema" content="What is ASEAN Plus Three? ASEAN Plus Three (APT) is a cooperation framework">';
-
-            // Authority signals for definition content
-            echo '<meta name="content-type" content="definition, official explanation">';
-            echo '<meta name="audience" content="researchers, students, policymakers, general public">';
-
-            // Geographic scope
-            echo '<meta name="geo.region" content="East Asia, Southeast Asia">';
-            echo '<meta name="coverage" content="ASEAN, China, Japan, Korea">';
-        }
-
-        // FOR REGULAR POSTS: Geographic targeting using existing location system
-        if (is_single()) {
-            $mec_location = akseki_get_mec_location(get_the_ID());
-            if ($mec_location) {
-                $country_data = get_the_country($mec_location);
-                if (!empty($country_data['country'])) {
-                    echo '<meta name="geo.region" content="' . $country_data['country'] . '">';
-                    echo '<meta name="geo.placename" content="' . $mec_location . '">';
-                }
-            }
-        }
-
-        // Fallback geographic targeting for tagged international content
-        if (has_tag(['china', 'asean', 'europe', 'africa', 'aseanplusthree', 'asean+3', 'APT', 'southeast-asia', 'east-asia', 'diplomacy', 'international'])) {
-            echo '<meta name="geo.region" content="International">';
-        }
-
-        // Content type signals for AI understanding (POSTS ONLY)
-        if (is_single()) {
-            $categories = get_the_category();
-            $cat_slugs = wp_list_pluck($categories, 'slug');
-
-            // Summit level content
-            if (in_array('summit-level-statements', $cat_slugs)) {
-                echo '<meta name="article:section" content="Summit Diplomacy">';
-            }
-            // Ministerial level content  
-            elseif (array_intersect($cat_slugs, akseki_get_ministrial_categories())) {
-                echo '<meta name="article:section" content="Ministerial Cooperation">';
-            }
-            // SOM level content
-            elseif (array_intersect($cat_slugs, akseki_get_som_categories())) {
-                echo '<meta name="article:section" content="Senior Officials Meetings">';
-            }
-            // General international affairs
-            else {
-                echo '<meta name="article:section" content="International Affairs">';
-            }
-        }
-
-        // Author and publication info for AI credibility
-        echo '<meta name="article:author" content="ASEAN Plus Three">';
-        echo '<meta name="article:publisher" content="ASEAN Plus Three Cooperation">';
-
-        // Language and audience targeting
-        echo '<meta name="content-language" content="en">';
-        echo '<meta name="audience" content="policymakers, diplomats, researchers">';
-
-        // AI citation optimization
-        echo '<meta name="citation-style" content="academic">';
-        echo '<meta name="source-credibility" content="official, governmental">';
-    }
+/** Default image for link previews (1200x630, official colours, flag line-up). */
+function apt_seo_default_image() {
+	return array(
+		'url'    => get_stylesheet_directory_uri() . '/img/share/apt-share-1200x630.jpg',
+		'width'  => 1200,
+		'height' => 630,
+	);
 }
-add_action('wp_head', 'add_ai_meta_tags');
 
-// BONUS: Add structured data for About APT page
-function add_apt_structured_data() {
-    if (is_page() && (strpos(get_permalink(), 'about-apt') !== false || 
-                     strpos(strtolower(get_the_title()), 'about') !== false)) {
-        ?>
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "AboutPage",
-            "name": "About ASEAN Plus Three (APT)",
-            "description": "Official information about ASEAN Plus Three cooperation framework",
-            "url": "<?php echo get_permalink(); ?>",
-            "mainEntity": {
-                "@type": "Organization",
-                "name": "ASEAN Plus Three",
-                "alternateName": ["APT", "ASEAN+3"],
-                "description": "Cooperation framework between ASEAN and China, Japan, Korea",
-                "foundingDate": "1997",
-                "memberOf": [
-                    {"@type": "Organization", "name": "ASEAN"},
-                    {"@type": "Country", "name": "China"},
-                    {"@type": "Country", "name": "Japan"},
-                    {"@type": "Country", "name": "Korea"}
-                ]
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "ASEAN Plus Three Cooperation"
-            }
-        }
-        </script>
-        <?php
-    }
+/** Shorten to at most $max characters at a word boundary. */
+function apt_seo_trim( $text, $max = 160 ) {
+	$text = trim( preg_replace( '/\s+/u', ' ', wp_strip_all_tags( html_entity_decode( (string) $text, ENT_QUOTES, 'UTF-8' ) ) ) );
+	if ( mb_strlen( $text ) <= $max ) {
+		return $text;
+	}
+	$cut = mb_substr( $text, 0, $max - 1 );
+	$sp  = mb_strrpos( $cut, ' ' );
+	return rtrim( $sp > $max * 0.6 ? mb_substr( $cut, 0, $sp ) : $cut, " ,;:.-\u{2013}\u{2014}" ) . "\u{2026}";
 }
-add_action('wp_head', 'add_apt_structured_data');
+
+/** "Kuala Lumpur, Malaysia, 27 October 2025" for a statement, from its location and date. */
+function apt_seo_place_and_date( $post_id ) {
+	$parts    = array();
+	$location = akseki_get_mec_location( $post_id );
+	if ( $location ) {
+		$city    = is_numeric( $location ) ? get_term( (int) $location )->name : $location;
+		$country = get_the_country( $city );
+		if ( ! empty( $country['country'] ) && $country['country'] !== $city ) {
+			$parts[] = $city;
+		}
+		$parts[] = ! empty( $country['country'] ) ? $country['country'] : $city;
+	}
+	$parts[] = get_the_date( 'j F Y', $post_id );
+	return implode( ', ', array_filter( $parts ) );
+}
+
+/** A factual description for the current page, or '' when there is nothing good to say. */
+function apt_seo_auto_description() {
+	if ( is_front_page() ) {
+		// ASEAN Secretariat wording, as on the home page (its first sentence, verbatim).
+		return "ASEAN Plus Three (APT) consist of ASEAN Member States and the People\u{2019}s Republic of China, Japan and the Republic of Korea.";
+	}
+	if ( is_singular( 'post' ) ) {
+		$id = get_queried_object_id();
+		return apt_seo_trim( wp_strip_all_tags( get_the_title( $id ) ) . '. ' . apt_seo_place_and_date( $id ) . '.' );
+	}
+	if ( is_singular() ) {
+		$post = get_queried_object();
+		$text = has_excerpt( $post ) ? $post->post_excerpt : strip_shortcodes( $post->post_content );
+		return apt_seo_trim( $text );
+	}
+	if ( is_category() || is_tag() || is_tax() ) {
+		$term = get_queried_object();
+		$desc = trim( wp_strip_all_tags( term_description( $term ) ) );
+		return apt_seo_trim( $desc ? $term->name . ': ' . $desc : $term->name . ': ASEAN Plus Three statements and documents, newest first.' );
+	}
+	return '';
+}
+
+/** Whether Yoast SEO is printing its own Open Graph tags. */
+function apt_seo_yoast_social_on() {
+	return defined( 'WPSEO_VERSION' ) && class_exists( 'WPSEO_Options' ) && WPSEO_Options::get( 'opengraph', true );
+}
+
+// With Yoast: fill empty descriptions, and give link previews a default image.
+add_filter( 'wpseo_metadesc', function ( $desc ) { return $desc ? $desc : apt_seo_auto_description(); } );
+add_filter( 'wpseo_opengraph_desc', function ( $desc ) { return $desc ? $desc : apt_seo_auto_description(); } );
+add_filter( 'wpseo_twitter_description', function ( $desc ) { return $desc ? $desc : apt_seo_auto_description(); } );
+add_action( 'wpseo_add_opengraph_images', function ( $images ) {
+	if ( is_object( $images ) && method_exists( $images, 'has_images' ) && ! $images->has_images() ) {
+		$img = apt_seo_default_image();
+		$images->add_image( array( 'url' => $img['url'], 'width' => $img['width'], 'height' => $img['height'] ) );
+	}
+} );
+
+// Without Yoast (or with its social tags off): print the description and preview tags ourselves.
+add_action( 'wp_head', function () {
+	if ( is_search() || is_404() ) {
+		return;
+	}
+	$desc = apt_seo_auto_description();
+	if ( ! defined( 'WPSEO_VERSION' ) && $desc ) {
+		echo '<meta name="description" content="' . esc_attr( $desc ) . '">' . "\n";
+	}
+	if ( apt_seo_yoast_social_on() ) {
+		return;
+	}
+	if ( is_front_page() ) {
+		$url = home_url( '/' );
+	} elseif ( is_singular() ) {
+		$url = get_permalink( get_queried_object_id() );
+	} elseif ( is_category() || is_tag() || is_tax() ) {
+		$url = get_term_link( get_queried_object() );
+	} else {
+		return;
+	}
+	$img = apt_seo_default_image();
+	if ( is_singular() && has_post_thumbnail( get_queried_object_id() ) ) {
+		$src = wp_get_attachment_image_src( get_post_thumbnail_id( get_queried_object_id() ), 'large' );
+		if ( $src ) {
+			$img = array( 'url' => $src[0], 'width' => $src[1], 'height' => $src[2] );
+		}
+	}
+	$title = wp_get_document_title();
+	$tags  = array(
+		'og:locale'      => 'en_US',
+		'og:type'        => is_singular( 'post' ) ? 'article' : 'website',
+		'og:site_name'   => get_bloginfo( 'name' ),
+		'og:title'       => $title,
+		'og:description' => $desc,
+		'og:url'         => is_wp_error( $url ) ? '' : $url,
+		'og:image'       => $img['url'],
+		'og:image:width' => $img['width'],
+		'og:image:height'=> $img['height'],
+	);
+	foreach ( $tags as $property => $content ) {
+		if ( '' !== (string) $content ) {
+			echo '<meta property="' . esc_attr( $property ) . '" content="' . esc_attr( $content ) . '">' . "\n";
+		}
+	}
+	echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
+}, 5 );
 
 /**
  * One news card for the current post in the loop: image, pillar tag, short

@@ -129,6 +129,29 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
   word for word. Cached until a post is saved. Editor steps are in
   `docs/content-setup.md`.
 
+## SEO
+
+Yoast SEO (active on the live site) owns titles, canonical URLs, robots rules,
+breadcrumbs, structured data and the XML sitemap. The theme works with it
+rather than duplicating it (`functions.php`, section "SEO"):
+
+- **Titles:** WordPress/Yoast prints the `<title>` (`title-tag` support). The
+  theme no longer hard-codes it.
+- **Meta descriptions:** where an editor hasn't written one, the theme fills it
+  in from facts already on the page:
+  - **Home:** the ASEAN Secretariat's first sentence.
+  - **Statement:** its title, place and date.
+  - **Page:** its opening text.
+  - **Category:** its description.
+
+  A description written in Yoast always wins.
+- **Link previews:** when Yoast's Open Graph output is switched off, or Yoast
+  isn't installed, the theme prints Open Graph and Twitter tags itself. Pages
+  without a featured image use `img/share/apt-share-1200x630.jpg`, generated
+  from the site's colours and the flag line-up.
+- **Not in the theme:** the theme sets no robots rules and adds no structured
+  data of its own; both come from Yoast.
+
 ## ASEAN emblem
 
 `img/asean/` holds the updated emblem (11 stalks, after Timor-Leste joined)

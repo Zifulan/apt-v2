@@ -1,4 +1,7 @@
 <?php 
+// Year headings sit under the section h2 on the home page, directly under the
+// page h1 on the Agenda page.
+$apt_year_h = empty( $args['in_page'] ) ? 'h3' : 'h2';
 $is_tbd = "";
 $is_dtd = "";
 $catsa = get_term_children(7,"category");
@@ -76,7 +79,7 @@ if($SE_query->have_posts()):
 				if($year_open){
 					$is_dtd .= '</div>';
 				}
-				$is_dtd .= '<div class="agenda-year-section"><h3 class="agenda-year-title">'.$qyear.'</h3>';
+				$is_dtd .= '<div class="agenda-year-section"><'.$apt_year_h.' class="agenda-year-title">'.$qyear.'</'.$apt_year_h.'>';
 				$year_open = true;
 				$tempyear = $qyear;
 			}
@@ -230,7 +233,7 @@ $apt_agenda_recent = ( $is_dtd === '' && $is_tbd === '' && $is_recent !== '' );
 			
 			<?php if($is_tbd !== ""):?>
 			<div class="agenda-year-section">
-				<h3 class="agenda-year-title">To Be Determined</h3>
+				<<?php echo $apt_year_h; ?> class="agenda-year-title">To Be Determined</<?php echo $apt_year_h; ?>>
 				<details class="agenda-month">
 					<summary class="agenda-month-summary">TBD</summary>
 					<div class="agenda-month-body">
