@@ -672,16 +672,28 @@ function add_custom_taxonomies() {
 }
 
 //load svg
-function load_flags_svg( $filename ) {
-    $svg_path = "/img/flags/".strtolower($filename).".svg";	
-    if ( file_exists( get_stylesheet_directory() . $svg_path  ) ) {       
-
-		return file_get_contents( get_stylesheet_directory() . $svg_path );
-
-    }else{
-
+/**
+ * A flag as inline SVG. The files' own <title>/<desc> (Wikimedia notes such as
+ * "Coding according to the official description...") are removed: search
+ * engines read them as page text. With $label the flag is an image named by
+ * it; without, it is decorative (the country is already written beside it).
+ */
+function load_flags_svg( $filename, $label = '' ) {
+	static $cache = array();
+	$key = strtolower( (string) $filename );
+	if ( ! isset( $cache[ $key ] ) ) {
+		$path          = get_stylesheet_directory() . '/img/flags/' . $key . '.svg';
+		$svg           = ( '' !== $key && file_exists( $path ) ) ? (string) file_get_contents( $path ) : '';
+		$svg           = preg_replace( '#<\?xml.*?\?>|<!--.*?-->|<title\b[^>]*>.*?</title>|<desc\b[^>]*>.*?</desc>|<metadata\b[^>]*>.*?</metadata>#is', '', $svg );
+		$cache[ $key ] = trim( $svg );
+	}
+	if ( '' === $cache[ $key ] ) {
 		return '';
-    }	    
+	}
+	$a11y = '' !== $label
+		? ' role="img" aria-label="' . esc_attr( $label ) . '"'
+		: ' aria-hidden="true"';
+	return preg_replace( '/<svg\b/i', '<svg focusable="false"' . $a11y, $cache[ $key ], 1 );
 }
 /**
  * ASEAN emblem (updated 11-stalk version after Timor-Leste joined) for the
@@ -979,7 +991,7 @@ function akseki_get_the_flag($postID){
 			$mec_city = $mec_location;
 		}
 		$mec_country = get_the_country($mec_city);
-		$return = '<span class="roundflag">'.load_flags_svg($mec_country['flag']).'</span>';
+		$return = '<span class="roundflag">'.load_flags_svg($mec_country['flag'], $mec_country['country']).'</span>';
 		return $return;
 	}
 }
