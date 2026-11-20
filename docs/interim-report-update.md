@@ -377,7 +377,59 @@ Layout shift (CLS) was 0 before and after on every page.
   - Measure real visitors with Google Search Console's Core Web Vitals report
     after launch.
 
-## 7. Security
+## 7. SEO review and fixes (20 November)
+
+**How the site handles SEO:** Yoast SEO (v28.8) on the live site already
+provides canonical URLs, robots rules (search results and the 404 page
+correctly "noindex"), breadcrumbs and structured data (Organization, WebSite,
+Article, CollectionPage). The review checked how the theme works with it,
+using the theme code and saved copies of 24 live pages.
+
+**Problems found in the theme, all fixed (commit 6484ab0)**
+
+| Problem | Effect | Fix |
+|---|---|---|
+| A hand-written "AI meta tags" block added a second robots tag to every post and page | It contradicted Yoast's own robots rules, including its `max-snippet` setting | Removed; Yoast alone sets robots rules |
+| The same block gave one hard-coded description to every page mentioning "ASEAN Plus Three" | Several pages had two descriptions, and many shared the same text | Removed |
+| It printed made-up tags (`faq-schema`, `citation-style`, `source-credibility`, `coverage`) | No search engine reads them; they only added noise | Removed |
+| An extra "AboutPage" structured-data block | It said "Korea" rather than "the Republic of Korea", and listed China and Japan as "members of" ASEAN | Removed; Yoast's structured data remains |
+| The theme hard-coded the page title | The homepage title was just "ASEAN Plus Three"; every other title gained an extra "APT " prefix, e.g. "APT CPR+3 Archives - ASEAN Plus Three" | Titles now come from Yoast |
+| Most pages had no meta description | Google picks its own snippet, often menu text | Automatic description where none is written: home (ASEC's first sentence, verbatim), statements (title, place, date), pages (opening text), categories (their description). A description written in Yoast always takes priority |
+| No Open Graph tags on most pages | Links shared on WhatsApp, LinkedIn or X showed no image or summary | The theme adds link-preview tags when Yoast's are off, with a default 1200×630 image in the official colours (`img/share/`) |
+| Heading levels skipped (h1 straight to h4 on statement lists, h1 to h3 on the Agenda) | Weaker page outline for search engines and screen readers | Fixed, with no visual change |
+
+**For the site owner, in WordPress (not theme code)**
+1. **Yoast settings:**
+   - **Social previews:** turn on Yoast's Open Graph (Settings → Site
+     features → Open Graph data), so editors can set images per post. The
+     theme's fallback covers it until then.
+   - **Organization:** fill in the logo and the official social profiles
+     (Settings → Site representation).
+   - **Tagline:** set a real tagline. It is currently the same as the site
+     name ("ASEAN Plus Three").
+2. **Pages that probably shouldn't be public or indexed:**
+   - Test and leftover pages: `testing-page`, `5417-2`, `my-front-page`,
+     `tickets-checkout`, `tickets-order`, `no-access`.
+   - Login-related pages: `login_ujv5g` and `limited-access-documents-3-donotcache…`.
+     **Security, not only SEO:** they reveal the login address.
+3. **Duplicates competing with each other in search:**
+   - `gallery`, `gallery2` and `gallery3`;
+   - `events-2` and `events-3`;
+   - `contact` and `contact-us`;
+   - `aptwg` and `aptwg-2`.
+
+   Keep one of each and redirect the others; Yoast Premium or the free
+   "Redirection" plugin can do this.
+4. **Page titles:** the Gallery page is titled "Gallery3" and the News page
+   "NEWS"; rename them in WordPress.
+5. **Search Console:** confirm the sitemap (`/sitemap_index.xml`) is submitted,
+   and watch the Core Web Vitals report after launch.
+
+**Not tested:** the live robots.txt and sitemap could not be fetched because of
+the firewall; the theme changes were tested in isolation with stand-in
+WordPress functions.
+
+## 8. Security
 
 - **Limited Access login (d650750):**
   - a dead login handler was removed;
@@ -393,12 +445,28 @@ Layout shift (CLS) was 0 before and after on every page.
   batches, because fast bursts tripped the hosting firewall (GoDaddy/Sucuri)
   and blocked the server (7932a2b).
 
-## 8. Maintainability
+## 9. Maintainability
 
 - **Theme identity:** the theme is now named **apt-v2**, version 2.1.0, with a
   fresh screenshot (63e4ed6).
 - **README:** it documents the homepage sections, the content rules, the
   official palette, the layout, search and all three extras.
+- **Code cleanup (20 November, d7660f4 and fbc5b93):**
+  - **Unused files:** 3.5 MB of images left over from the original theme
+    (newslogo, newsthumb, front-carousel), and 18 unused Bootstrap source
+    files and maps.
+  - **Dead styles:** 69 style rules for elements that no longer exist
+    anywhere, plus commented-out styles. `style.css` went from 1,293 to 953
+    lines.
+  - **Commented-out code:** about 420 lines of old PHP, plus three unused
+    functions.
+  - **Size:** the theme is now about 3.2 MB without documentation, down from
+    about 9 MB.
+  - **How it was checked:**
+    - every PHP file passes a syntax check;
+    - a token comparison proves the executable PHP code is unchanged;
+    - a pixel-by-pixel comparison of 30 page states, at desktop and phone,
+      shows no visual change.
 
 ## Still open (for the "next steps" section)
 
