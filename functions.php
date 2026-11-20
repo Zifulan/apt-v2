@@ -2075,3 +2075,48 @@ function apt_news_card_html( $heading_tag = 'h3' ) {
 	. $readmore
 	. '</article>';
 }
+
+/**
+ * Flag line-up: ASEAN Member States in alphabetical order with the ASEAN flag
+ * on the right (ASEAN Flag Guidelines, para 16), then China, Japan and the
+ * Republic of Korea. Official names are in alt/title only. Used by the home
+ * page hero and the About page.
+ * Flags: flag-icons (MIT, img/flags/1x1/LICENSE-flag-icons); ASEAN flag:
+ * img/flags/asean.svg.
+ *
+ * @param string $class Class of the wrapper (layout differs per page).
+ */
+function apt_flag_lineup_html( $class = 'apt-hero-flags' ) {
+	$dir    = get_stylesheet_directory_uri() . '/img/flags/';
+	$groups = array(
+		array(
+			'bn'    => 'Brunei Darussalam',
+			'kh'    => 'Kingdom of Cambodia',
+			'id'    => 'Republic of Indonesia',
+			'la'    => "Lao People's Democratic Republic",
+			'my'    => 'Malaysia',
+			'mm'    => 'Republic of the Union of Myanmar',
+			'ph'    => 'Republic of the Philippines',
+			'sg'    => 'Republic of Singapore',
+			'th'    => 'Kingdom of Thailand',
+			'tl'    => 'Democratic Republic of Timor-Leste',
+			'vn'    => 'Socialist Republic of Viet Nam',
+			'asean' => 'Association of Southeast Asian Nations (ASEAN)',
+		),
+		array(
+			'cn' => "People's Republic of China",
+			'jp' => 'Japan',
+			'kr' => 'Republic of Korea',
+		),
+	);
+	$html = '<div class="' . esc_attr( $class ) . '" role="group" aria-label="' . esc_attr__( 'ASEAN Member States, ASEAN, and China, Japan and the Republic of Korea', 'akseki-vi' ) . '">';
+	foreach ( $groups as $flags ) {
+		$html .= '<ul class="apt-flag-group">';
+		foreach ( $flags as $code => $name ) {
+			$src   = $dir . ( 'asean' === $code ? 'asean.svg' : '1x1/' . $code . '.svg' );
+			$html .= '<li' . ( 'asean' === $code ? ' class="is-asean"' : '' ) . '><img src="' . esc_url( $src ) . '" alt="' . esc_attr( $name ) . '" title="' . esc_attr( $name ) . '" width="26" height="26" decoding="async"></li>';
+		}
+		$html .= '</ul>';
+	}
+	return $html . '</div>';
+}

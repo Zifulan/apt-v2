@@ -1763,3 +1763,68 @@ main.site-single {
 .site-main:not(.front-main) #avi-content > .listings-wrapper.row { margin-inline: 0; }
 .site-main:not(.front-main) #avi-content > .listings-wrapper.row > .order-2 { padding-left: 0; }
 .site-main:not(.front-main) #avi-content > .listings-wrapper.row > .order-3 { padding-right: 0; }
+
+/* About page (page-about-apt.php): ASEC text and links, flags beside it */
+.apt-about { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: start; padding-bottom: clamp(24px, 4vw, 48px); }
+.apt-about-lede { font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem); line-height: 1.7; margin: 0 0 8px; max-width: 68ch; }
+.apt-about-source { margin: 0 0 24px; color: var(--ink-2); font-size: 0.85rem; }
+.apt-about-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.apt-about-flags { display: flex; flex-direction: column; gap: 18px; padding: clamp(20px, 3vw, 32px); border-radius: var(--radius-tile); background: var(--paper-2); }
+.apt-about-flags .apt-flag-group { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.apt-about-flags .apt-flag-group img { display: block; width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--rule-soft); }
+.apt-about-flags .is-asean img { box-shadow: 0 0 0 3px var(--apt-yellow); }
+@media (max-width: 767.98px) {
+	.apt-about { grid-template-columns: 1fr; }
+	.apt-about-flags .apt-flag-group img { width: 36px; height: 36px; }
+}
+
+/* ---------- Content pages (editor content) ------------------------------ */
+/* Justified text leaves uneven gaps between words; read left-aligned. */
+.site-main:not(.front-main) .entry-content :is(p, li)[align="justify"],
+.site-main:not(.front-main) .entry-content [style*="text-align: justify"],
+.site-main:not(.front-main) .entry-content [style*="text-align:justify"] { text-align: left !important; }
+.site-main:not(.front-main) .entry-content > .wp-block-separator:first-child { display: none; }
+.site-main:not(.front-main) .entry-content img { border-radius: var(--radius-tile); }
+/* Bootstrap cards written into page content: theme panels */
+.site-main:not(.front-main) .entry-content .card { border: 0 !important; border-radius: var(--radius-tile) !important; background: var(--paper-2) !important; box-shadow: none !important; }
+.site-main:not(.front-main) .entry-content .card-body { padding: clamp(18px, 2.5vw, 24px); }
+.site-main:not(.front-main) .entry-content .card-title :is(h4, h5) { font-size: 1rem; font-weight: 700; margin: 0 0 10px; }
+.site-main:not(.front-main) .entry-content .card .lcp_catlist { list-style: none; margin: 0 0 16px; padding: 0; }
+.site-main:not(.front-main) .entry-content .card .lcp_catlist li { padding: 8px 0; border-top: 1px solid var(--rule-soft); font-size: 0.95rem; line-height: 1.45; }
+.site-main:not(.front-main) .entry-content :is(.btn-primary, .btn-block.btn-primary) {
+	display: inline-flex !important; width: auto !important; align-items: center; min-block-size: var(--target-size);
+	padding: 8px 18px !important; border-radius: var(--radius-pill) !important; border: 1px solid var(--ink) !important;
+	background: var(--ink) !important; color: var(--paper) !important; font-weight: 600; text-decoration: none !important;
+}
+.site-main:not(.front-main) .entry-content .btn-primary:hover { background: var(--apt-blue) !important; border-color: var(--apt-blue) !important; }
+
+/* Links to related pages at the end of About / History / Areas */
+.apt-related-links { display: flex; flex-wrap: wrap; gap: 10px; margin: clamp(28px, 4vw, 44px) 0 clamp(24px, 4vw, 48px); padding-top: 24px; border-top: 1px solid var(--rule-soft); }
+
+/* History timeline (page-history.php) */
+.apt-timeline { list-style: none; margin: 0; padding: 0; max-width: 64rem; }
+.apt-timeline-item { position: relative; display: grid; grid-template-columns: 7rem 1fr; gap: 0 32px; padding-bottom: clamp(24px, 3vw, 36px); }
+.apt-timeline-item::before { content: ''; position: absolute; left: calc(7rem + 15px); top: 10px; bottom: 0; width: 2px; background: var(--rule-soft); }
+.apt-timeline-item:last-child::before { display: none; }
+.apt-timeline-item::after { content: ''; position: absolute; left: calc(7rem + 10px); top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--apt-blue); box-shadow: 0 0 0 4px var(--paper); }
+.apt-timeline-year { margin: 0; font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem); font-weight: 700; line-height: 1; color: var(--ink); text-align: right; }
+.apt-timeline-body { grid-column: 2; padding-left: 24px; }
+.apt-timeline-body p { margin: 0 0 12px; font-size: 1.05rem; line-height: 1.7; max-width: 68ch; }
+@media (max-width: 575.98px) {
+	.apt-timeline-item { grid-template-columns: 1fr; padding-left: 28px; }
+	.apt-timeline-item::before { left: 5px; }
+	.apt-timeline-item::after { left: 0; }
+	.apt-timeline-year { text-align: left; margin-bottom: 8px; }
+	.apt-timeline-body { grid-column: 1; padding-left: 0; }
+}
+
+/* Areas of Cooperation (page-areas-of-cooperation.php) */
+.apt-areas-intro { margin-bottom: clamp(28px, 4vw, 40px); }
+.apt-areas-title { font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem); font-weight: 700; margin: 0 0 18px; }
+.apt-areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 20px; }
+.apt-areas-pillar { padding: clamp(18px, 2.5vw, 24px); border-radius: var(--radius-tile); background: var(--paper-2); border-top: 4px solid var(--tag-c, var(--apt-blue)); }
+.apt-areas-pillar-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 10px; }
+.apt-areas-list { list-style: none; margin: 0; padding: 0; }
+.apt-areas-list li { border-top: 1px solid var(--rule-soft); }
+.apt-areas-list a { display: flex; align-items: center; min-block-size: var(--target-size); padding: 6px 0; color: var(--ink); text-decoration: none; }
+.apt-areas-list a:hover { color: var(--apt-blue); text-decoration: underline; text-underline-offset: 3px; }
