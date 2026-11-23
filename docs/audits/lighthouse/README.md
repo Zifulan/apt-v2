@@ -25,3 +25,15 @@ How they were made
 | Search results | 95, LCP 2.4 s | 99, LCP 1.9 s |
 | News | 95, LCP 2.4 s | 99, LCP 1.9 s |
 | Page not found | 95, LCP 2.4 s | 99, LCP 1.8 s |
+
+## Live site, 23 November 2026 (`live-2026-11-23/`)
+
+Homepage on the real site, Lighthouse 13.5 in Chrome DevTools, mobile. JSON
+files with screenshots removed; open them in the Lighthouse Viewer
+(https://googlechrome.github.io/lighthouse/viewer/).
+
+| File | Run | Score | LCP | TBT |
+|---|---|---|---|---|
+| `1-logged-in.json` | Logged in to WordPress | 89 | 2.6 s | 310 ms |
+| `2-before-incognito.json` | Logged out, before commit 8675397 | 86 | 2.7 s | 390 ms |
+| `3-after-incognito.json` | Logged out, after commit 8675397 | 97 | 2.4 s | 20 ms |

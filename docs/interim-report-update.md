@@ -373,9 +373,69 @@ Layout shift (CLS) was 0 before and after on every page.
   The homepage also loads 15 small flag images (about 22 KB in total).
 - **Next steps:**
   - Remove Bootstrap once the remaining older templates are rebuilt.
-  - Combine the flags into one file.
+  - Combine the flags into one file. (Done differently on 23 November: the
+    flags beside statements are now image files; see section 6b.)
   - Measure real visitors with Google Search Console's Core Web Vitals report
     after launch.
+
+## 6b. Performance on the live site (23 November)
+
+Section 6 measured the theme alone on a test server. After apt-v2 went live,
+the homepage was measured on the real site, with real photos, plugins and
+Google Analytics included.
+
+**Method**
+- **Tool:** Lighthouse 13.5 in Chrome DevTools, default "mobile phone on a
+  4G connection" simulation, single runs.
+- **Logged out:** run in an Incognito window, as a normal visitor sees the
+  site. A logged-in WordPress session skips the page cache and loads the
+  admin icon font, so it is slower than what the public gets.
+- **Reports:** `docs/audits/lighthouse/live-2026-11-23/` (JSON; open them at
+  https://googlechrome.github.io/lighthouse/viewer/). Screenshots were
+  removed to keep the files small.
+
+**Results (homepage, mobile)**
+
+| | Logged in | Logged out, before fix | Logged out, after fix |
+|---|---|---|---|
+| **Performance score** | 89 | 86 | **97** |
+| First paint (FCP) | 1.8 s | 1.5 s | 1.7 s |
+| Main content appears (LCP) | 2.6 s | 2.7 s | **2.4 s** |
+| Page frozen by scripts (TBT) | 310 ms | 390 ms | **20 ms** |
+| Layout shift (CLS) | 0 | 0 | 0 |
+| Data transferred at load | 1,104 KB | 1,104 KB | **915 KB** |
+| Elements on the page | 2,012 | 2,013 | **1,616** |
+
+Accessibility, Best Practices and SEO scored 100 in every run. The desktop
+test scored 100 in all four categories.
+
+**What changed between the two logged-out runs (commit 8675397)**
+- **Google Analytics loads after the page:** on the visitor's first tap,
+  scroll or key press, or 3 seconds after loading, whichever comes first.
+  Before, its 183 KB script ran while the page was still drawing and froze
+  a phone for about 0.45 seconds. Nothing recorded is lost: events wait and
+  are sent when it loads. Only visits shorter than about 3 seconds without
+  any interaction go uncounted.
+- **Search box categories load when the search opens:** the 82-item category
+  list is no longer part of every page.
+- **Flags are image files:** the small round flags beside statements were
+  SVG drawings copied into the page, dozens of elements each. They are now
+  one image per flag, downloaded once and reused.
+
+**Earlier the same day**
+- **Fonts are self-hosted:** Outfit now comes from the site itself instead of
+  Google Fonts, removing a connection to a second server before text can show
+  (commit e909723).
+
+**Fair caveats**
+- **Single runs vary:** scores move by about ±5 between runs; the trend is
+  what matters.
+- **Server response varied:** 83 ms in one run and 600 ms in the next. The
+  slower run was right after the deploy, when the page cache had just been
+  cleared. Real-visitor speed depends on the hosting's page cache, not the theme.
+- **Lab, not real visitors:** Google ranks on real-visitor data (the Core Web
+  Vitals report in Search Console), which takes about 28 days to reflect a
+  change.
 
 ## 7. SEO review and fixes (20 November)
 
@@ -479,5 +539,9 @@ WordPress functions.
   was caused by a misplaced line in functions.php. It was reverted and fixed
   the same day (4138cd6), which shows why changes should go through staging
   first.
+- Re-upload the news image "SSOM-AMAF" (509 KB PNG) as a JPG or WebP; it is
+  the heaviest file on the homepage (about 60 KB once converted).
+- Check the host's page cache: server response ranged from 83 ms to 600 ms
+  in the 23 November tests.
 - Add the mobile share of visitors from Google Analytics. It is still the
   strongest single argument for the redesign.
