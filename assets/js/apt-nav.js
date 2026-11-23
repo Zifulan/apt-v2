@@ -77,7 +77,28 @@
 	'use strict';
 
 	var dialog = document.getElementById('apt-search');
-	if (!dialog || typeof dialog.showModal !== 'function') {
+	if (!dialog) {
+		return;
+	}
+
+	// The category list ships in a <template> (see search-form.php); insert
+	// it when the dialog is about to open, so it is not in the page's DOM.
+	var fillCategories = function () {
+		var tpl = dialog.querySelector('template.apt-cat-tpl');
+		if (tpl) {
+			tpl.replaceWith(tpl.content.cloneNode(true));
+		}
+	};
+	['pointerdown', 'keydown', 'focusin'].forEach(function (type) {
+		document.addEventListener(type, function (event) {
+			if (event.target.closest && event.target.closest('button[commandfor="apt-search"]')) {
+				fillCategories();
+			}
+		}, true);
+	});
+	dialog.addEventListener('toggle', fillCategories);
+
+	if (typeof dialog.showModal !== 'function') {
 		return;
 	}
 

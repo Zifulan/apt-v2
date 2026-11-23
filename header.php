@@ -2,12 +2,29 @@
 <html <?php language_attributes(); ?>>
 	<head>
         <?php if ( 'production' === wp_get_environment_type() ) : // staging copies: define( 'WP_ENVIRONMENT_TYPE', 'staging' ) to skip analytics ?>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-V2E02382TY"></script>
         <script>
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-V2E02382TY');
+          /* Analytics loads after the page: on the first interaction, or 3 s
+             after load, so it does not compete with rendering on phones.
+             Calls made before then wait in dataLayer and are sent once it loads. */
+          (function () {
+            var done = false;
+            function load() {
+              if (done) { return; }
+              done = true;
+              var s = document.createElement('script');
+              s.async = true;
+              s.src = 'https://www.googletagmanager.com/gtag/js?id=G-V2E02382TY';
+              document.head.appendChild(s);
+            }
+            ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(function (e) {
+              window.addEventListener(e, load, { once: true, passive: true });
+            });
+            window.addEventListener('load', function () { setTimeout(load, 3000); });
+          })();
         </script>
         <?php endif; ?>
         
@@ -74,5 +91,5 @@
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
 		</button>
 	</div>
-	<?php get_template_part( 'template-parts/search-form', null, array( 'id' => 'apt-search', 'autofocus' => true ) ); ?>
+	<?php get_template_part( 'template-parts/search-form', null, array( 'id' => 'apt-search', 'autofocus' => true, 'lazy_cats' => true ) ); ?>
 </dialog>

@@ -673,27 +673,20 @@ function add_custom_taxonomies() {
 
 //load svg
 /**
- * A flag as inline SVG. The files' own <title>/<desc> (Wikimedia notes such as
- * "Coding according to the official description...") are removed: search
- * engines read them as page text. With $label the flag is an image named by
- * it; without, it is decorative (the country is already written beside it).
+ * A flag as an <img> pointing at the SVG file. Earlier versions inlined the
+ * SVG markup, which added hundreds of elements per page (slow layout on
+ * phones) and exposed the files' <title>/<desc> notes to search engines as
+ * page text; as an image the browser caches the file once and none of its
+ * text is read as page content. With $label the flag is an image named by it;
+ * without, it is decorative (the country is already written beside it).
  */
 function load_flags_svg( $filename, $label = '' ) {
-	static $cache = array();
 	$key = strtolower( (string) $filename );
-	if ( ! isset( $cache[ $key ] ) ) {
-		$path          = get_stylesheet_directory() . '/img/flags/' . $key . '.svg';
-		$svg           = ( '' !== $key && file_exists( $path ) ) ? (string) file_get_contents( $path ) : '';
-		$svg           = preg_replace( '#<\?xml.*?\?>|<!--.*?-->|<title\b[^>]*>.*?</title>|<desc\b[^>]*>.*?</desc>|<metadata\b[^>]*>.*?</metadata>#is', '', $svg );
-		$cache[ $key ] = trim( $svg );
-	}
-	if ( '' === $cache[ $key ] ) {
+	if ( '' === $key || ! file_exists( get_stylesheet_directory() . '/img/flags/' . $key . '.svg' ) ) {
 		return '';
 	}
-	$a11y = '' !== $label
-		? ' role="img" aria-label="' . esc_attr( $label ) . '"'
-		: ' aria-hidden="true"';
-	return preg_replace( '/<svg\b/i', '<svg focusable="false"' . $a11y, $cache[ $key ], 1 );
+	return '<img src="' . esc_url( get_stylesheet_directory_uri() . '/img/flags/' . $key . '.svg' ) . '"'
+		. ' alt="' . esc_attr( $label ) . '" width="16" height="16" loading="lazy" decoding="async">';
 }
 /**
  * ASEAN emblem (updated 11-stalk version after Timor-Leste joined) for the

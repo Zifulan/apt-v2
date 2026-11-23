@@ -293,6 +293,7 @@ a:hover { color: var(--apt-red); }
 /* Round flags coming from akseki_get_the_meta() */
 .roundflag { display: inline-flex; width: 1.1em; height: 1.1em; vertical-align: -0.2em; border-radius: 50%; overflow: hidden; }
 .roundflag svg { width: 100%; height: 100%; }
+.roundflag img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------- Header -------------------------------------------------------- */
 

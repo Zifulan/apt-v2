@@ -5,9 +5,13 @@
  *
  * $args['id']        Prefix for element IDs (must be unique on the page).
  * $args['autofocus'] Focus the keyword field when shown (the dialog).
+ * $args['lazy_cats'] Ship the category list inside a <template>; apt-nav.js
+ *                    inserts it when the dialog opens (keeps ~80 options out
+ *                    of every page's DOM).
  */
 $apt_sf_id        = isset( $args['id'] ) ? $args['id'] : 'apt-search';
 $apt_sf_autofocus = ! empty( $args['autofocus'] );
+$apt_sf_lazy      = ! empty( $args['lazy_cats'] );
 ?>
 <form class="apt-search-form<?php echo isset( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : ''; ?>" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 	<div class="apt-search-field">
@@ -16,6 +20,7 @@ $apt_sf_autofocus = ! empty( $args['autofocus'] );
 	</div>
 	<div class="apt-search-field">
 		<label for="<?php echo esc_attr( $apt_sf_id ); ?>-cat"><?php esc_html_e( 'Category', 'akseki-vi' ); ?></label>
+		<?php if ( $apt_sf_lazy ) : ?><template class="apt-cat-tpl"><?php endif; ?>
 		<?php
 		wp_dropdown_categories( array(
 			'show_option_all' => __( 'All categories', 'akseki-vi' ),
@@ -26,6 +31,7 @@ $apt_sf_autofocus = ! empty( $args['autofocus'] );
 			'selected'        => (int) get_query_var( 'cat' ),
 		) );
 		?>
+		<?php if ( $apt_sf_lazy ) : ?></template><?php endif; ?>
 	</div>
 	<button type="submit" class="apt-search-submit"><?php esc_html_e( 'Search', 'akseki-vi' ); ?></button>
 </form>
