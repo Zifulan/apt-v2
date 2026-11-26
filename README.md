@@ -99,6 +99,16 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
   Details, the broken links and uninstall notes are in
   `extras/apt-pdf-search/README.md`.
 
+## Themes of meeting categories
+
+Each meeting category belongs to one theme page (a child page of "Themes").
+Set it in **Posts → Categories → edit a category → Theme**; the categories
+list has a Theme column (`inc/category-themes.php`). Behind it, each theme
+page keeps a `tpc_topics` custom field (comma-separated category slugs),
+which the dropdown edits for you; renaming a category's slug updates it too.
+The theme also needs `tpc_pillar` (e.g. `economic-cooperations`) on new theme
+pages.
+
 ## Limited Access files
 
 Limited Access documents are stored in `wp-content/uploads/private/` (uploaded

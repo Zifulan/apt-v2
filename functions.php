@@ -1331,7 +1331,7 @@ function akseki_get_theme_from_id($id,$idtype){
 	$topics_arr = [];	
 	foreach($themes as $theme){		
 		$tpc_topics = get_post_custom_values( "tpc_topics", $theme->ID);
-		$extos = explode(",",$tpc_topics[0]);
+		$extos = array_map( 'trim', explode( ",", (string) ( $tpc_topics[0] ?? '' ) ) ); // "a, b" works too
 		foreach($extos as $exto){
 
 			$topics_arr[$exto] = $theme->ID;
@@ -1789,6 +1789,8 @@ add_action( 'init', function () {
 
 // Limited Access files: only logged-in visitors can open uploads/private/.
 require_once get_template_directory() . '/inc/limited-access-files.php';
+// Posts → Categories: a "Theme" dropdown that edits the theme pages' tpc_topics.
+require_once get_template_directory() . '/inc/category-themes.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );

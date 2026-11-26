@@ -9,7 +9,8 @@ $tpc_topics = explode(",",$tpc_topics[0]);
 $dgcatid=377;$wgcatid=373;$mincatid = 43;$somcatid = 280;$othcatid = 295;$ottcatid = 399;$ott_themespageid = 6262;
 $dglevel=[];$wglevel=[];$minlevel = [];$somlevel = [];$othlevel = [];$mechanisms = [];
 foreach($tpc_topics as $topic){
-	$to = get_category_by_slug($topic);
+	$to = get_category_by_slug(trim($topic));
+	if(!$to){ continue; } // empty or unknown slug in tpc_topics
 	$ta = get_ancestors($to->term_id,'category');
 	if(in_array($mincatid,$ta)){
 		$minlevel[] = $to;
