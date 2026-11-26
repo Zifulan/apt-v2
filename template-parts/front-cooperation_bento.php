@@ -51,7 +51,7 @@ $apt_mechanisms = array(
 	array(
 		'name' => 'Asian Bond Markets Initiative (ABMI)',
 		'text' => 'At their 29th Meeting on 3 May 2026, the ASEAN+3 Finance Ministers and Central Bank Governors stated: “We acknowledge the progress that the ABMI has achieved since the Asian Financial Crisis and appreciate the significant developments made in the local currency bond markets. … To mark a new stage of regional financial cooperation in ASEAN+3, we agreed to evolve the ABMI into the Asian Bond and Financial Markets Initiative (ABFMI) under the next roadmap, while local currency bond market development remains the anchor of the initiative.”',
-		'url'  => '/wp-content/uploads/2026/05/20260502-Joint-Statement_29th-AFMGM3_final.pdf',
+		'url'  => '/wp-content/uploads/2026/05/20260502-Joint-Statement_29th-AFMGM3_final.pdf#page=4', // opens at paras 13-14 (ABMI)
 		'label' => '29th AFMGM+3 Joint Statement (PDF)',
 		'ext'  => 'https://asianbondsonline.adb.org/abmi.php',
 		'ext_label' => 'AsianBondsOnline (ADB)',
