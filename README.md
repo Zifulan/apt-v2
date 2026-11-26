@@ -99,6 +99,24 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
   Details, the broken links and uninstall notes are in
   `extras/apt-pdf-search/README.md`.
 
+## Limited Access files
+
+Limited Access documents are stored in `wp-content/uploads/private/` (uploaded
+there by hand, not through the Media Library). They only open for logged-in
+visitors (`inc/limited-access-files.php`):
+
+- The folder gets a `.htaccess` that refuses direct requests, so old or shared
+  file addresses stop working (written on the next admin page load).
+- Links to the folder, in any page or post, become `/?apt_file=<path>`: the
+  theme checks the login, then sends the file. Visitors who are not logged in
+  go to the Limited Access login page.
+- **Media → Limited Access files** checks that direct access is really
+  blocked, and lists links on Limited Access pages that point outside the
+  folder (those files are still public).
+- The PDF search add-on skips the folder.
+- New Limited Access documents must go into this folder; files uploaded
+  through the Media Library are public.
+
 ## Home page
 
 | Section | File | Content |

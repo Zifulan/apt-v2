@@ -1749,6 +1749,9 @@ add_action( 'init', function () {
 	}
 }, 99 );
 
+// Limited Access files: only logged-in visitors can open uploads/private/.
+require_once get_template_directory() . '/inc/limited-access-files.php';
+
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
 function meta_limit_increase( $limit ) {
