@@ -28,13 +28,12 @@
 							) );
 							?>
 							<div>
-								<h2 class="apt-footer-heading">The ASEAN Secretariat</h2>
+								<?php $apt_contact = apt_secretariat_contact(); ?>
+								<h2 class="apt-footer-heading"><?php echo esc_html( $apt_contact['name'] ); ?></h2>
 								<address class="apt-footer-address">
-									70A Jalan Sisingamangaraja<br>
-									Jakarta 12110, Indonesia<br>
-									(+6221) 7262991, 7243372<br>
-									(+6221) 7398234, 7243504<br>
-									<a href="mailto:public@asean.org">public@asean.org</a>
+									<?php foreach ( $apt_contact['address'] as $line ) : ?><?php echo esc_html( $line ); ?><br><?php endforeach; ?>
+									<?php foreach ( $apt_contact['phones'] as $ph ) : ?><?php echo esc_html( $ph[0] . ', ' . $ph[2] ); ?><br><?php endforeach; ?>
+									<a href="mailto:<?php echo esc_attr( $apt_contact['email'] ); ?>"><?php echo esc_html( $apt_contact['email'] ); ?></a>
 								</address>
 							</div>
 							<div>

@@ -106,6 +106,25 @@ add_filter( 'wp_nav_menu_objects', function ( $items, $args ) {
 }, 20, 2 );
 
 /**
+ * The ASEAN Secretariat's contact details, used by the footer and the Contact
+ * page (page-contact.php), so a change is made in one place.
+ */
+function apt_secretariat_contact() {
+	return array(
+		'name'    => 'The ASEAN Secretariat',
+		'address' => array( '70A Jalan Sisingamangaraja', 'Jakarta 12110, Indonesia' ),
+		// Each line: the area code and two numbers, as printed by the Secretariat.
+		'phones'  => array(
+			array( '(+6221) 7262991', '+62217262991', '7243372', '+62217243372' ),
+			array( '(+6221) 7398234', '+62217398234', '7243504', '+62217243504' ),
+		),
+		'email'   => 'public@asean.org',
+		'map'     => 'https://maps.google.com/maps?q=asean%20secretariat%20jakarta&t=m&z=15&output=embed',
+		'route'   => 'https://www.google.com/maps/dir/?api=1&destination=ASEAN+Secretariat%2C+70A+Jalan+Sisingamangaraja%2C+Jakarta',
+	);
+}
+
+/**
  * The full-screen site menu (header.php): numbered sections from the
  * "primary" menu (Appearance > Menus), each with a panel of its links.
  * Desktop: sections on the left, the open section's links on the right.
