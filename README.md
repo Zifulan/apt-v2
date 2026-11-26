@@ -99,6 +99,15 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
   Details, the broken links and uninstall notes are in
   `extras/apt-pdf-search/README.md`.
 
+## Statement settings
+
+The post edit screen has a **Statement settings** box
+(`inc/statement-settings.php`) for the special tags the theme reads:
+short name (`SM_…`), date of an upcoming meeting (`SC_month`, `SC_year`,
+`SC_nodate`), and `hasnocontent`, `hyperlinked`, `noshorttitle`, `marker`.
+It saves the same tags, so typing them in the Tags box still works; the box
+only changes what was changed in it.
+
 ## Themes of meeting categories
 
 Each meeting category belongs to one theme page (a child page of "Themes").
