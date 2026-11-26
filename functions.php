@@ -87,6 +87,25 @@ function apt_mega_menu_items( $items, $args ) {
 add_filter( 'wp_nav_menu_objects', 'apt_mega_menu_items', 10, 2 );
 
 /**
+ * Footer menu: no "Contact" column. The ASEAN Secretariat's address next to
+ * it already gives the contact details. The header menu keeps "Contact".
+ */
+add_filter( 'wp_nav_menu_objects', function ( $items, $args ) {
+	if ( empty( $args->apt_footer ) ) {
+		return $items;
+	}
+	$hidden = array();
+	foreach ( $items as $item ) {
+		if ( ! (int) $item->menu_item_parent && 'contact' === strtolower( trim( wp_strip_all_tags( $item->title ) ) ) ) {
+			$hidden[] = (int) $item->ID;
+		}
+	}
+	return array_values( array_filter( $items, function ( $item ) use ( $hidden ) {
+		return ! in_array( (int) $item->ID, $hidden, true ) && ! in_array( (int) $item->menu_item_parent, $hidden, true );
+	} ) );
+}, 20, 2 );
+
+/**
  * The full-screen site menu (header.php): numbered sections from the
  * "primary" menu (Appearance > Menus), each with a panel of its links.
  * Desktop: sections on the left, the open section's links on the right.
