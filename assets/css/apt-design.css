@@ -2247,3 +2247,10 @@ main.site-single {
   .apt-limited-page .entry-content ul { grid-template-columns: 1fr; gap: 6px; }
   .site-main .apt-limited-page .entry-content ul a { min-block-size: 44px; }
 }
+
+/* Limited Access: find a document */
+.apt-la-filter { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; order: -2; }
+.apt-la-filter input[type="search"] { flex: 1 1 280px; max-inline-size: 520px; min-block-size: 48px; padding: 0 16px 0 44px; border: 1px solid var(--rule-soft); border-radius: var(--radius-pill); background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a4f5c' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") 16px center/18px no-repeat; font: inherit; color: var(--ink); }
+.apt-la-filter input[type="search"]:focus-visible { outline: 2px solid var(--apt-blue); outline-offset: 2px; border-color: var(--apt-blue); }
+.apt-la-none { margin: 0; font-weight: 600; color: var(--ink-2); }
+.apt-limited-page [hidden], .apt-la-bar [hidden] { display: none !important; }

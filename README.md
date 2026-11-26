@@ -154,8 +154,10 @@ visitors (`inc/limited-access-files.php`):
 - **The documents page** keeps its plain content (a heading, then a bullet
   list of links, for each group). The theme shows it with a bar of shortcuts
   to each heading (with how many documents it lists) and the log-out button,
-  the documents as a grid of tiles, and the title without "Private:". A new
-  heading and list appear in the same style; nothing else is needed.
+  the documents as a grid of tiles, newest first (editors keep adding new
+  documents at the bottom of a list), a box to find a document as you type,
+  and the title without "Private:". A new heading and list appear in the
+  same style; nothing else is needed.
 
 ## Home page
 

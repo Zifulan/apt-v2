@@ -485,6 +485,10 @@ function apt_limited_admin_page() {
  * - a bar at the top with a shortcut to each heading (and how many documents
  *   it lists), and the "You are logged in / Log out" line;
  * - the document count next to each heading;
+ * - newest first: each list is shown in reverse, so editors keep adding new
+ *   documents at the bottom (lists with sub-lists are left as they are);
+ * - a box to find a document as you type (the script is printed in the
+ *   footer; without it the box stays hidden);
  * - the class "apt-limited-page", which styles the lists as a grid of tiles
  *   (assets/css/apt-design.css).
  * The title is shown without WordPress's "Private:" prefix.
@@ -520,10 +524,15 @@ function apt_limited_docs_layout( $content ) {
 	$parts = preg_split( '#(<h2\b[^>]*>.*?</h2>)#is', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
 	$links = array();
 	$used  = array();
+	$total = 0;
 	for ( $i = 1; $i < count( $parts ); $i += 2 ) {
 		preg_match( '#<h2\b([^>]*)>(.*?)</h2>#is', $parts[ $i ], $h );
 		$text  = trim( html_entity_decode( wp_strip_all_tags( $h[2] ), ENT_QUOTES, 'UTF-8' ), " \t\n\r\0\x0B\xC2\xA0" );
-		$count = preg_match_all( '#<li\b#i', isset( $parts[ $i + 1 ] ) ? $parts[ $i + 1 ] : '' );
+		if ( isset( $parts[ $i + 1 ] ) ) {
+			$parts[ $i + 1 ] = apt_limited_newest_first( $parts[ $i + 1 ] );
+		}
+		$count  = preg_match_all( '#<li\b#i', isset( $parts[ $i + 1 ] ) ? $parts[ $i + 1 ] : '' );
+		$total += $count;
 		if ( '' === $text ) {
 			continue;
 		}
@@ -545,7 +554,68 @@ function apt_limited_docs_layout( $content ) {
 		$links[]     = '<a href="#' . esc_attr( $id ) . '">' . esc_html( $text ) . ( $count ? ' <span>' . (int) $count . '</span>' : '' ) . '</a>';
 	}
 	$nav = count( $links ) > 1 ? '<nav class="apt-la-jump" aria-label="' . esc_attr__( 'Sections', 'akseki-vi' ) . '">' . implode( '', $links ) . '</nav>' : '';
-	$bar = ( $nav || $logout ) ? '<div class="apt-la-bar">' . $nav . $logout . '</div>' : '';
+	$find = $total > 1 ? '<div class="apt-la-filter" hidden><label class="screen-reader-text" for="apt-la-q">' . esc_html__( 'Find a document', 'akseki-vi' ) . '</label>'
+		. '<input type="search" id="apt-la-q" placeholder="' . esc_attr__( 'Find a document, e.g. 2019', 'akseki-vi' ) . '" autocomplete="off">'
+		. '<p class="apt-la-none" role="status" hidden>' . esc_html__( 'No documents match.', 'akseki-vi' ) . '</p></div>' : '';
+	$bar  = ( $find || $nav || $logout ) ? '<div class="apt-la-bar">' . $find . $nav . $logout . '</div>' : '';
 	return $bar . implode( '', $parts );
 }
 add_filter( 'the_content', 'apt_limited_docs_layout', 20 );
+
+/** Show each simple list (no sub-lists) in reverse order: newest first. */
+function apt_limited_newest_first( $html ) {
+	return preg_replace_callback(
+		'#(<ul\b[^>]*>)(.*?)(</ul>)#is',
+		function ( $m ) {
+			if ( preg_match( '#<(ul|ol)\b#i', $m[2] ) || ! preg_match_all( '#<li\b[^>]*>.*?</li>#is', $m[2], $li ) ) {
+				return $m[0];
+			}
+			return $m[1] . implode( '', array_reverse( $li[0] ) ) . $m[3];
+		},
+		$html
+	);
+}
+
+// The "find a document" box: hide documents that don't match, and sections
+// (and their shortcuts) with none; update the counts.
+add_action( 'wp_footer', function () {
+	if ( ! is_page() || ! apt_is_limited_docs_page( get_queried_object_id() ) ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	var box = document.querySelector('.apt-la-filter'), q = document.getElementById('apt-la-q');
+	if (!box || !q) { return; }
+	var page = box.closest('.entry-content'), none = box.querySelector('.apt-la-none');
+	var sections = Array.prototype.map.call(page.querySelectorAll('h2[id]'), function (h) {
+		var lists = [], el = h.nextElementSibling;
+		while (el && el.tagName !== 'H2') { if (el.tagName === 'UL') { lists.push(el); } el = el.nextElementSibling; }
+		return { h: h, lists: lists, pill: page.querySelector('.apt-la-jump a[href="#' + CSS.escape(h.id) + '"]') };
+	});
+	box.hidden = false;
+	q.addEventListener('input', function () {
+		var t = q.value.trim().toLowerCase(), all = 0;
+		sections.forEach(function (s) {
+			if (!s.lists.length) { return; }
+			var n = 0;
+			s.lists.forEach(function (ul) {
+				var shown = 0;
+				Array.prototype.forEach.call(ul.querySelectorAll('li'), function (li) {
+					var ok = !t || li.textContent.toLowerCase().indexOf(t) !== -1;
+					li.hidden = !ok; shown += ok ? 1 : 0;
+				});
+				ul.hidden = !shown; n += shown;
+			});
+			s.h.hidden = !n;
+			var c = s.h.querySelector('.apt-la-count');
+			if (c) { c.textContent = n; }
+			if (s.pill) { s.pill.hidden = !n; var pc = s.pill.querySelector('span'); if (pc) { pc.textContent = n; } }
+			all += n;
+		});
+		none.hidden = all > 0;
+	});
+})();
+</script>
+	<?php
+}, 20 );
