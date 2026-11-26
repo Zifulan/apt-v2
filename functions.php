@@ -1626,19 +1626,41 @@ add_shortcode( 'akseki_get_recent_posts', 'akseki_get_recent_posts' );
  */
 add_shortcode( 'akseki_limited_access', '__return_empty_string' );
 
-//check if user already logged in or not
-function add_login_check_limited_access()
-{
-    if ( is_user_logged_in() && is_page(4452) ) {
-        wp_redirect('/limited-access-documents-2');
-        exit;
-    }
-    if (isset($_GET['loginf'])) {
-		//The parameter you need is present
-		echo('<div class="w-auto alert alert-primary" role="alert">Failed password</div>');
+/*
+ * Limited Access login pages: page 4452 (the login page) and any page with the
+ * [wp_login_form] or [logincheck] shortcode.
+ * - Never cached, by WP Super Cache (DONOTCACHEPAGE) or by the hosting
+ *   firewall/CDN (no-cache headers): a cached copy can show a stale or broken
+ *   form, and login pages should not be stored anyway.
+ * - Already logged in on the login page: straight to the documents. This runs
+ *   before the page is sent (it was inside the [logincheck] shortcode, too late
+ *   for a redirect to work).
+ */
+function apt_is_login_form_page() {
+	if ( ! is_singular() ) {
+		return false;
 	}
+	$post = get_queried_object();
+	return $post instanceof WP_Post && ( 4452 === (int) $post->ID || has_shortcode( $post->post_content, 'wp_login_form' ) || has_shortcode( $post->post_content, 'logincheck' ) );
 }
-add_shortcode('logincheck', 'add_login_check_limited_access');
+add_action( 'template_redirect', function () {
+	if ( ! apt_is_login_form_page() ) {
+		return;
+	}
+	if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+		define( 'DONOTCACHEPAGE', true );
+	}
+	nocache_headers();
+	if ( is_user_logged_in() && is_page( 4452 ) ) {
+		wp_safe_redirect( home_url( '/limited-access-documents-2/' ) );
+		exit;
+	}
+}, 1 );
+
+// [logincheck]: kept so pages that still contain it don't show the raw
+// shortcode. Its redirect is above; its "Failed password" message is now
+// part of [wp_login_form].
+add_shortcode( 'logincheck', '__return_empty_string' );
 
 /*
  * On a failed front-end login (the Limited Access login form), go back to
@@ -1679,6 +1701,8 @@ function apt_login_form_shortcode( $atts ) {
 			. '<a class="apt-logout-link" href="' . esc_url( wp_logout_url( $after ) ) . '">' . esc_html__( 'Log out', 'akseki-vi' ) . '</a></p>';
 	}
 	$atts = (array) $atts;
+	// Back from a wrong password (see my_front_end_login_fail()).
+	$failed = isset( $_GET['loginf'] ) ? '<p class="apt-login-failed" role="alert">' . esc_html__( 'Failed password. Please try again.', 'akseki-vi' ) . '</p>' : ''; // phpcs:ignore WordPress.Security.NonceVerification -- display only
 	// Quotes typed in the visual editor can arrive as curly quotes.
 	foreach ( $atts as $k => $v ) {
 		$atts[ $k ] = preg_replace( '/^[\s"\'\x{201C}\x{201D}\x{2018}\x{2019}\x{2033}]+|[\s"\'\x{201C}\x{201D}\x{2018}\x{2019}\x{2033}]+$/u', '', (string) $v );
@@ -1717,7 +1741,7 @@ function apt_login_form_shortcode( $atts ) {
 	if ( isset( $atts['lost_password'] ) && ! $off( $atts['lost_password'] ) ) {
 		$form .= '<p class="login-lost-password"><a href="' . esc_url( wp_lostpassword_url( $args['redirect'] ) ) . '">' . esc_html__( 'Lost your password?' ) . '</a></p>';
 	}
-	return $form;
+	return $failed . $form;
 }
 add_action( 'init', function () {
 	if ( ! shortcode_exists( 'wp_login_form' ) ) {

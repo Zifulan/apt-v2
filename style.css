@@ -754,9 +754,6 @@ ul.page-numbers .current{
 	background-color:#ced4da;
 }
 
-/*limited access page*/
-#post-4452 .login-username{visibility:hidden;height:2px;}
-#post-4452 .login-password, #post-4452 .login-submit{display:table-cell;}
 
 /*quick fix for wp-block-gallery columns not displaying properly*/
 .entry-content .wp-block-gallery.has-nested-images{
