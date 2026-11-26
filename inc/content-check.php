@@ -105,6 +105,43 @@ function apt_content_check_badge( $ok, $text_ok = '', $text_bad = '' ) {
 		: '<span style="color:#b32d2e;font-weight:600">' . esc_html( $text_bad ? $text_bad : __( 'Needs attention', 'akseki-vi' ) ) . '</span>';
 }
 
+/*
+ * Some plugins register their shortcodes on the public site only, so the
+ * admin screen alone can't tell which exist there. When a public page is
+ * viewed, record the shortcodes and who provides them (only written when the
+ * list changes). The check uses both lists.
+ */
+add_action( 'wp', function () {
+	if ( is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
+		return;
+	}
+	$tags = array_keys( $GLOBALS['shortcode_tags'] );
+	sort( $tags );
+	$hash = md5( implode( ',', $tags ) );
+	if ( get_option( 'apt_front_shortcodes_hash' ) === $hash ) {
+		return;
+	}
+	$map = array();
+	foreach ( $tags as $tag ) {
+		$map[ $tag ] = apt_shortcode_provider( $tag );
+	}
+	update_option( 'apt_front_shortcodes', array( 'time' => time(), 'tags' => $map ), false );
+	update_option( 'apt_front_shortcodes_hash', $hash, false );
+} );
+
+/** Whether a shortcode exists here or on the public site (as last recorded). */
+function apt_shortcode_known( $tag ) {
+	static $front = null;
+	if ( null === $front ) {
+		$f     = get_option( 'apt_front_shortcodes' );
+		$front = ( is_array( $f ) && isset( $f['tags'] ) ) ? $f['tags'] : array();
+	}
+	if ( shortcode_exists( $tag ) ) {
+		return apt_shortcode_provider( $tag );
+	}
+	return isset( $front[ $tag ] ) ? $front[ $tag ] : null;
+}
+
 /** Who provides a registered shortcode: array( label, plugin folder or '' ). */
 function apt_shortcode_provider( $tag ) {
 	global $shortcode_tags;
@@ -119,6 +156,9 @@ function apt_shortcode_provider( $tag ) {
 		}
 	}
 	$cb   = isset( $shortcode_tags[ $tag ] ) ? $shortcode_tags[ $tag ] : null;
+	if ( is_string( $cb ) && 0 === strpos( $cb, '__return_' ) ) {
+		return array( __( 'This theme (shows nothing; kept so old pages show no raw text)', 'akseki-vi' ), '' );
+	}
 	$file = '';
 	try {
 		if ( is_string( $cb ) && false !== strpos( $cb, '::' ) ) {
@@ -169,7 +209,7 @@ function apt_shortcode_usage() {
 				continue; // [[escaped]] or already counted here
 			}
 			$seen[ $tag ] = true;
-			if ( shortcode_exists( $tag ) ) {
+			if ( apt_shortcode_known( $tag ) ) {
 				$used[ $tag ][] = $where;
 			} elseif ( false !== strpbrk( $tag, '_-' ) || ( isset( $x[3] ) && false !== strpos( $x[3], '=' ) ) ) {
 				// Looks like a shortcode (name with _ or -, or attributes); plain
@@ -207,7 +247,7 @@ function apt_shortcode_usage() {
 		if ( preg_match_all( '/do_shortcode\(\s*[\'"]\[([a-zA-Z][\w\-]*)/', (string) file_get_contents( $f ), $m ) ) {
 			foreach ( array_unique( $m[1] ) as $tag ) {
 				$where = array( sprintf( /* translators: %s: file name */ __( 'Theme template %s', 'akseki-vi' ), basename( $f ) ), '' );
-				if ( shortcode_exists( strtolower( $tag ) ) ) {
+				if ( apt_shortcode_known( strtolower( $tag ) ) ) {
 					$used[ strtolower( $tag ) ][] = $where;
 				} else {
 					$raw[ strtolower( $tag ) ][] = $where;
@@ -315,8 +355,10 @@ function apt_content_check_page() {
 	// 7. Shortcodes.
 	$sc        = apt_shortcode_usage();
 	$sc_unused = array(); // plugin => its shortcodes, none used in content
-	foreach ( array_keys( $GLOBALS['shortcode_tags'] ) as $tag ) {
-		list( $who, $folder ) = apt_shortcode_provider( $tag );
+	$front = get_option( 'apt_front_shortcodes' );
+	$all   = array_unique( array_merge( array_keys( $GLOBALS['shortcode_tags'] ), ( is_array( $front ) && isset( $front['tags'] ) ) ? array_keys( $front['tags'] ) : array() ) );
+	foreach ( $all as $tag ) {
+		list( $who, $folder ) = apt_shortcode_known( $tag );
 		if ( $folder ) {
 			$sc_unused[ $who ][ $tag ] = isset( $sc['used'][ $tag ] );
 		}
@@ -440,6 +482,15 @@ function apt_content_check_page() {
 		<h2 id="apt-cc-shortcodes"><?php esc_html_e( '7. Shortcodes', 'akseki-vi' ); ?></h2>
 		<p><?php esc_html_e( 'Shortcodes are the [name …] commands in pages, posts and widgets. A plugin whose shortcodes are used must stay active, or those pages show the raw command.', 'akseki-vi' ); ?></p>
 
+		<?php $front = get_option( 'apt_front_shortcodes' ); ?>
+		<p class="description">
+			<?php if ( is_array( $front ) && ! empty( $front['time'] ) ) : ?>
+				<?php echo esc_html( sprintf( /* translators: %s: date and time */ __( 'Includes shortcodes that exist only on the public site, as recorded when a page was last viewed (%s).', 'akseki-vi' ), wp_date( 'j F Y, H:i', $front['time'] ) ) ); ?>
+			<?php else : ?>
+				<strong><?php esc_html_e( 'Open any page of the public site once (logged in, so it is not served from the cache), then reload this page: some plugins register their shortcodes only there, and until then they may be listed as raw text by mistake.', 'akseki-vi' ); ?></strong>
+			<?php endif; ?>
+		</p>
+
 		<h3><?php esc_html_e( 'Showing as raw text', 'akseki-vi' ); ?></h3>
 		<?php if ( ! $sc['raw'] ) : ?>
 			<p><?php echo apt_content_check_badge( true, __( 'None: every shortcode in the content is provided by an active plugin or the theme.', 'akseki-vi' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
@@ -464,7 +515,7 @@ function apt_content_check_page() {
 				<tbody>
 				<?php foreach ( $sc['used'] as $tag => $places ) : ?>
 					<tr><td><code>[<?php echo esc_html( $tag ); ?>]</code></td>
-					<td><?php echo esc_html( apt_shortcode_provider( $tag )[0] ); ?></td>
+					<td><?php $who = apt_shortcode_known( $tag ); echo esc_html( $who ? $who[0] : '' ); ?></td>
 					<td><?php echo count( $places ); ?></td>
 					<td><?php echo apt_shortcode_where_html( $places ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside ?></td></tr>
 				<?php endforeach; ?>
