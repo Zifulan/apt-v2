@@ -14,7 +14,7 @@
  *   (first sentence).
  * - ABMI: Joint Statement of the 29th ASEAN+3 Finance Ministers' and Central
  *   Bank Governors' Meeting, Samarkand, 3 May 2026, paras 13 and 14, on this
- *   site: /29th-afmgm3/ (checked against the official PDF of the statement).
+ *   site: /wp-content/uploads/2026/05/20260502-Joint-Statement_29th-AFMGM3_final.pdf
  *   The ABMI is to become the Asian Bond and Financial Markets Initiative
  *   (ABFMI) under the next roadmap (endorsement expected at the AFMGM+3 in
  *   2027): rename the card then.
@@ -51,8 +51,8 @@ $apt_mechanisms = array(
 	array(
 		'name' => 'Asian Bond Markets Initiative (ABMI)',
 		'text' => 'At their 29th Meeting on 3 May 2026, the ASEAN+3 Finance Ministers and Central Bank Governors stated: “We acknowledge the progress that the ABMI has achieved since the Asian Financial Crisis and appreciate the significant developments made in the local currency bond markets. … To mark a new stage of regional financial cooperation in ASEAN+3, we agreed to evolve the ABMI into the Asian Bond and Financial Markets Initiative (ABFMI) under the next roadmap, while local currency bond market development remains the anchor of the initiative.”',
-		'url'  => '/29th-afmgm3/',
-		'label' => '29th AFMGM+3 Joint Statement',
+		'url'  => '/wp-content/uploads/2026/05/20260502-Joint-Statement_29th-AFMGM3_final.pdf',
+		'label' => '29th AFMGM+3 Joint Statement (PDF)',
 		'ext'  => 'https://asianbondsonline.adb.org/abmi.php',
 		'ext_label' => 'AsianBondsOnline (ADB)',
 	),
@@ -81,6 +81,6 @@ $apt_mechanisms = array(
 			<?php endforeach; ?>
 		</ul>
 
-		<p class="apt-stats-source apt-coop-source">Descriptions are quoted from AMRO&rsquo;s <a href="https://amro-asia.org/about-amro/amro-and-the-cmim/">AMRO and the CMIM</a> and <a href="https://www.amro-asia.org/about-amro/who-we-are/">Who we are</a> pages, the <a href="<?php echo esc_url( home_url( '/29th-afmgm3/' ) ); ?>">Joint Statement of the 29th ASEAN+3 Finance Ministers&rsquo; and Central Bank Governors&rsquo; Meeting</a> (3 May 2026) and the ASEAN Secretariat&rsquo;s <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025).</p>
+		<p class="apt-stats-source apt-coop-source">Descriptions are quoted from AMRO&rsquo;s <a href="https://amro-asia.org/about-amro/amro-and-the-cmim/">AMRO and the CMIM</a> and <a href="https://www.amro-asia.org/about-amro/who-we-are/">Who we are</a> pages, the <a href="<?php echo esc_url( home_url( '/wp-content/uploads/2026/05/20260502-Joint-Statement_29th-AFMGM3_final.pdf' ) ); ?>">Joint Statement of the 29th ASEAN+3 Finance Ministers&rsquo; and Central Bank Governors&rsquo; Meeting</a> (3 May 2026) and the ASEAN Secretariat&rsquo;s <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025).</p>
 	</div>
 </section>
