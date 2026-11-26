@@ -151,6 +151,11 @@ visitors (`inc/limited-access-files.php`):
 - The PDF search add-on skips the folder.
 - New Limited Access documents must go into this folder; files uploaded
   through the Media Library are public.
+- **The documents page** keeps its plain content (a heading, then a bullet
+  list of links, for each group). The theme shows it with a bar of shortcuts
+  to each heading (with how many documents it lists) and the log-out button,
+  the documents as a grid of tiles, and the title without "Private:". A new
+  heading and list appear in the same style; nothing else is needed.
 
 ## Home page
 

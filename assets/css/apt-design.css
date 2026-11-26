@@ -2221,3 +2221,29 @@ main.site-single {
 .apt-eyebrow + .entry-title { margin-top: 0 !important; }
 /* Long page titles wrap into even lines instead of leaving one word alone */
 .site-main:not(.front-main) :is(.entry-title, .page-title, .apt-page-head h1, .topic-head h1) { text-wrap: balance; }
+
+/* ---------- Limited Access documents page (inc/limited-access-files.php, part 4) ---------- */
+.apt-limited-page .entry-content { max-width: none; }
+.apt-la-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; margin: 0 0 2.5rem; padding: 16px 20px; border-radius: var(--radius-tile); background: var(--paper-2); }
+.apt-la-bar .apt-logout { margin: 0; }
+.apt-la-bar .apt-logout span { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.apt-la-bar .apt-logout span::before { content: ""; inline-size: 18px; block-size: 18px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E") center/contain no-repeat; }
+.apt-la-jump { display: flex; flex-wrap: wrap; gap: 8px; order: -1; flex: 1 1 420px; }
+.site-main .entry-content .apt-la-jump a { display: inline-flex; align-items: center; gap: 8px; min-block-size: 40px; padding: 0 8px 0 16px; border: 1px solid var(--rule-soft); border-radius: var(--radius-pill); background: var(--paper); color: var(--ink); font-weight: 600; text-decoration: none; }
+.site-main .entry-content .apt-la-jump a:hover { border-color: var(--apt-blue); color: var(--apt-blue); }
+.apt-la-jump a span, .apt-limited-page h2 .apt-la-count { display: inline-grid; place-items: center; min-inline-size: 26px; block-size: 26px; padding: 0 7px; border-radius: var(--radius-pill); background: var(--paper-2); font-size: 0.8rem; font-weight: 700; color: var(--ink-2); }
+.apt-limited-page .entry-content hr { display: none; }
+.apt-limited-page .entry-content h2 { margin: 2.5rem 0 1rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--rule); scroll-margin-top: var(--header-offset); }
+.apt-limited-page .entry-content .apt-la-bar + h2 { margin-top: 0; }
+.apt-limited-page .entry-content ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.apt-limited-page .entry-content ul li { display: block; inline-size: 100%; margin: 0; padding: 0; }
+.apt-limited-page .entry-content ul li::before { content: none; }
+.site-main .apt-limited-page .entry-content ul a { display: flex; align-items: center; gap: 10px; box-sizing: border-box; inline-size: 100%; min-block-size: 48px; padding: 8px 14px; border: 1px solid var(--rule-soft); border-radius: 10px; background: var(--paper); color: var(--ink); font-weight: 500; line-height: 1.3; text-decoration: none; transition: border-color 150ms ease-out, background-color 150ms ease-out; }
+.site-main .apt-limited-page .entry-content ul a::before { content: ""; flex: none; inline-size: 20px; block-size: 20px; background: var(--apt-red); -webkit-mask: var(--icon-doc) center/contain no-repeat; mask: var(--icon-doc) center/contain no-repeat; }
+.site-main .apt-limited-page .entry-content ul a:hover { border-color: var(--apt-blue); background: var(--paper-2); color: var(--apt-blue); }
+.apt-limited-page { --icon-doc: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z'/%3E%3Cpath d='M14 3v5h5M9 13h6M9 17h4'/%3E%3C/svg%3E"); }
+.apt-limited-page h2 .apt-la-count { vertical-align: middle; margin-inline-start: 6px; }
+@media (max-width: 599px) {
+  .apt-limited-page .entry-content ul { grid-template-columns: 1fr; gap: 6px; }
+  .site-main .apt-limited-page .entry-content ul a { min-block-size: 44px; }
+}

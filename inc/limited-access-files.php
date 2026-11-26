@@ -475,3 +475,77 @@ function apt_limited_admin_page() {
 	</div>
 	<?php
 }
+
+/* ---------- 4. The Limited Access documents page ---------- */
+
+/*
+ * The documents page (a private page whose slug or title contains "limited",
+ * not the login page 4452) keeps its plain content: headings with bullet
+ * lists of links. When it is shown, the theme adds:
+ * - a bar at the top with a shortcut to each heading (and how many documents
+ *   it lists), and the "You are logged in / Log out" line;
+ * - the document count next to each heading;
+ * - the class "apt-limited-page", which styles the lists as a grid of tiles
+ *   (assets/css/apt-design.css).
+ * The title is shown without WordPress's "Private:" prefix.
+ */
+function apt_is_limited_docs_page( $post = null ) {
+	$post = get_post( $post );
+	return $post && 'page' === $post->post_type && 4452 !== (int) $post->ID
+		&& apt_limited_is_limited_post( $post ) && ! post_password_required( $post );
+}
+
+add_filter( 'private_title_format', function ( $format, $post ) {
+	return ( $post && apt_limited_is_limited_post( $post ) ) ? '%s' : $format;
+}, 10, 2 );
+
+add_filter( 'post_class', function ( $classes ) {
+	if ( is_page() && in_the_loop() && apt_is_limited_docs_page() ) {
+		$classes[] = 'apt-limited-page';
+	}
+	return $classes;
+} );
+
+function apt_limited_docs_layout( $content ) {
+	if ( ! is_page() || ! in_the_loop() || ! is_main_query() || ! apt_is_limited_docs_page() ) {
+		return $content;
+	}
+	// The log-out line ([wp_login_form] when logged in) moves into the bar.
+	$logout = '';
+	if ( preg_match( '#<p class="apt-logout">.*?</p>#s', $content, $m ) ) {
+		$logout  = $m[0];
+		$content = str_replace( $m[0], '', $content );
+	}
+	// Split at the h2 headings: [before, h2, section, h2, section, …].
+	$parts = preg_split( '#(<h2\b[^>]*>.*?</h2>)#is', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
+	$links = array();
+	$used  = array();
+	for ( $i = 1; $i < count( $parts ); $i += 2 ) {
+		preg_match( '#<h2\b([^>]*)>(.*?)</h2>#is', $parts[ $i ], $h );
+		$text  = trim( html_entity_decode( wp_strip_all_tags( $h[2] ), ENT_QUOTES, 'UTF-8' ), " \t\n\r\0\x0B\xC2\xA0" );
+		$count = preg_match_all( '#<li\b#i', isset( $parts[ $i + 1 ] ) ? $parts[ $i + 1 ] : '' );
+		if ( '' === $text ) {
+			continue;
+		}
+		$attrs = $h[1];
+		if ( preg_match( '/\sid\s*=\s*(["\'])(.*?)\1/i', $attrs, $idm ) ) {
+			$id = $idm[2];
+		} else {
+			$base = sanitize_title( $text );
+			$base = '' !== $base ? $base : 'section';
+			$id   = $base;
+			for ( $n = 2; isset( $used[ $id ] ); $n++ ) {
+				$id = $base . '-' . $n;
+			}
+			$attrs .= ' id="' . esc_attr( $id ) . '"';
+		}
+		$used[ $id ] = true;
+		$badge       = $count ? ' <span class="apt-la-count">' . (int) $count . '</span>' : '';
+		$parts[ $i ] = '<h2' . $attrs . '>' . $h[2] . $badge . '</h2>';
+		$links[]     = '<a href="#' . esc_attr( $id ) . '">' . esc_html( $text ) . ( $count ? ' <span>' . (int) $count . '</span>' : '' ) . '</a>';
+	}
+	$nav = count( $links ) > 1 ? '<nav class="apt-la-jump" aria-label="' . esc_attr__( 'Sections', 'akseki-vi' ) . '">' . implode( '', $links ) . '</nav>' : '';
+	$bar = ( $nav || $logout ) ? '<div class="apt-la-bar">' . $nav . $logout . '</div>' : '';
+	return $bar . implode( '', $parts );
+}
+add_filter( 'the_content', 'apt_limited_docs_layout', 20 );
