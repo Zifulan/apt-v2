@@ -1854,19 +1854,44 @@ main.site-single {
 	.apt-footer-top { flex-direction: column; align-items: flex-start; }
 }
 
-/* News page: the home page cards in a grid. Each cell is narrow, so the
-   card keeps its stacked layout (the side-by-side one is for the carousel). */
-.apt-news-grid {
-	list-style: none;
-	margin: 24px 0 0;
-	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-	gap: 24px;
+/* News page (page-news-2.php, inc/news-page.php): filters, then a list
+   grouped by month. The home page keeps the cards. */
+.nw-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin: 24px 0 28px; padding: 14px 18px; border-radius: var(--radius-tile); background: var(--paper-2); }
+.nw-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.nw-label { margin: 0 6px 0 0; font-size: 0.8rem; font-weight: 700; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.04em; }
+.site-main .nw-chip { display: inline-flex; align-items: center; gap: 6px; min-block-size: 36px; padding: 0 14px; border: 1px solid var(--rule-soft); border-radius: var(--radius-pill); background: var(--paper); color: var(--ink); font: inherit; font-size: 0.9rem; font-weight: 500; text-decoration: none; cursor: pointer; }
+.site-main .nw-chip:hover { border-color: var(--apt-blue); color: var(--apt-blue); }
+.site-main .nw-chip.is-on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.nw-chip i { inline-size: 9px; block-size: 9px; border-radius: 50%; background: var(--tag-c); box-shadow: inset 0 0 0 1px rgba(17, 19, 24, 0.3); }
+.nw-select { min-block-size: 36px; padding: 0 12px; border: 1px solid var(--rule-soft); border-radius: var(--radius-pill); background: var(--paper); color: var(--ink); font: inherit; font-size: 0.9rem; }
+.site-main .nw-clear { font-size: 0.9rem; font-weight: 600; color: var(--ink-2); }
+.nw-empty { margin: 8px 0 32px; font-weight: 600; }
+.nw-tag-summit { --tag-c: var(--apt-red); }
+.nw-kicker .apt-tag { font-weight: 600; color: var(--ink); }
+.nw-month { margin: 8px 0 4px; font-size: 1rem; font-weight: 700; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.05em; }
+.nw-list { list-style: none; margin: 0 0 32px; padding: 0; }
+.nw-list > li { margin: 0; border-top: 1px solid var(--rule-soft); }
+.nw-row { position: relative; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; padding: 20px 0; }
+.nw-image { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; background: var(--paper-2); }
+.nw-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 0 0 6px; font-size: 0.8rem; color: var(--ink-3); }
+.nw-kicker .apt-tag { position: relative; z-index: 2; }
+.nw-title { margin: 0 0 6px; font-size: 1.3rem; font-weight: 700; line-height: 1.25; max-inline-size: 60ch; }
+.site-main .nw-title a { color: var(--ink); text-decoration: none; }
+.nw-title a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.nw-title a:focus-visible { outline: none; }
+.nw-row:has(.nw-title a:focus-visible) { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 10px; }
+.site-main .nw-row:has(.nw-title a:hover) .nw-title a { color: var(--apt-red); }
+.nw-sub { margin: 0 0 8px; color: var(--ink-2); font-size: 0.95rem; max-inline-size: 75ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.nw-row .news-card-date { margin: 0; }
+@media (max-width: 599.98px) {
+	.nw-filters { padding: 12px; gap: 10px; }
+	.nw-group { flex-wrap: nowrap; overflow-x: auto; max-inline-size: 100%; scrollbar-width: none; }
+	.nw-chip { flex: none; }
+	.nw-row { grid-template-columns: 96px minmax(0, 1fr); gap: 14px; padding: 16px 0; }
+	.nw-image { aspect-ratio: 1; }
+	.nw-title { font-size: 1.05rem; }
+	.nw-sub { display: none; }
 }
-.apt-news-grid > li { display: flex; margin: 0; }
-.apt-news-grid .news-card { width: 100%; }
-.apt-news-grid .news-card-title { font-size: 1.15rem; }
 
 /* Bootstrap's .text-muted (#6c757d) drops to 4.3:1 on the light grey panels;
    use the theme's secondary ink, which passes on white and grey. */

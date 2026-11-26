@@ -1797,6 +1797,7 @@ require_once get_template_directory() . '/inc/statement-settings.php';
 require_once get_template_directory() . '/inc/content-check.php';
 // No emoji script; admin area for editors only (were plugins).
 require_once get_template_directory() . '/inc/site-tweaks.php';
+require_once get_template_directory() . '/inc/news-page.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );

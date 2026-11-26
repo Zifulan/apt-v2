@@ -159,6 +159,25 @@ visitors (`inc/limited-access-files.php`):
   and the title without "Private:". A new heading and list appear in the
   same style; nothing else is needed.
 
+## News page
+
+`page-news-2.php` with `inc/news-page.php`: statements and news, newest
+first, 12 per page, as a list grouped by month (the home page keeps its card
+carousel).
+
+- **Filters:** Pillar (Political-Security, Economic, Socio-Cultural), Level
+  (Summit, Ministerial, Others) and Year. They read the existing categories,
+  so editors do nothing new. Pillar follows the same rule as the pillar tag
+  on the cards (the meeting category's parent slug contains "political",
+  "economic" or "socio"); Summit and Ministerial are categories 41 and 43
+  with their sub-categories; Others is everything else.
+- The filters are plain links (`/news-2/?pillar=ec&level=summit&yr=2025`), so
+  they work without JavaScript and crawlers can follow them. Filtered lists
+  are marked `noindex, follow` so they are not indexed as duplicates of the
+  full list. Pagination keeps the filters.
+- Each row: photo, tag (Summit, or the pillar), level and topic, short name,
+  full title, place and date. The whole row is clickable.
+
 ## Home page
 
 | Section | File | Content |
