@@ -1666,10 +1666,18 @@ function my_front_end_login_fail( $username ) {
  * reCAPTCHA plugins that hook into that form keep working.
  * With a preset username and the label "-" (how Limited Access is set up),
  * the username is sent as a hidden field and only the password is asked for.
+ * When the visitor is already logged in, it shows a log-out button instead.
  * Registered late and only if no plugin provides the shortcode, so while the
  * plugin is still active it keeps working as before.
  */
 function apt_login_form_shortcode( $atts ) {
+	// Already logged in: no form, a log-out button instead. Afterwards, back to
+	// the Limited Access login page (4452) if it is public, else the home page.
+	if ( is_user_logged_in() ) {
+		$after = 'publish' === get_post_status( 4452 ) ? get_permalink( 4452 ) : home_url( '/' );
+		return '<p class="apt-logout"><span>' . esc_html__( 'You are logged in.', 'akseki-vi' ) . '</span>'
+			. '<a class="apt-logout-link" href="' . esc_url( wp_logout_url( $after ) ) . '">' . esc_html__( 'Log out', 'akseki-vi' ) . '</a></p>';
+	}
 	$atts = (array) $atts;
 	// Quotes typed in the visual editor can arrive as curly quotes.
 	foreach ( $atts as $k => $v ) {
