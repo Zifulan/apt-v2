@@ -106,8 +106,11 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
 editor's attention, read only, with links to where each is fixed: pages,
 categories and the image the code relies on by ID; meeting categories without
 a Theme or Description; theme pages with a missing pillar or unknown slugs;
-statements of the last 12 months without a photo; mistyped special tags; and
-Limited Access links outside the protected folder.
+statements of the last 12 months without a photo; mistyped special tags;
+Limited Access links outside the protected folder; and shortcodes: which are
+used where (pages, posts, widgets, the theme's templates) and which plugin
+provides each, any showing as raw text, and plugins whose shortcodes nothing
+uses (candidates for removal).
 
 ## Statement settings
 

@@ -12,6 +12,8 @@
  * 4. Statements of the last 12 months without a photo.
  * 5. Special tags that look mistyped (sm_…, "SM 11th", hasnocontents …).
  * 6. Limited Access links outside the protected folder.
+ * 7. Shortcodes: which are used where and who provides them; any showing as
+ *    raw text; plugins whose shortcodes no content uses.
  *
  * @package apt-v2
  */
@@ -103,6 +105,131 @@ function apt_content_check_badge( $ok, $text_ok = '', $text_bad = '' ) {
 		: '<span style="color:#b32d2e;font-weight:600">' . esc_html( $text_bad ? $text_bad : __( 'Needs attention', 'akseki-vi' ) ) . '</span>';
 }
 
+/** Who provides a registered shortcode: array( label, plugin folder or '' ). */
+function apt_shortcode_provider( $tag ) {
+	global $shortcode_tags;
+	static $plugins = null;
+	if ( null === $plugins ) {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		$plugins = array();
+		foreach ( get_plugins() as $file => $data ) {
+			$plugins[ strtok( $file, '/' ) ] = $data['Name'];
+		}
+	}
+	$cb   = isset( $shortcode_tags[ $tag ] ) ? $shortcode_tags[ $tag ] : null;
+	$file = '';
+	try {
+		if ( is_string( $cb ) && false !== strpos( $cb, '::' ) ) {
+			$cb = explode( '::', $cb, 2 );
+		}
+		if ( is_array( $cb ) ) {
+			$file = ( new ReflectionMethod( $cb[0], $cb[1] ) )->getFileName();
+		} elseif ( $cb instanceof Closure || ( is_string( $cb ) && function_exists( $cb ) ) ) {
+			$file = ( new ReflectionFunction( $cb ) )->getFileName();
+		}
+	} catch ( ReflectionException $e ) {
+		$file = '';
+	}
+	$file = wp_normalize_path( (string) $file );
+	$pdir = wp_normalize_path( WP_PLUGIN_DIR ) . '/';
+	if ( $file && 0 === strpos( $file, $pdir ) ) {
+		$folder = strtok( substr( $file, strlen( $pdir ) ), '/' );
+		return array( isset( $plugins[ $folder ] ) ? $plugins[ $folder ] : $folder, $folder );
+	}
+	if ( $file && 0 === strpos( $file, wp_normalize_path( get_template_directory() ) ) ) {
+		return array( __( 'This theme', 'akseki-vi' ), '' );
+	}
+	if ( $file && 0 === strpos( $file, wp_normalize_path( ABSPATH . WPINC ) ) ) {
+		return array( 'WordPress', '' );
+	}
+	return array( __( 'Unknown', 'akseki-vi' ), '' );
+}
+
+/**
+ * Where shortcodes are used: posts and pages of every status (not trash),
+ * widgets, and the theme's own templates (do_shortcode).
+ * Returns array( 'used' => tag => [ [label, url], ... ], 'raw' => same, for
+ * shortcode-like text that nothing provides, so it shows as raw text ).
+ */
+function apt_shortcode_usage() {
+	global $wpdb;
+	$used = array();
+	$raw  = array();
+	$add  = function ( $content, $where ) use ( &$used, &$raw ) {
+		if ( false === strpos( (string) $content, '[' ) ) {
+			return;
+		}
+		preg_match_all( '/\[(\[?)([a-zA-Z][\w\-]*)(\s[^\]]*)?\/?\]/', (string) $content, $m, PREG_SET_ORDER );
+		$seen = array();
+		foreach ( $m as $x ) {
+			$tag = strtolower( $x[2] );
+			if ( '[' === $x[1] || isset( $seen[ $tag ] ) ) {
+				continue; // [[escaped]] or already counted here
+			}
+			$seen[ $tag ] = true;
+			if ( shortcode_exists( $tag ) ) {
+				$used[ $tag ][] = $where;
+			} elseif ( false !== strpbrk( $tag, '_-' ) || ( isset( $x[3] ) && false !== strpos( $x[3], '=' ) ) ) {
+				// Looks like a shortcode (name with _ or -, or attributes); plain
+				// words in brackets such as [sic] or [1] are not counted.
+				$raw[ $tag ][] = $where;
+			}
+		}
+	};
+	$last = 0;
+	do {
+		$rows = $wpdb->get_results( $wpdb->prepare( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			"SELECT ID, post_title, post_type, post_content FROM {$wpdb->posts}
+			 WHERE ID > %d AND post_content LIKE %s
+			 AND post_type NOT IN ('revision','attachment','nav_menu_item','customize_changeset','oembed_cache')
+			 AND post_status NOT IN ('trash','auto-draft','inherit')
+			 ORDER BY ID LIMIT 300",
+			$last,
+			'%[%'
+		) );
+		foreach ( $rows as $r ) {
+			$last = (int) $r->ID;
+			$add( $r->post_content, array( ( '' !== $r->post_title ? $r->post_title : '#' . $r->ID ) . ( 'post' === $r->post_type ? '' : ' (' . $r->post_type . ')' ), get_edit_post_link( $r->ID, 'raw' ) ) );
+		}
+	} while ( count( $rows ) === 300 );
+	foreach ( array( 'widget_text' => 'text', 'widget_custom_html' => 'content', 'widget_block' => 'content' ) as $opt => $key ) {
+		foreach ( (array) get_option( $opt, array() ) as $w ) {
+			if ( is_array( $w ) && ! empty( $w[ $key ] ) ) {
+				$add( $w[ $key ], array( __( 'A widget', 'akseki-vi' ), admin_url( 'widgets.php' ) ) );
+			}
+		}
+	}
+	$dir   = get_template_directory();
+	$files = array_merge( (array) glob( $dir . '/*.php' ), (array) glob( $dir . '/template-parts/*.php' ), (array) glob( $dir . '/inc/*.php' ) );
+	foreach ( $files as $f ) {
+		if ( preg_match_all( '/do_shortcode\(\s*[\'"]\[([a-zA-Z][\w\-]*)/', (string) file_get_contents( $f ), $m ) ) {
+			foreach ( array_unique( $m[1] ) as $tag ) {
+				$where = array( sprintf( /* translators: %s: file name */ __( 'Theme template %s', 'akseki-vi' ), basename( $f ) ), '' );
+				if ( shortcode_exists( strtolower( $tag ) ) ) {
+					$used[ strtolower( $tag ) ][] = $where;
+				} else {
+					$raw[ strtolower( $tag ) ][] = $where;
+				}
+			}
+		}
+	}
+	ksort( $used );
+	ksort( $raw );
+	return compact( 'used', 'raw' );
+}
+
+/** Links to where a shortcode is used: the first few, then "and N more". */
+function apt_shortcode_where_html( $places ) {
+	$out = array();
+	foreach ( array_slice( $places, 0, 8 ) as $p ) {
+		$out[] = $p[1] ? '<a href="' . esc_url( $p[1] ) . '">' . esc_html( $p[0] ) . '</a>' : esc_html( $p[0] );
+	}
+	$more = count( $places ) - 8;
+	return implode( ', ', $out ) . ( $more > 0 ? ' ' . esc_html( sprintf( /* translators: %d: count */ __( 'and %d more', 'akseki-vi' ), $more ) ) : '' );
+}
+
 function apt_content_check_page() {
 	// 1. Fixed IDs.
 	$ids = array();
@@ -185,6 +312,18 @@ function apt_content_check_page() {
 	// 6. Limited Access links outside the protected folder.
 	$la_links = function_exists( 'apt_limited_public_links' ) ? count( apt_limited_public_links() ) : null;
 
+	// 7. Shortcodes.
+	$sc        = apt_shortcode_usage();
+	$sc_unused = array(); // plugin => its shortcodes, none used in content
+	foreach ( array_keys( $GLOBALS['shortcode_tags'] ) as $tag ) {
+		list( $who, $folder ) = apt_shortcode_provider( $tag );
+		if ( $folder ) {
+			$sc_unused[ $who ][ $tag ] = isset( $sc['used'][ $tag ] );
+		}
+	}
+	$sc_unused = array_filter( $sc_unused, function ( $tags ) { return ! in_array( true, $tags, true ); } );
+	ksort( $sc_unused );
+
 	$summary = array(
 		array( '#apt-cc-ids', __( 'Site structure', 'akseki-vi' ), 0 === $ids_bad, $ids_bad ),
 		array( '#apt-cc-meetings', __( 'Meeting categories', 'akseki-vi' ), ! $meetings, count( $meetings ) ),
@@ -192,6 +331,7 @@ function apt_content_check_page() {
 		array( '#apt-cc-photos', __( 'Statements without a photo (last 12 months)', 'akseki-vi' ), ! $no_photo, count( $no_photo ) ),
 		array( '#apt-cc-tags', __( 'Mistyped special tags', 'akseki-vi' ), ! $bad_tags, count( $bad_tags ) ),
 		array( '#apt-cc-limited', __( 'Limited Access links outside the protected folder', 'akseki-vi' ), ! $la_links, (int) $la_links ),
+		array( '#apt-cc-shortcodes', __( 'Shortcodes showing as raw text', 'akseki-vi' ), ! $sc['raw'], count( $sc['raw'] ) ),
 	);
 	?>
 	<div class="wrap">
@@ -295,6 +435,53 @@ function apt_content_check_page() {
 		<?php else : ?>
 			<p><?php echo esc_html( sprintf( /* translators: %d: count */ _n( '%d file linked from a Limited Access page is still public.', '%d files linked from Limited Access pages are still public.', $la_links, 'akseki-vi' ), $la_links ) ); ?>
 			<a href="<?php echo esc_url( admin_url( 'upload.php?page=apt-limited-files' ) ); ?>"><?php esc_html_e( 'Move them into the protected folder', 'akseki-vi' ); ?></a></p>
+		<?php endif; ?>
+
+		<h2 id="apt-cc-shortcodes"><?php esc_html_e( '7. Shortcodes', 'akseki-vi' ); ?></h2>
+		<p><?php esc_html_e( 'Shortcodes are the [name …] commands in pages, posts and widgets. A plugin whose shortcodes are used must stay active, or those pages show the raw command.', 'akseki-vi' ); ?></p>
+
+		<h3><?php esc_html_e( 'Showing as raw text', 'akseki-vi' ); ?></h3>
+		<?php if ( ! $sc['raw'] ) : ?>
+			<p><?php echo apt_content_check_badge( true, __( 'None: every shortcode in the content is provided by an active plugin or the theme.', 'akseki-vi' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
+		<?php else : ?>
+			<p><?php esc_html_e( 'Nothing active provides these, so visitors see the command itself. Remove it from the page, or reactivate the plugin it came from.', 'akseki-vi' ); ?></p>
+			<table class="widefat striped" style="max-width:1000px">
+				<thead><tr><th><?php esc_html_e( 'Shortcode', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Used on', 'akseki-vi' ); ?></th></tr></thead>
+				<tbody>
+				<?php foreach ( $sc['raw'] as $tag => $places ) : ?>
+					<tr><td><code>[<?php echo esc_html( $tag ); ?>]</code></td><td><?php echo apt_shortcode_where_html( $places ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside ?></td></tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+
+		<h3><?php esc_html_e( 'In use', 'akseki-vi' ); ?></h3>
+		<?php if ( ! $sc['used'] ) : ?>
+			<p><?php esc_html_e( 'No shortcodes are used.', 'akseki-vi' ); ?></p>
+		<?php else : ?>
+			<table class="widefat striped" style="max-width:1000px">
+				<thead><tr><th><?php esc_html_e( 'Shortcode', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Provided by', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Places', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Used on', 'akseki-vi' ); ?></th></tr></thead>
+				<tbody>
+				<?php foreach ( $sc['used'] as $tag => $places ) : ?>
+					<tr><td><code>[<?php echo esc_html( $tag ); ?>]</code></td>
+					<td><?php echo esc_html( apt_shortcode_provider( $tag )[0] ); ?></td>
+					<td><?php echo count( $places ); ?></td>
+					<td><?php echo apt_shortcode_where_html( $places ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside ?></td></tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+
+		<h3><?php esc_html_e( 'Plugins whose shortcodes no content uses', 'akseki-vi' ); ?></h3>
+		<?php if ( ! $sc_unused ) : ?>
+			<p><?php esc_html_e( 'None.', 'akseki-vi' ); ?></p>
+		<?php else : ?>
+			<p><?php esc_html_e( 'No page, post, widget or theme template uses these plugins\' shortcodes. If a plugin does nothing else for the site, it can be removed; check its other features first.', 'akseki-vi' ); ?></p>
+			<ul style="list-style:disc;padding-left:1.5em">
+			<?php foreach ( $sc_unused as $who => $tags ) : ?>
+				<li><strong><?php echo esc_html( $who ); ?></strong>: <?php echo esc_html( implode( ', ', array_map( function ( $t ) { return '[' . $t . ']'; }, array_keys( $tags ) ) ) ); ?></li>
+			<?php endforeach; ?>
+			</ul>
 		<?php endif; ?>
 	</div>
 	<?php
