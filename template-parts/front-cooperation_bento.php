@@ -7,10 +7,7 @@
  * are joined with "…"). No dated figures that go stale (the 2015 APTERR
  * rice quantity was removed). Do not paraphrase; if a source changes,
  * replace the quote. Sources (checked 26 November 2026):
- * - CMIM: AMRO, "AMRO and the CMIM",
- *   https://amro-asia.org/about-amro/amro-and-the-cmim/ (start of the first
- *   sentence, up to "financial safety net", and the last sentence of the
- *   introduction; the site uses no dashes in visible text).
+ * - CMIM: "About CMIM" page on this site, /about-cmim/ (first sentence).
  * - AMRO: AMRO, "Who we are", https://www.amro-asia.org/about-amro/who-we-are/
  *   (first sentence).
  * - ABMI: ASEAN Secretariat, "Finance Cooperation (ASEAN+3)",
@@ -30,7 +27,7 @@
 $apt_mechanisms = array(
 	array(
 		'name' => 'Chiang Mai Initiative Multilateralisation (CMIM)',
-		'text' => 'The Chiang Mai Initiative Multilateralisation (CMIM) serves as the ASEAN+3 region’s financial safety net … Collectively, members commit <strong>US$240 billion</strong> to support one another when needed.',
+		'text' => 'With a size of <strong>US$240 billion</strong>, the CMIM is a multilateral currency swap arrangement among ASEAN+3 members, established under the agreement signed by the ASEAN+3 Finance Ministers and Central Bank Governors that came into effect on March 24, 2010.',
 		'url'  => '/about-cmim/',
 		'label' => 'About the CMIM',
 		'ext'  => 'https://amro-asia.org/about-amro/amro-and-the-cmim/',
@@ -85,6 +82,6 @@ $apt_mechanisms = array(
 			<?php endforeach; ?>
 		</ul>
 
-		<p class="apt-stats-source apt-coop-source">Descriptions are quoted from the ASEAN Secretariat&rsquo;s <a href="https://asean.org/our-communities/economic-community/finance-integration/finance-cooperation-asean-3/">Finance Cooperation (ASEAN+3)</a> page, AMRO&rsquo;s <a href="https://amro-asia.org/about-amro/amro-and-the-cmim/">AMRO and the CMIM</a> and <a href="https://www.amro-asia.org/about-amro/who-we-are/">Who we are</a> pages, the <a href="<?php echo esc_url( home_url( '/wp-content/uploads/2026/05/20260502-Joint-Statement_29th-AFMGM3_final.pdf' ) ); ?>">Joint Statement of the 29th ASEAN+3 Finance Ministers&rsquo; and Central Bank Governors&rsquo; Meeting</a> (3 May 2026) and the ASEAN Secretariat&rsquo;s <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025).</p>
+		<p class="apt-stats-source apt-coop-source">Descriptions are quoted from the APT pages linked above, the ASEAN Secretariat&rsquo;s <a href="https://asean.org/our-communities/economic-community/finance-integration/finance-cooperation-asean-3/">Finance Cooperation (ASEAN+3)</a> page, AMRO&rsquo;s <a href="https://www.amro-asia.org/about-amro/who-we-are/">Who we are</a> page, the <a href="<?php echo esc_url( home_url( '/wp-content/uploads/2026/05/20260502-Joint-Statement_29th-AFMGM3_final.pdf' ) ); ?>">Joint Statement of the 29th ASEAN+3 Finance Ministers&rsquo; and Central Bank Governors&rsquo; Meeting</a> (3 May 2026) and the ASEAN Secretariat&rsquo;s <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025).</p>
 	</div>
 </section>
