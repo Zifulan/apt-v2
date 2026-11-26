@@ -1793,6 +1793,8 @@ require_once get_template_directory() . '/inc/limited-access-files.php';
 require_once get_template_directory() . '/inc/category-themes.php';
 // Post edit screen: a "Statement settings" box for the special tags (SM_, SC_, hasnocontent …).
 require_once get_template_directory() . '/inc/statement-settings.php';
+// Tools → Content check: what needs an editor's attention.
+require_once get_template_directory() . '/inc/content-check.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );

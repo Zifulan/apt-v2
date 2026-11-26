@@ -99,6 +99,15 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
   Details, the broken links and uninstall notes are in
   `extras/apt-pdf-search/README.md`.
 
+## Content check
+
+**Tools → Content check** (`inc/content-check.php`) lists what needs an
+editor's attention, read only, with links to where each is fixed: pages,
+categories and the image the code relies on by ID; meeting categories without
+a Theme or Description; theme pages with a missing pillar or unknown slugs;
+statements of the last 12 months without a photo; mistyped special tags; and
+Limited Access links outside the protected folder.
+
 ## Statement settings
 
 The post edit screen has a **Statement settings** box
