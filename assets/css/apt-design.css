@@ -2174,6 +2174,10 @@ main.site-single {
 :is(.apt-recent-card, .apt-mechanism, .apt-gallery-item, .apt-doc, .apt-summit, .apt-meeting-latest) .akseki-meta * {
 	float: none !important; display: inline !important; border: 0 !important; padding: 0 !important; margin: 0 !important; background: none !important; text-align: left !important;
 }
+/* ...except the round flag: as an inline element it can't be sized, and its
+   image would stretch to the full card width */
+:is(.apt-recent-card, .apt-mechanism, .apt-gallery-item, .apt-doc, .apt-summit, .apt-meeting-latest) .akseki-meta .roundflag { display: inline-flex !important; margin-left: 4px !important; }
+:is(.apt-recent-card, .apt-mechanism, .apt-gallery-item, .apt-doc, .apt-summit, .apt-meeting-latest) .akseki-meta .roundflag img { display: block !important; }
 .apt-recent-card .akseki-meta { display: block; padding: 0 12px !important; }
 .apt-recent-name { text-align: left !important; display: block; }
 /* The 'lone link in a list item' rule (inline-flex, centred) must not reach the new cards */
