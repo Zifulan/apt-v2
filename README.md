@@ -112,7 +112,10 @@ visitors (`inc/limited-access-files.php`):
   go to the Limited Access login page.
 - **Media → Limited Access files** checks that direct access is really
   blocked, and lists links on Limited Access pages that point outside the
-  folder (those files are still public).
+  folder (those files are still public). Its button moves them into the
+  folder (`private/2021/11/…`, keeping the year/month folders) and updates
+  their links and Media Library items; files also used on public content
+  are skipped and listed. **Undo the last move** puts everything back.
 - The PDF search add-on skips the folder.
 - New Limited Access documents must go into this folder; files uploaded
   through the Media Library are public.
