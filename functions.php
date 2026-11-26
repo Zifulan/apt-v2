@@ -1795,6 +1795,8 @@ require_once get_template_directory() . '/inc/category-themes.php';
 require_once get_template_directory() . '/inc/statement-settings.php';
 // Tools → Content check: what needs an editor's attention.
 require_once get_template_directory() . '/inc/content-check.php';
+// No emoji script; admin area for editors only (were plugins).
+require_once get_template_directory() . '/inc/site-tweaks.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
