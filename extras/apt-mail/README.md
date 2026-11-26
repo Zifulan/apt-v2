@@ -18,7 +18,7 @@ Sends the website's email through Gmail, for when the hosting's own mail
   list in the theme). A post is only marked as notified if the email went out;
   posts of the last 60 days whose notification failed are listed with a
   **Send now** button. **Send test notification** sends a post's notification
-  to yourself only.
+  to one address you type (yours by default), and nobody else.
 - **Failures are not silent:** administrators see a notice with the time,
   subject and error of the last failed email until an email succeeds. Only that
   is kept; no email contents are stored.

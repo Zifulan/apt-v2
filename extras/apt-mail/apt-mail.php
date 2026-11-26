@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       APT Mail
  * Description:       Sends the site's email through Gmail (SMTP with an App Password), with a test button, editable new-post notification recipients, and a warning when email fails (Settings > Email).
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 5.9
  * Requires PHP:      7.4
  * Author:            ASEAN Plus Three website
@@ -205,9 +205,13 @@ function apt_mail_page() {
 	// Send a post's notification (to everyone, or to me as a test).
 	if ( isset( $_POST['apt_mail_notify'] ) && check_admin_referer( 'apt_mail_notify' ) ) {
 		$post_id = absint( $_POST['post_id'] ?? 0 );
-		$only    = ! empty( $_POST['only_me'] ) ? wp_get_current_user()->user_email : '';
+		$is_test = isset( $_POST['test_notify_to'] );
+		$only    = $is_test ? sanitize_email( wp_unslash( $_POST['test_notify_to'] ) ) : '';
 		$post    = get_post( $post_id );
-		if ( $post && 'post' === $post->post_type && 'publish' === $post->post_status ) {
+		if ( $is_test && ! is_email( $only ) ) {
+			// Never fall back to the real recipients for a test.
+			$notice = '<div class="notice notice-error"><p>' . esc_html__( 'Enter a valid email address for the test notification. Nothing was sent.', 'apt-mail' ) . '</p></div>';
+		} elseif ( $post && 'post' === $post->post_type && 'publish' === $post->post_status ) {
 			$failed = '';
 			$catch  = function ( $e ) use ( &$failed ) {
 				$failed = $e->get_error_message();
@@ -296,12 +300,13 @@ function apt_mail_page() {
 		<?php else : ?>
 			<p><?php esc_html_e( 'Every post of the last 60 days has had its notification sent.', 'apt-mail' ); ?></p>
 		<?php endif; ?>
-		<form method="post" style="margin-top:16px"><?php wp_nonce_field( 'apt_mail_notify' ); ?><input type="hidden" name="only_me" value="1">
+		<form method="post" style="margin-top:16px"><?php wp_nonce_field( 'apt_mail_notify' ); ?>
 			<p><label for="apt-notify-post"><?php esc_html_e( 'See what the recipients get: send the notification for', 'apt-mail' ); ?></label>
 			<select id="apt-notify-post" name="post_id">
 				<?php foreach ( $recent as $p ) : ?><option value="<?php echo (int) $p->ID; ?>"><?php echo esc_html( wp_trim_words( get_the_title( $p ), 12 ) ); ?></option><?php endforeach; ?>
 			</select>
-			<?php echo esc_html( sprintf( /* translators: %s: address */ __( 'to me only (%s)', 'apt-mail' ), wp_get_current_user()->user_email ) ); ?>
+			<label for="apt-notify-to"><?php esc_html_e( 'only to', 'apt-mail' ); ?></label>
+			<input type="email" id="apt-notify-to" name="test_notify_to" class="regular-text" value="<?php echo esc_attr( wp_get_current_user()->user_email ); ?>" required>
 			<button class="button" name="apt_mail_notify" value="1"><?php esc_html_e( 'Send test notification', 'apt-mail' ); ?></button></p>
 		</form>
 	</div>
