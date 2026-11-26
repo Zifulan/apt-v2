@@ -2262,3 +2262,79 @@ add_action( 'wp_enqueue_scripts', function () {
 add_action( 'wp_head', function () {
 	echo '<link rel="preload" href="' . esc_url( get_stylesheet_directory_uri() . '/assets/fonts/outfit-latin.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 }, 1 );
+
+/*
+ * Overview of ASEAN Plus Three Cooperation page.
+ *
+ * The section shortcuts at the top of the page (#subsectionPolitical …) and
+ * the page layout (assets/css/apt-design.css) rely on IDs on the four section
+ * headings. When the page text is replaced (e.g. pasted in from the yearly
+ * Word file), those IDs are easily lost, so the theme adds them itself: each
+ * heading is recognised by its wording, at any heading level (h2–h4).
+ */
+function apt_is_overview_page( $post = null ) {
+	$post = get_post( $post );
+	return $post && 'page' === $post->post_type && 'overview-of-asean-plus-three-cooperation' === $post->post_name;
+}
+
+function apt_overview_section_ids( $content ) {
+	if ( ! apt_is_overview_page() ) {
+		return $content;
+	}
+	$sections = array(
+		'Political-Security'   => 'subsectionPolitical',
+		'Economic and Finance' => 'subsectionEconomic',
+		'Socio-Cultural'       => 'subsectionSocio',
+		'Track 1.5'            => 'subsectionTracks',
+	);
+	return preg_replace_callback(
+		'#<(h[2-4])((?:\s[^>]*)?)>(.*?)</\1>#is',
+		function ( $m ) use ( $sections ) {
+			$text = trim( html_entity_decode( wp_strip_all_tags( $m[3] ), ENT_QUOTES, 'UTF-8' ), " \t\n\r\0\x0B\xC2\xA0" );
+			foreach ( $sections as $start => $id ) {
+				if ( 0 !== stripos( $text, $start ) ) {
+					continue;
+				}
+				// The shortcuts point at these IDs, so they replace any other ID.
+				$attrs = preg_replace( '/\sid\s*=\s*(["\'])[^"\']*\1/i', '', $m[2] ) . ' id="' . $id . '"';
+				if ( preg_match( '/\sclass\s*=\s*(["\'])(.*?)\1/i', $attrs, $c ) ) {
+					if ( ! preg_match( '/(^|\s)subsection(\s|$)/', $c[2] ) ) {
+						$attrs = str_replace( $c[0], ' class=' . $c[1] . trim( $c[2] . ' subsection' ) . $c[1], $attrs );
+					}
+				} else {
+					$attrs .= ' class="subsection"';
+				}
+				return '<' . $m[1] . $attrs . '>' . $m[3] . '</' . $m[1] . '>';
+			}
+			return $m[0];
+		},
+		$content
+	);
+}
+add_filter( 'the_content', 'apt_overview_section_ids', 20 );
+
+/*
+ * "How to update this page": a box in the editor sidebar, shown only when
+ * editing the Overview page. Same text as docs/how-to-update-overview.md.
+ */
+add_action( 'add_meta_boxes_page', function ( $post ) {
+	if ( ! apt_is_overview_page( $post ) ) {
+		return;
+	}
+	add_meta_box( 'apt-overview-help', __( 'How to update this page', 'akseki-vi' ), 'apt_overview_help_box', 'page', 'side', 'high' );
+} );
+
+function apt_overview_help_box() {
+	?>
+	<ol style="margin:0 0 0 1.2em;padding:0">
+		<li><strong>Ask for the Word file</strong> of the new Overview, not only the PDF. Text pasted from Word keeps its paragraphs and links; text copied from a PDF does not.</li>
+		<li><strong>Keep the text exactly as written</strong> by the ASEAN Secretariat. Do not reword or correct it.</li>
+		<li><strong>Replace the paragraphs</strong> one section at a time. Keep the four section headings worded as they are now: <em>Political-Security Cooperation</em>, <em>Economic and Finance Cooperation</em>, <em>Socio-Cultural Cooperation</em>, <em>Track 1.5 and Track 2 Cooperation</em>. The site finds the sections by these words.</li>
+		<li><strong>Leave the shortcodes</strong> (text in square brackets, such as <code>[akseki_get_recent_posts …]</code> and <code>[akseki_cat_children …]</code>) where they are. They show the Summit and mechanism cards and update by themselves.</li>
+		<li><strong>Add the links</strong> to the related statements: search the site for the meeting, copy its address, select the words in the text and add the link.</li>
+		<li><strong>New PDF:</strong> upload it under Media, then change the link of the <em>Download Overview in PDF</em> button to the new file.</li>
+		<li><strong>Preview</strong>, check each section shortcut at the top jumps to its section, then <strong>Update</strong>.</li>
+	</ol>
+	<p style="margin:10px 0 0">If something looks wrong, use <em>Revisions</em> (in the Page panel) to go back to the previous version.</p>
+	<?php
+}
