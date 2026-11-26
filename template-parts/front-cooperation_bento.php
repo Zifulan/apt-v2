@@ -2,24 +2,31 @@
 /**
  * Home: "Cooperation in Practice" — shared APT mechanisms.
  *
- * Every description below is quoted word for word from an ASEAN Secretariat
- * or official APT document. Do not paraphrase; if a source changes, replace
- * the quote. Sources (checked 19 November 2026):
- * - CMIM: "About CMIM" page on this site, /about-cmim/ (first sentence).
- * - AMRO: "About AMRO" page on this site, /about-amro-working-committee/ (Mission).
+ * Each card says what the mechanism is, quoted word for word from a current
+ * official source (sentences that are not next to each other in the source
+ * are joined with "…"). No dated figures that go stale (the 2015 APTERR
+ * rice quantity was removed). Do not paraphrase; if a source changes,
+ * replace the quote. Sources (checked 26 November 2026):
+ * - CMIM: AMRO, "AMRO and the CMIM",
+ *   https://amro-asia.org/about-amro/amro-and-the-cmim/ (first and last
+ *   sentences of the introduction).
+ * - AMRO: AMRO, "Who we are", https://www.amro-asia.org/about-amro/who-we-are/
+ *   (first sentence).
+ * - ABMI: Joint Statement of the 29th ASEAN+3 Finance Ministers' and Central
+ *   Bank Governors' Meeting, Samarkand, 3 May 2026, paras 13 and 14,
+ *   https://asianbondsonline.adb.org/documents/asean3-fm-cbg-js/20260503.pdf
+ *   The ABMI is to become the Asian Bond and Financial Markets Initiative
+ *   (ABFMI) under the next roadmap (endorsement expected at the AFMGM+3 in
+ *   2027): rename the card then.
  * - APTERR: ASEAN Secretariat, "Overview of ASEAN Plus Three Cooperation"
  *   (as of 14 November 2025), para 13,
  *   https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf
- *   and ASEAN Secretariat factsheet "ASEAN Food Security: Ensuring the Supply of Rice in the Region",
- *   https://www.asean.org/wp-content/uploads/images/2015/October/outreach-document/Edited%20APTERR-2.pdf
- * - ABMI: Chairman's Press Release on the Asian Bond Markets Initiative,
- *   /chairmans-press-releaseon-the-asian-bond-markets-initiative/ (first sentence).
  * - Section intro: Overview of ASEAN Plus Three Cooperation, para 3.
  */
 $apt_mechanisms = array(
 	array(
 		'name' => 'Chiang Mai Initiative Multilateralisation (CMIM)',
-		'text' => 'With a size of <strong>US$240 billion</strong>, the CMIM is a multilateral currency swap arrangement among ASEAN+3 members, established under the agreement signed by the ASEAN+3 Finance Ministers and Central Bank Governors that came into effect on March 24, 2010.',
+		'text' => 'The Chiang Mai Initiative Multilateralisation (CMIM) serves as the ASEAN+3 region’s financial safety net – a multilateral currency swap arrangement under which participating economies commit to support one another in times of need. … Collectively, members commit <strong>US$240 billion</strong> to support one another when needed.',
 		'url'  => '/about-cmim/',
 		'label' => 'About the CMIM',
 		'ext'  => 'https://amro-asia.org/about-amro/amro-and-the-cmim/',
@@ -27,7 +34,7 @@ $apt_mechanisms = array(
 	),
 	array(
 		'name' => 'ASEAN+3 Macroeconomic Research Office (AMRO)',
-		'text' => 'To contribute to the macroeconomic and financial resilience and stability of the region through surveillance, supporting regional financing arrangements, providing technical assistance, serving as a regional knowledge hub and facilitating ASEAN+3 financial cooperation.',
+		'text' => 'Established in 2011 by ASEAN+3 Finance Ministers, the ASEAN+3 Macroeconomic Research Office (AMRO) is an international organization that aims to contribute to the macroeconomic and financial resilience and stability in the ASEAN+3 region.',
 		'url'  => '/about-amro-working-committee/',
 		'label' => 'About AMRO',
 		'ext'  => 'https://amro-asia.org/',
@@ -35,7 +42,7 @@ $apt_mechanisms = array(
 	),
 	array(
 		'name' => 'ASEAN Plus Three Emergency Rice Reserve (APTERR)',
-		'text' => 'APTERR aims to enhance food security, alleviate poverty, and eradicate malnutrition among members without disrupting normal trade. At the initial stage of operation, the total earmarked quantity of rice reserve contributed by the ASEAN Plus Three Countries amounts to <strong>787,000 MT</strong>.',
+		'text' => 'A key element of APT food security cooperation is the ASEAN Plus Three Emergency Rice Reserve (APTERR), established under the APTERR Agreement signed in October 2011 in Jakarta. APTERR aims to enhance food security, alleviate poverty, and eradicate malnutrition among members without disrupting normal trade.',
 		'url'  => '/category/statements-and-declarations/director-general-level/economic-cooperations-director-general-level/apterr/',
 		'label' => 'APTERR documents',
 		'ext'  => 'https://www.apterr.org/',
@@ -43,11 +50,11 @@ $apt_mechanisms = array(
 	),
 	array(
 		'name' => 'Asian Bond Markets Initiative (ABMI)',
-		'text' => 'The Asian Bond Markets Initiative (ABMI) aims to develop efficient and liquid bond markets in Asia, which would enable better utilization of Asian savings for Asian investments.',
+		'text' => 'At their 29th Meeting on 3 May 2026, the ASEAN+3 Finance Ministers and Central Bank Governors stated: “We acknowledge the progress that the ABMI has achieved since the Asian Financial Crisis and appreciate the significant developments made in the local currency bond markets. … To mark a new stage of regional financial cooperation in ASEAN+3, we agreed to evolve the ABMI into the Asian Bond and Financial Markets Initiative (ABFMI) under the next roadmap, while local currency bond market development remains the anchor of the initiative.”',
 		'url'  => '/chairmans-press-releaseon-the-asian-bond-markets-initiative/',
 		'label' => 'ABMI press release',
-		'ext'  => 'https://asianbondsonline.adb.org/abmi.php',
-		'ext_label' => 'AsianBondsOnline (ADB)',
+		'ext'  => 'https://asianbondsonline.adb.org/documents/asean3-fm-cbg-js/20260503.pdf',
+		'ext_label' => '2026 Joint Statement (PDF)',
 	),
 );
 ?>
@@ -74,6 +81,6 @@ $apt_mechanisms = array(
 			<?php endforeach; ?>
 		</ul>
 
-		<p class="apt-stats-source apt-coop-source">Descriptions are quoted from the APT pages linked above, the ASEAN Secretariat&rsquo;s <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025) and its <a href="https://www.asean.org/wp-content/uploads/images/2015/October/outreach-document/Edited%20APTERR-2.pdf">ASEAN Food Security factsheet</a>.</p>
+		<p class="apt-stats-source apt-coop-source">Descriptions are quoted from AMRO&rsquo;s <a href="https://amro-asia.org/about-amro/amro-and-the-cmim/">AMRO and the CMIM</a> and <a href="https://www.amro-asia.org/about-amro/who-we-are/">Who we are</a> pages, the <a href="https://asianbondsonline.adb.org/documents/asean3-fm-cbg-js/20260503.pdf">Joint Statement of the 29th ASEAN+3 Finance Ministers&rsquo; and Central Bank Governors&rsquo; Meeting</a> (3 May 2026) and the ASEAN Secretariat&rsquo;s <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">Overview of ASEAN Plus Three Cooperation</a> (as of 14 November 2025).</p>
 	</div>
 </section>
