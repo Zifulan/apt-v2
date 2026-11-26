@@ -30,6 +30,7 @@ ASEAN-Korea Cooperation Fund site, in the official ASEAN colours.
 | `search.php`, `template-parts/search-result.php` | Search results page |
 | `extras/apt-pdf-search/` | Separate plugin: search inside statement PDFs (see **Search** below) |
 | `extras/apt-link-checker/` | Separate plugin: lists broken links, missing files and broken PDFs (Tools → Link checker). See its README |
+| `extras/apt-mail/` | Separate plugin: sends the site's email through Gmail; new-post notification recipients (Settings → Email). See its README |
 | `extras/apt-local-search/` | Offline page for searching PDFs in a local or OneDrive folder (not part of the site). See its README |
 | `docs/content-setup.md` | Changes made in WordPress, not the theme: Contact page, pages to unpublish, how editors choose the homepage quote |
 | `list-category-posts/` | Templates for the List Category Posts plugin |

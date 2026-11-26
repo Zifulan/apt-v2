@@ -1952,12 +1952,14 @@ function notifyauthor($post_id) {
 
     $subject = "[Notification] A post has been published on the ASEAN Plus Three website: ".$postm->post_title;
 
-    $multiple_recipients = array(
+    // Recipients can be edited on Settings > Email (APT Mail plugin); this
+    // list is used when that is empty or the plugin is off.
+    $multiple_recipients = apply_filters( 'apt_publish_notify_recipients', array(
         'fifi@asean.org',
         'pham.thu@asean.org',
         'andi.rozin@asean.org',
         'fatahillah.rachman@asean.org'
-    );
+    ) );
 
     $headers = array('Content-Type: text/html; charset=UTF-8');
 
@@ -1966,18 +1968,24 @@ function notifyauthor($post_id) {
         <p>This is an automated notification e-mail. Please do not reply to sender.</p>
         <p>A new post has been published in asean+3 website:</p>
         <ul>
-        <li>Title: <b>\"".$postm->post_title."\"</b></li>
+        <li>Title: <b>\"".esc_html( $postm->post_title )."\"</b></li>
         <li>View: ".get_permalink( $post_id )."</li>
         ".$hastag."
         </ul>
         <p>Thank you and best regards.</p>";
 
-    foreach($multiple_recipients as $recipient){    
-        wp_mail($recipient, $subject, $message, $headers);
+    $sent = false;
+    foreach($multiple_recipients as $recipient){
+        if ( wp_mail($recipient, $subject, $message, $headers) ) {
+            $sent = true;
+        }
     }
 
-    // Mark as notification sent to prevent future emails
-    update_post_meta($post_id, '_notification_sent', true);
+    // Mark as sent (no second email later) only if it went out; a failed
+    // notification can be sent again from Settings > Email.
+    if ( $sent ) {
+        update_post_meta($post_id, '_notification_sent', true);
+    }
 }
 
 // Use better hook that only fires when post becomes published
