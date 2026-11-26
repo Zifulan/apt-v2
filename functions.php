@@ -1757,12 +1757,9 @@ add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
 function meta_limit_increase( $limit ) {
     return 200;
 }
-//include DASHICON
-function enable_frontend_dashicons() {
-  wp_enqueue_style( 'dashicons' );
-}
-
-add_action( 'wp_enqueue_scripts', 'enable_frontend_dashicons' );
+// No icon font (dashicons) for visitors: the theme's few icons are drawn as
+// SVG (footer social icons, sidebar arrows, external-link and date icons).
+// WordPress still loads it for logged-in users' admin bar.
 //add extra field to category
 function addExtraFieldToCat(){
     $cat_extra = get_term_meta($_GET['tag_ID'], '_catextra', true);
@@ -2328,14 +2325,6 @@ add_filter( 'wp_img_tag_add_auto_sizes', '__return_false' );
 /*
  * Loading performance (from the live Lighthouse reports)
  */
-// The icon font (dashicons) is only used for small icons further down the
-// page: load it without blocking the first paint.
-add_filter( 'style_loader_tag', function ( $tag, $handle ) {
-	if ( 'dashicons' === $handle && ! is_admin() && ! is_user_logged_in() ) {
-		$tag = str_replace( "media='all'", "media='print' onload=\"this.media='all'\"", $tag ) . '<noscript>' . $tag . '</noscript>';
-	}
-	return $tag;
-}, 10, 2 );
 
 // The home page has no share buttons: skip the social-sharing plugin's files there.
 add_action( 'wp_enqueue_scripts', function () {
