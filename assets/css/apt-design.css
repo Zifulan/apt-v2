@@ -2154,6 +2154,29 @@ main.site-single {
 .site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism img { grid-row: 1 / span 2; width: 88px; height: 88px; aspect-ratio: 1; margin: 0; border-radius: 10px !important; }
 .site-main:not(.front-main) .entry-content .col-md-4 .apt-mechanisms.has-photos .apt-mechanism > span { padding: 0; }
 
+/* Overview page layout. The text, links and photos stay in the page content;
+   only its old Bootstrap floats are replaced. Matched by the page's own
+   section headings, so a page without them is untouched.
+   - The PDF button and the section shortcuts: one row of pills at the top
+     (was a right-hand float that left a blank gap under the first paragraph).
+   - The sections' inner .container: no extra indent, so all sections line up.
+   - Wide screens (1200px+): opening text on the left, Summit cards on the
+     right; narrower, the cards follow the first paragraph as before. */
+.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) .list-group.float-right { float: none !important; display: flex !important; flex-direction: row; flex-wrap: wrap; gap: 8px; margin: 0 0 24px !important; }
+.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) .list-group.float-right > * { flex: 0 0 auto; width: auto; margin: 0 !important; padding: 6px 14px !important; border: 1px solid var(--rule-soft) !important; border-radius: 999px !important; font-size: 0.9rem; }
+.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) .list-group.float-right > :first-child { padding: 6px 18px !important; border-color: transparent !important; }
+.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) .container { max-width: none; padding-left: 0; padding-right: 0; }
+.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) p.clearfix { display: none; }
+@media (min-width: 1200px) {
+	.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(470px, 42%); column-gap: 48px; align-content: start; }
+	.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) > * { grid-column: 1 / -1; }
+	.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) > div:nth-child(-n+2) { display: contents; }
+	.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) > div:nth-child(-n+2) > p { grid-column: 1; }
+	.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) > div:nth-child(-n+2) > .list-group { grid-column: 1 / -1; }
+	.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) > div:nth-child(2) > .float-left { grid-column: 2; grid-row: 2 / span 3; align-self: start; float: none !important; width: auto; max-width: none; margin: 0 !important; }
+	.site-main:not(.front-main) .entry-content:has(#subsectionPolitical) .apt-recent-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
 /* Images never reserve placeholder space before loading (WordPress's
    auto-sizes adds contain-intrinsic-size: 3000px 1500px to lazy images). */
 :is(.news-card, .apt-gallery-link, .apt-recent-card, .apt-mechanism, .apt-hero-feature) img { contain-intrinsic-size: none !important; }
