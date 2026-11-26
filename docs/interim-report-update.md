@@ -236,7 +236,7 @@ renders them.
 | Criterion | Result |
 |---|---|
 | 1.1.1 Non-text content | Pass (theme). Editors must still describe meaningful images they add to pages |
-| 1.2.1–1.2.5 Audio and video | Not applicable to the theme. Any video embedded in a page needs captions |
+| 1.2.1 to 1.2.5 Audio and video | Not applicable to the theme. Any video embedded in a page needs captions |
 | 1.3.1 Info and relationships | Pass, with a recommendation: some older templates and pages skip heading levels (e.g. h1 straight to h4/h5). WCAG doesn't strictly forbid this, but it makes screen-reader navigation harder |
 | 1.3.2 Meaningful sequence | Pass |
 | 1.3.3 Sensory characteristics | Pass (theme) |
@@ -286,7 +286,7 @@ renders them.
 | 3.2.1 On focus / 3.2.2 On input | Pass: nothing changes until the user acts (e.g. search runs on its button) |
 | 3.2.3 Consistent navigation / 3.2.4 Consistent identification | Pass: same header, menu and footer on every page |
 | 3.2.6 Consistent help | Pass: contact details in the same footer on every page |
-| 3.3.1–3.3.3 Errors and labels | Pass for search. The Limited Access login's error message comes from WordPress and was not tested |
+| 3.3.1 to 3.3.3 Errors and labels | Pass for search. The Limited Access login's error message comes from WordPress and was not tested |
 | 3.3.4 Error prevention | Not applicable (no legal or financial transactions) |
 | 3.3.7 Redundant entry | Not applicable |
 | 3.3.8 Accessible authentication | Not verified (WordPress login; password managers are not blocked) |
@@ -339,7 +339,7 @@ renders them.
 
 **Results**
 
-| Page | Score (0–100) | Main content appears (LCP) | First paint (FCP) | Page frozen by scripts (TBT) | Data transferred |
+| Page | Score (0 to 100) | Main content appears (LCP) | First paint (FCP) | Page frozen by scripts (TBT) | Data transferred |
 |---|---|---|---|---|---|
 | Home | 83 → **99** | 2.5 s → **1.9 s** | 2.1 s → **1.7 s** | 500 ms → **0 ms** | 295 KB → **185 KB** (−37%) |
 | Statement | 95 → 98 | 2.4 s → 2.0 s | 2.3 s → 1.9 s | 0 → 0 | 198 KB → 176 KB (−11%) |

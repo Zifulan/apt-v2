@@ -225,7 +225,7 @@ flag guidelines require it to be "treated with respect" and it is the
 
 ## Layout
 
-`--page-max` (1280px) and `--page-gutter` (16–48px) set one fluid `.container`
+`--page-max` (1280px) and `--page-gutter` (16 to 48px) set one fluid `.container`
 for every page, and the frameless home hero uses the same edges, so all
 sections line up at every width. This replaces Bootstrap's stepped container
 widths.

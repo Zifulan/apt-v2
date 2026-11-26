@@ -8,8 +8,9 @@
  * rice quantity was removed). Do not paraphrase; if a source changes,
  * replace the quote. Sources (checked 26 November 2026):
  * - CMIM: AMRO, "AMRO and the CMIM",
- *   https://amro-asia.org/about-amro/amro-and-the-cmim/ (first and last
- *   sentences of the introduction).
+ *   https://amro-asia.org/about-amro/amro-and-the-cmim/ (start of the first
+ *   sentence, up to "financial safety net", and the last sentence of the
+ *   introduction; the site uses no dashes in visible text).
  * - AMRO: AMRO, "Who we are", https://www.amro-asia.org/about-amro/who-we-are/
  *   (first sentence).
  * - ABMI: ASEAN Secretariat, "Finance Cooperation (ASEAN+3)",
@@ -29,7 +30,7 @@
 $apt_mechanisms = array(
 	array(
 		'name' => 'Chiang Mai Initiative Multilateralisation (CMIM)',
-		'text' => 'The Chiang Mai Initiative Multilateralisation (CMIM) serves as the ASEAN+3 region’s financial safety net – a multilateral currency swap arrangement under which participating economies commit to support one another in times of need. … Collectively, members commit <strong>US$240 billion</strong> to support one another when needed.',
+		'text' => 'The Chiang Mai Initiative Multilateralisation (CMIM) serves as the ASEAN+3 region’s financial safety net … Collectively, members commit <strong>US$240 billion</strong> to support one another when needed.',
 		'url'  => '/about-cmim/',
 		'label' => 'About the CMIM',
 		'ext'  => 'https://amro-asia.org/about-amro/amro-and-the-cmim/',

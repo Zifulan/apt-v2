@@ -2277,7 +2277,7 @@ function apt_public_sources_html( $sources ) {
 	foreach ( $links as $url => $name ) {
 		if ( $counts[ $name ] > 1 ) {
 			$last = basename( (string) wp_parse_url( $url, PHP_URL_PATH ) );
-			$name = $last ? $name . ' – ' . rawurldecode( $last ) : $name;
+			$name = $last ? $name . ' (' . rawurldecode( $last ) . ')' : $name;
 		}
 		$items[] = '<a class="apt-ext" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html( $name ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'akseki-vi' ) . '</span></a>';
 	}
