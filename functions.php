@@ -1656,6 +1656,67 @@ function my_front_end_login_fail( $username ) {
 	wp_safe_redirect( add_query_arg( 'loginf', 'failed', $referrer ) );
 	exit;
 }
+/*
+ * [wp_login_form …]: the Limited Access login form, built into the theme so it
+ * no longer needs the "WP Login Form" plugin. Same name and options as the
+ * plugin, so the page content stays as it is:
+ *   value_username, redirect, label_username, label_password, label_log_in,
+ *   remember, value_remember, lost_password (+ form_id, id_* as in WordPress).
+ * It uses WordPress's own login form (wp_login_form()), so security and
+ * reCAPTCHA plugins that hook into that form keep working.
+ * With a preset username and the label "-" (how Limited Access is set up),
+ * the username is sent as a hidden field and only the password is asked for.
+ * Registered late and only if no plugin provides the shortcode, so while the
+ * plugin is still active it keeps working as before.
+ */
+function apt_login_form_shortcode( $atts ) {
+	$atts = (array) $atts;
+	// Quotes typed in the visual editor can arrive as curly quotes.
+	foreach ( $atts as $k => $v ) {
+		$atts[ $k ] = preg_replace( '/^[\s"\'\x{201C}\x{201D}\x{2018}\x{2019}\x{2033}]+|[\s"\'\x{201C}\x{201D}\x{2018}\x{2019}\x{2033}]+$/u', '', (string) $v );
+	}
+	$off  = function ( $v ) {
+		return in_array( strtolower( (string) $v ), array( '0', 'false', 'no', 'off', '' ), true );
+	};
+	$args = array(
+		'echo'           => false,
+		'redirect'       => isset( $atts['redirect'] ) ? $atts['redirect'] : get_permalink(),
+		'label_username' => isset( $atts['label_username'] ) ? $atts['label_username'] : __( 'Username or Email Address' ),
+		'label_password' => isset( $atts['label_password'] ) ? $atts['label_password'] : __( 'Password' ),
+		'label_remember' => isset( $atts['label_remember'] ) ? $atts['label_remember'] : __( 'Remember Me' ),
+		'label_log_in'   => isset( $atts['label_log_in'] ) ? $atts['label_log_in'] : __( 'Log In' ),
+		'value_username' => isset( $atts['value_username'] ) ? $atts['value_username'] : '',
+		'remember'       => isset( $atts['remember'] ) ? ! $off( $atts['remember'] ) : true,
+		'value_remember' => isset( $atts['value_remember'] ) ? ! $off( $atts['value_remember'] ) : false,
+	);
+	foreach ( array( 'form_id', 'id_username', 'id_password', 'id_remember', 'id_submit' ) as $key ) {
+		if ( ! empty( $atts[ $key ] ) ) {
+			$args[ $key ] = $atts[ $key ];
+		}
+	}
+	$args['redirect'] = wp_validate_redirect( $args['redirect'], home_url( '/' ) );
+	$form             = wp_login_form( $args );
+
+	// Preset username without a real label: send it hidden, ask only for the password.
+	if ( '' !== $args['value_username'] && in_array( trim( $args['label_username'] ), array( '', '-' ), true ) ) {
+		$form = preg_replace(
+			'#<p class="login-username">.*?</p>#s',
+			'<input type="hidden" name="log" value="' . esc_attr( $args['value_username'] ) . '" autocomplete="username">',
+			$form,
+			1
+		);
+	}
+	if ( isset( $atts['lost_password'] ) && ! $off( $atts['lost_password'] ) ) {
+		$form .= '<p class="login-lost-password"><a href="' . esc_url( wp_lostpassword_url( $args['redirect'] ) ) . '">' . esc_html__( 'Lost your password?' ) . '</a></p>';
+	}
+	return $form;
+}
+add_action( 'init', function () {
+	if ( ! shortcode_exists( 'wp_login_form' ) ) {
+		add_shortcode( 'wp_login_form', 'apt_login_form_shortcode' );
+	}
+}, 99 );
+
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
 function meta_limit_increase( $limit ) {
