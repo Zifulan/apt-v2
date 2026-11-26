@@ -26,7 +26,7 @@
 					
 					<div class="stat-card stat-card-yellow">
 						<?php $summits = apt_get_summit_count(); ?>
-						<div class="stat-number"><?php echo esc_html( $summits ? $summits : 'N/A' ); ?></div>
+						<div class="stat-number"><?php echo esc_html( $summits ? $summits : '&mdash;' ); ?></div>
 						<div class="stat-label">Summit Level Activities</div>
 					</div>
 					
