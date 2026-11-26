@@ -134,6 +134,7 @@
 						);
 						?>
 					</div><!-- .entry-content -->
+					<?php echo apt_public_sources_html( $the_source ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside ?>
 					<style>
 						#post-<?php the_ID(); ?> .wp-block-file object
 						{
@@ -175,7 +176,8 @@
 					}
 				}
 
-				//for logged-in editors only: the source links of this post
+				//for logged-in editors only: all source entries of this post (web links
+				//are also shown publicly under the text, see apt_public_sources_html())
 				if(is_user_logged_in()){
 					echo('<section class="apt-post-sources">');
 					echo('<h2>Sources <span>visible to editors only</span></h2>');

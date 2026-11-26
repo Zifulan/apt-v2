@@ -2246,6 +2246,45 @@ function apt_statement_row_html( $id, $heading_tag = 'h2' ) {
  * Where a document was adopted: [ label, category ID ] — "Summit Level
  * Statements", or "Ministerial Level › AMAF+3" — or [ '', 0 ] if neither.
  */
+/**
+ * Public "Source:" line under a statement: the web links (http/https) of its
+ * "source" custom field, each shown as the website's name (asean.org) and
+ * opening the original in a new tab. Anything else in the field (plain-text
+ * notes, intranet or local addresses, Limited Access files) stays in the
+ * editors-only Sources box.
+ *
+ * @param array|null $sources Values of the "source" custom field.
+ */
+function apt_public_sources_html( $sources ) {
+	$links = array();
+	foreach ( (array) $sources as $source ) {
+		$url  = trim( (string) $source );
+		$host = strtolower( (string) wp_parse_url( $url, PHP_URL_HOST ) );
+		if ( ! preg_match( '#^https?://#i', $url ) || '' === $host
+			|| false === strpos( $host, '.' )                       // intranet names, localhost
+			|| filter_var( $host, FILTER_VALIDATE_IP )              // bare IP addresses
+			|| false !== strpos( $url, '/uploads/private/' ) ) {    // Limited Access files
+			continue;
+		}
+		$links[ $url ] = preg_replace( '/^www\./', '', $host );
+	}
+	if ( ! $links ) {
+		return '';
+	}
+	// The same website more than once: add the page's last part so the links differ.
+	$counts = array_count_values( $links );
+	$items  = array();
+	foreach ( $links as $url => $name ) {
+		if ( $counts[ $name ] > 1 ) {
+			$last = basename( (string) wp_parse_url( $url, PHP_URL_PATH ) );
+			$name = $last ? $name . ' – ' . rawurldecode( $last ) : $name;
+		}
+		$items[] = '<a class="apt-ext" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html( $name ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'akseki-vi' ) . '</span></a>';
+	}
+	$label = count( $items ) > 1 ? __( 'Sources:', 'akseki-vi' ) : __( 'Source:', 'akseki-vi' );
+	return '<p class="apt-post-source">' . esc_html( $label ) . ' ' . implode( ', ', $items ) . '</p>';
+}
+
 function apt_document_source( $id ) {
 	if ( in_category( 41, $id ) ) {
 		return array( 'Summit Level Statements', 41 );

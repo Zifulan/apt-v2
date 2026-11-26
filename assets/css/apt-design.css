@@ -1503,6 +1503,10 @@ main.site-single {
 .site-main:not(.front-main) .detail-sidebar .badge-secondary { background: var(--paper-2); color: var(--ink-2); font-weight: 500; border-radius: 999px; padding: 2px 8px; }
 
 /* Sources: editors only */
+/* Public "Source:" line under a statement (web links of the source field) */
+.apt-post-source { margin: 1.75rem 0 0; padding-top: 12px; border-top: 1px solid var(--rule-soft); font-size: 0.9rem; color: var(--ink-2); }
+.apt-post-source a { color: var(--ink-2); overflow-wrap: anywhere; }
+.apt-post-source a:hover { color: var(--apt-red); }
 .apt-post-sources { padding: 14px 16px; border-radius: 12px; background: var(--paper-2); font-size: 0.85rem; }
 .apt-post-sources h2 { font-size: 0.95rem; font-weight: 600; margin: 0 0 6px; color: var(--ink); }
 .apt-post-sources h2 span { display: block; font-size: 0.75rem; font-weight: 400; color: var(--ink-3); }
