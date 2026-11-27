@@ -149,7 +149,10 @@ endif;
 wp_reset_postdata();
 
 // Nothing upcoming: show the 5 most recent meetings instead (published
-// statements in the same categories, dated today or earlier).
+// statements in the same categories, dated today or earlier). Statements of
+// one meeting (same meeting series, same date) are one row: the meeting is
+// its "marker" post (Statement settings) if it has one, else its first
+// statement, and the others are listed under it ("Also from this meeting").
 $is_recent = '';
 if ( $is_dtd === '' && $is_tbd === '' ) {
 	$recent_query = new WP_Query( array(
@@ -157,15 +160,30 @@ if ( $is_dtd === '' && $is_tbd === '' ) {
 		'post_status'    => 'publish',
 		'orderby'        => 'date',
 		'order'          => 'DESC',
-		'posts_per_page' => 5,
+		'posts_per_page' => 30, // enough for 5 meetings with several statements each
 		'no_found_rows'  => true,
 		'date_query'     => array( array( 'before' => 'tomorrow' ) ),
 	) );
-	while ( $recent_query->have_posts() ) {
-		$recent_query->the_post();
-		$r_cats  = array_intersect( wp_list_pluck( get_the_category(), 'term_id' ), $SE_cats );
-		$r_cat   = $r_cats ? get_category( reset( $r_cats ) ) : null;
-		$r_level = get_category( akseki_get_level_from_id( get_the_ID(), 'post', 'level' ) );
+	$r_meetings = array();
+	foreach ( $recent_query->posts as $r_post ) {
+		$r_cats = array_intersect( wp_list_pluck( get_the_category( $r_post->ID ), 'term_id' ), $SE_cats );
+		$r_key  = ( $r_cats ? reset( $r_cats ) : 0 ) . '|' . get_the_date( 'Y-m-d', $r_post );
+		if ( ! isset( $r_meetings[ $r_key ] ) ) {
+			if ( count( $r_meetings ) >= 5 ) {
+				continue;
+			}
+			$r_meetings[ $r_key ] = array( 'main' => 0, 'posts' => array(), 'cat' => $r_cats ? reset( $r_cats ) : 0 );
+		}
+		if ( ! $r_meetings[ $r_key ]['main'] && has_tag( 'marker', $r_post ) ) {
+			$r_meetings[ $r_key ]['main'] = $r_post->ID;
+		} else {
+			$r_meetings[ $r_key ]['posts'][] = $r_post->ID;
+		}
+	}
+	foreach ( $r_meetings as $r_m ) {
+		$r_id   = $r_m['main'] ? $r_m['main'] : array_shift( $r_m['posts'] );
+		$r_cat  = $r_m['cat'] ? get_category( $r_m['cat'] ) : null;
+		$r_level = get_category( akseki_get_level_from_id( $r_id, 'post', 'level' ) );
 		$r_class = '';
 		if ( $r_level && ! is_wp_error( $r_level ) ) {
 			if ( 'summit-level-statements' === $r_level->slug ) {
@@ -174,17 +192,25 @@ if ( $is_dtd === '' && $is_tbd === '' ) {
 				$r_class = ' agenda-item-ministerial';
 			}
 		}
-		$r_loc  = akseki_get_mec_location( get_the_ID() );
-		$r_flag = ( empty( $r_loc ) || 'tbd' === $r_loc ) ? '' : akseki_get_the_flag( get_the_ID() );
+		$r_loc  = akseki_get_mec_location( $r_id );
+		$r_flag = ( empty( $r_loc ) || 'tbd' === $r_loc ) ? '' : akseki_get_the_flag( $r_id );
+		$r_also = '';
+		if ( $r_m['posts'] ) {
+			$r_links = array();
+			foreach ( $r_m['posts'] as $r_other ) {
+				$r_links[] = '<a href="' . esc_url( get_permalink( $r_other ) ) . '">' . akseki_get_shortname( get_the_title( $r_other ), $r_other ) . '</a>';
+			}
+			$r_also = '<span class="agenda-also"><span class="agenda-also-label">Also from this meeting:</span> ' . implode( '<span aria-hidden="true"> · </span>', $r_links ) . '</span>';
+		}
 		$is_recent .= '<li class="agenda-event-item' . $r_class . '">'
 			. '<span class="agenda-event-content">'
-			. '<span class="agenda-date-badge agenda-badge-date">' . esc_html( get_the_date( 'j F Y' ) ) . '</span>' . $r_flag
-			. '<a class="agenda-event-title" href="' . esc_url( get_permalink() ) . '">' . akseki_get_shortname( get_the_title(), get_the_ID() ) . '</a>'
+			. '<span class="agenda-date-badge agenda-badge-date">' . esc_html( get_the_date( 'j F Y', $r_id ) ) . '</span>' . $r_flag
+			. '<a class="agenda-event-title" href="' . esc_url( get_permalink( $r_id ) ) . '">' . akseki_get_shortname( get_the_title( $r_id ), $r_id ) . '</a>'
 			. '</span>'
 			. ( ( $r_cat && ! is_wp_error( $r_cat ) && $r_cat->description ) ? '<span class="agenda-category">' . $r_cat->description . '</span>' : '' )
+			. $r_also
 			. '</li>';
 	}
-	wp_reset_postdata();
 }
 ?>
 

@@ -1304,6 +1304,11 @@ details[open] > .agenda-month-summary::before { rotate: 0deg; }
 .agenda-recent:first-child { margin-top: 0; }
 .agenda-recent a.agenda-event-title { color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; min-block-size: var(--target-size); }
 .agenda-recent a.agenda-event-title:hover { color: var(--apt-red); text-decoration: underline; text-underline-offset: 3px; }
+/* Other statements of the same meeting, under it */
+.agenda-also { flex-basis: 100%; font-size: 0.85rem; line-height: 1.6; color: var(--ink-2); }
+.agenda-also-label { color: var(--ink-3); }
+.agenda-recent .agenda-also a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule-soft); text-underline-offset: 3px; }
+.agenda-recent .agenda-also a:hover { color: var(--apt-red); text-decoration-color: currentColor; }
 
 /* ---------- Inner pages --------------------------------------------------- */
 
