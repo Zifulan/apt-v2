@@ -632,7 +632,7 @@ function apt_sw_page() {
 		.apt-sw-side input[type=text], .apt-sw-side input[type=url], .apt-sw-side input[type=email] { width: 100%; margin: 2px 0; }
 		.apt-sw-feed { border: 1px solid #dcdcde; border-radius: 4px; padding: 8px; margin-bottom: 8px; }
 		.apt-sw-ok { color: #008a20; font-weight: 600; display: block; margin-top: 4px; }
-		.apt-sw-err { color: #b32d2e; font-weight: 600; display: block; margin-top: 4px; }
+		.apt-sw-err { color: #b32d2e; font-weight: 600; display: block; margin-top: 4px; overflow-wrap: anywhere; }
 		.apt-sw-remove { display: block; margin-top: 4px; color: #646970; }
 	</style>
 	<?php
