@@ -47,7 +47,7 @@ foreach ( $apt_q->posts as $p ) {
 				<span class="apt-archive-month-count"><?php echo esc_html( sprintf( /* translators: %d: count */ _n( '%d statement', '%d statements', count( $ids ), 'akseki-vi' ), count( $ids ) ) ); ?></span></h3>
 			<ul class="list-group ministerial-listing">
 				<?php foreach ( $ids as $id ) {
-					echo apt_statement_row_html( $id, 'h4' ); // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in the function.
+					echo apt_statement_row_html( $id, 'h4', 'day' ); // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in the function.
 				} ?>
 			</ul>
 		</section>

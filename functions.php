@@ -2330,20 +2330,78 @@ function apt_flag_lineup_html( $class = 'apt-hero-flags' ) {
 }
 
 /**
+ * The meeting a statement belongs to, for statements with their own short
+ * name (e.g. "ASEAN Plus Three Leaders' Statement on …"): the short name of
+ * the meeting's marker post, or else of another statement of the same
+ * meeting series on the same day without its own short name ("29th APT
+ * Summit"); failing both, the meeting series' name.
+ */
+function apt_statement_meeting_label( $id ) {
+	static $cache = array();
+	if ( isset( $cache[ $id ] ) ) {
+		return $cache[ $id ];
+	}
+	$cats  = wp_list_pluck( get_the_category( $id ), 'term_id' );
+	$day   = get_the_date( 'Y-m-d', $id );
+	$label = '';
+	if ( $cats ) {
+		$same = get_posts( array(
+			'category__in'        => $cats,
+			'post_status'         => array( 'publish', 'pending', 'future' ),
+			'posts_per_page'      => 20,
+			'post__not_in'        => array( (int) $id ),
+			'ignore_sticky_posts' => true,
+			'no_found_rows'       => true,
+			'date_query'          => array( array( 'year' => (int) substr( $day, 0, 4 ), 'month' => (int) substr( $day, 5, 2 ), 'day' => (int) substr( $day, 8, 2 ) ) ),
+		) );
+		$main = null;
+		foreach ( $same as $p ) {
+			if ( has_tag( 'marker', $p ) ) {
+				$main = $p;
+				break;
+			}
+			if ( ! $main && ! akseki_get_sm( $p->ID ) ) {
+				$main = $p;
+			}
+		}
+		if ( $main ) {
+			$label = akseki_get_shortname( get_the_title( $main ), $main->ID );
+		}
+	}
+	if ( '' === $label ) {
+		$doc   = function_exists( 'apt_document_source' ) ? apt_document_source( $id ) : array( '', 0 );
+		$cat   = $cats ? get_category( end( $cats ) ) : null;
+		$label = ( $cat && ! is_wp_error( $cat ) ) ? esc_html( $cat->name ) : esc_html( $doc[0] );
+	}
+	return $cache[ $id ] = $label;
+}
+
+/**
  * One statement row: the meeting's short name and year on the left, the full
  * title (linked unless upcoming) and place/date on the right. Used by meeting
  * pages (listings-list.php), the Statements page and the level pages.
  *
+ * A statement with its own short name (SM_ tag, e.g. a Leaders' Statement)
+ * is labelled with the meeting it belongs to (apt_statement_meeting_label()).
+ *
  * @param int    $id          Post ID.
  * @param string $heading_tag Heading for the title, to fit the page outline.
+ * @param string $when        Under the label: 'year' (default), or 'day'
+ *                            ("17 Nov") where the page is already one year.
  */
-function apt_statement_row_html( $id, $heading_tag = 'h2' ) {
+function apt_statement_row_html( $id, $heading_tag = 'h2', $when = 'year' ) {
 	$heading_tag = in_array( $heading_tag, array( 'h2', 'h3', 'h4' ), true ) ? $heading_tag : 'h2';
 	$sm      = akseki_get_sm( $id );
 	$sc      = akseki_get_sc_raw( $id );
 	$future  = get_the_date( 'Y-m-d H:i:s', $id ) > current_time( 'Y-m-d H:i:s' );
-	$label   = ! empty( $sm ) ? 'Extra' : akseki_get_shortname( get_the_title( $id ), $id );
-	$year    = ( $future && 'SC_nodate' === $sc ) ? '<em>tbd</em>' : get_the_date( 'Y', $id );
+	$label   = ! empty( $sm ) ? apt_statement_meeting_label( $id ) : akseki_get_shortname( get_the_title( $id ), $id );
+	if ( $future && 'SC_nodate' === $sc ) {
+		$year = '<em>tbd</em>';
+	} elseif ( 'day' === $when && ! ( $future && in_array( $sc, array( 'SC_month', 'SC_year' ), true ) ) ) {
+		$year = esc_html( get_the_date( 'j M', $id ) );
+	} else {
+		$year = get_the_date( 'Y', $id );
+	}
 	$title   = get_the_title( $id );
 	if ( $future ) {
 		$link = '<span class="apt-tag">Upcoming</span> ' . $title;
