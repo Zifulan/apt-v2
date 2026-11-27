@@ -204,6 +204,12 @@ a Google Alert set to "Deliver to: RSS feed".
   "appeared first on" line) and the source address in the `source` field.
   Links lose their tracking parameters; Google Alerts links are unwrapped.
 
+- **Firewalls:** if a feed answers with a redirect WordPress won't follow
+  (e.g. a Sucuri cookie check, status 307), the theme fetches it itself,
+  following up to 4 redirects and keeping the cookies. If the site still
+  refuses, the error says where it was sent; then ask that site's IT to allow
+  the server, or use a Google Alerts feed instead.
+
 Options: `apt_sw_settings`, `apt_sw_items`, `apt_sw_feeds`, `apt_sw_last`,
 `apt_sw_new_count` (the menu badge, so admin pages don't load the whole list).
 

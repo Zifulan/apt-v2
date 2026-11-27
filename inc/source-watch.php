@@ -144,6 +144,62 @@ function apt_sw_items() {
 }
 
 /**
+ * Read a feed. First WordPress's own reader (fetch_feed). If the site answers
+ * with a redirect it won't follow (a firewall's cookie check, e.g. Sucuri's
+ * 307 to the same address), fetch it here like a browser: follow up to 4
+ * redirects, keeping the cookies each one sets, then read what comes back.
+ * Returns a SimplePie object or a WP_Error that says where the site sent us.
+ */
+function apt_sw_fetch( $url ) {
+	$rss = fetch_feed( $url );
+	if ( ! is_wp_error( $rss ) ) {
+		return $rss;
+	}
+	$cookies = array();
+	$where   = $url;
+	for ( $hop = 0; $hop < 5; $hop++ ) {
+		$res = wp_safe_remote_get( $where, array(
+			'timeout'     => 20,
+			'redirection' => 0,
+			'cookies'     => $cookies,
+			'user-agent'  => 'Mozilla/5.0 (compatible; APT-Source-Watch; +' . home_url( '/' ) . ')',
+			'headers'     => array( 'Accept' => 'application/rss+xml, application/xml;q=0.9, */*;q=0.8' ),
+		) );
+		if ( is_wp_error( $res ) ) {
+			return $res;
+		}
+		foreach ( wp_remote_retrieve_cookies( $res ) as $c ) {
+			$cookies[ $c->name ] = $c->value;
+		}
+		$code = (int) wp_remote_retrieve_response_code( $res );
+		if ( $code >= 300 && $code < 400 ) {
+			$next = (string) wp_remote_retrieve_header( $res, 'location' );
+			if ( '' === $next ) {
+				break;
+			}
+			$where = 0 === strpos( $next, '/' ) ? preg_replace( '#^(https?://[^/]+).*$#', '$1', $where ) . $next : $next;
+			continue;
+		}
+		$body = (string) wp_remote_retrieve_body( $res );
+		$start = substr( $body, 0, 2000 );
+		if ( 200 === $code && ( false !== stripos( $start, '<rss' ) || false !== stripos( $start, '<feed' ) ) ) {
+			$feed = new SimplePie();
+			$feed->set_raw_data( $body );
+			$feed->enable_cache( false );
+			$feed->init();
+			$feed->handle_content_type();
+			if ( ! $feed->error() ) {
+				return $feed;
+			}
+		}
+		/* translators: 1: status code, 2: address */
+		return new WP_Error( 'feed', sprintf( __( 'the site answered %1$d at %2$s instead of the feed (often a firewall check). Ask the site\'s IT to allow this server, or use a Google Alerts feed.', 'akseki-vi' ), $code, $where ) );
+	}
+	/* translators: %s: address */
+	return new WP_Error( 'feed', sprintf( __( 'the site kept redirecting (last: %s), probably a firewall check. Ask the site\'s IT to allow this server, or use a Google Alerts feed.', 'akseki-vi' ), $where ) );
+}
+
+/**
  * Check all feeds. Returns the items found new in this check.
  *
  * @param bool $send_email Email the new items.
@@ -166,7 +222,7 @@ function apt_sw_check( $send_email = true ) {
 	};
 	add_filter( 'wp_feed_cache_transient_lifetime', $ttl );
 	foreach ( $s['feeds'] as $feed ) {
-		$rss = fetch_feed( $feed['url'] );
+		$rss = apt_sw_fetch( $feed['url'] );
 		if ( is_wp_error( $rss ) ) {
 			$status[ $feed['url'] ] = array( 'ok' => false, 'time' => time(), 'error' => $rss->get_error_message() );
 			continue;
@@ -294,7 +350,7 @@ function apt_sw_create_draft( $key ) {
 		if ( ! function_exists( 'fetch_feed' ) ) {
 			require_once ABSPATH . WPINC . '/feed.php';
 		}
-		$rss = fetch_feed( $feed['url'] );
+		$rss = apt_sw_fetch( $feed['url'] );
 		if ( ! is_wp_error( $rss ) ) {
 			foreach ( $rss->get_items( 0, 30 ) as $fi ) {
 				if ( apt_sw_norm_url( $fi->get_permalink() ) === apt_sw_norm_url( $it['link'] ) ) {
