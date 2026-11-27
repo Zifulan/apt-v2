@@ -4,7 +4,8 @@
 			<div class="apt-about-intro">
 				<h2 class="apt-section-title">About <span class="text-nowrap">ASEAN Plus Three</span></h2>
 				<div class="about-card-body">
-						<p class="about-card-text apt-section-lede">ASEAN Plus Three (APT) consists of the 11 ASEAN Member States and the People&rsquo;s Republic of China, Japan and the Republic of Korea. The APT Cooperation process began in December 1997 and since than has evolve as the main vehicle to promote East Asian Cooperation towards the long-term goal of building an East Asian Community, with ASEAN as the driving force. The APT has become one of the most comprehensive cooperation frameworks in the region, and APT cooperation continue to be broadened and deepened in a wide range of areas, including political-security, trade and investment, finance, energy, tourism, agriculture and forestry, environment, education, health, culture and arts, etc, among others. The APT also supports the implementation of the ASEAN Community Vision 2045.</p>
+						<?php $apt_about = apt_home_content( 'about' ); // Appearance → Home page content ?>
+						<p class="about-card-text apt-section-lede"><?php echo wp_kses_post( $apt_about['text'] ); ?></p>
 						<div class="about-links">
 							<a href="<?php echo esc_url( home_url( '/about-apt/history/' ) ); ?>" class="apt-pill apt-pill--light apt-arrow">History</a>
 							<a href="<?php echo esc_url( home_url( '/about-apt/areas-of-cooperation/' ) ); ?>" class="apt-pill apt-pill--light apt-arrow">Areas of Cooperation</a>
@@ -36,85 +37,26 @@
 					</div>
 					
 					<?php
-					/*
-					 * The figures are exactly as published (nothing is calculated); the
-					 * sentences around them are written for readers. Update when new
-					 * editions come out.
-					 * - Trade and FDI: ASEAN Secretariat, "Overview of ASEAN Plus Three
-					 *   Cooperation" (as of 14 November 2025), para 8.
-					 * - Population, GDP, visitor arrivals (127.1 million; 26.7% from +3
-					 *   countries): ASEANstats, ASEAN Statistical
-					 *   Highlights 2025 (2024 data), https://www.aseanstats.org/publication/
-					 * The intro paragraph is the site's own About page text (/about-apt/).
-					 */
-					?>
-					<div class="stat-card stat-card-detail">
+					// Figures: Appearance → Home page content → Figures (inc/home-content.php).
+					$apt_figures = apt_home_content( 'figures' );
+					$apt_icons   = apt_hc_icons();
+					foreach ( $apt_figures as $i => $f ) :
+						$icon = isset( $apt_icons[ $f['icon'] ] ) ? $apt_icons[ $f['icon'] ][1] : $apt_icons['investment'][1];
+						$wide = ( count( $apt_figures ) % 2 ) && $i === count( $apt_figures ) - 1; // an odd last card fills the row
+						?>
+					<div class="stat-card stat-card-detail<?php echo $wide ? ' stat-card-wide' : ''; ?>">
 						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
-								<path d="M9 10h6M9 14h6" stroke="currentColor" stroke-width="2"/>
-							</svg>
+							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true"><?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput -- fixed markup ?></svg>
 						</div>
 						<div class="stat-content">
-							<div class="stat-value">US$44.4 billion</div>
-							<div class="stat-desc">of foreign direct investment into ASEAN came from China, Japan and the Republic of Korea <em>(2024, preliminary)</em></div>
-							<p class="stat-source">Source: ASEAN Secretariat, <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">APT Cooperation Overview</a> (Nov 2025)</p>
+							<div class="stat-value"><?php echo esc_html( $f['value'] ); ?></div>
+							<div class="stat-desc"><?php echo wp_kses_post( $f['text'] ); ?><?php echo '' !== $f['note'] ? ' <em>(' . esc_html( $f['note'] ) . ')</em>' : ''; ?></div>
+							<?php if ( '' !== $f['source'] ) : ?>
+							<p class="stat-source"><?php esc_html_e( 'Source:', 'akseki-vi' ); ?> <?php echo $f['source_url'] ? '<a href="' . esc_url( apt_hc_link( $f['source_url'] ) ) . '">' . esc_html( $f['source'] ) . '</a>' : esc_html( $f['source'] ); ?></p>
+							<?php endif; ?>
 						</div>
 					</div>
-
-					<div class="stat-card stat-card-detail">
-						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path d="M3 3h18v18H3z" stroke="currentColor" stroke-width="2"/>
-								<path d="M8 8h8M8 12h8M8 16h4" stroke="currentColor" stroke-width="2"/>
-							</svg>
-						</div>
-						<div class="stat-content">
-							<div class="stat-value">US$1.2 trillion</div>
-							<div class="stat-desc">two-way trade in goods between ASEAN and China, Japan and the Republic of Korea <em>(2024, preliminary)</em></div>
-							<p class="stat-source">Source: ASEAN Secretariat, <a href="https://aseanplusthree.asean.org/wp-content/uploads/2026/01/Overview-of-APT-Cooperation-as-of-14-November-2025.pdf">APT Cooperation Overview</a> (Nov 2025)</p>
-						</div>
-					</div>
-
-					<div class="stat-card stat-card-detail">
-						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"/>
-							</svg>
-						</div>
-						<div class="stat-content">
-							<div class="stat-value">2,277.5 million</div>
-							<div class="stat-desc">people live in the ASEAN Plus Three countries, 28.1% of the world&rsquo;s population <em>(2024)</em></div>
-							<p class="stat-source">Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">Statistical Highlights 2025</a></p>
-						</div>
-					</div>
-
-					<div class="stat-card stat-card-detail">
-						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-								<path d="M12 6v6l4 4" stroke="currentColor" stroke-width="2"/>
-							</svg>
-						</div>
-						<div class="stat-content">
-							<div class="stat-value">US$28.6 trillion</div>
-							<div class="stat-desc">combined GDP of the ASEAN Plus Three countries, 25.9% of the world economy <em>(2024)</em></div>
-							<p class="stat-source">Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">Statistical Highlights 2025</a></p>
-						</div>
-					</div>
-
-					<div class="stat-card stat-card-detail stat-card-wide">
-						<div class="stat-icon">
-							<svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-							</svg>
-						</div>
-						<div class="stat-content">
-							<div class="stat-value">26.7%</div>
-							<div class="stat-desc">of the 127.1 million visitor arrivals in ASEAN came from China, Japan and the Republic of Korea <em>(2024)</em></div>
-							<p class="stat-source">Source: ASEANstats, <a href="https://www.aseanstats.org/publication/ash2025/">Statistical Highlights 2025</a></p>
-						</div>
-					</div>
+					<?php endforeach; ?>
 				</div>
 			</div>
 		</div>

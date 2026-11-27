@@ -1,8 +1,8 @@
 <?php
 /**
  * The Contact page (WordPress uses this file for the page with the slug
- * "contact"). The details come from apt_secretariat_contact() in
- * functions.php, shared with the footer. The page's own content in the
+ * "contact"). The details come from apt_secretariat_contact(), shared with
+ * the footer, and are edited under Appearance → Home page content → Contact. The page's own content in the
  * editor (the old map and address) is not shown.
  *
  * @package apt-v2
@@ -37,7 +37,7 @@ $apt_icon    = function ( $path ) {
 											<?php echo $apt_icon( '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>' ); // phpcs:ignore WordPress.Security.EscapeOutput -- fixed markup ?>
 											<div><span class="apt-contact-label"><?php esc_html_e( 'Phone', 'akseki-vi' ); ?></span>
 												<?php foreach ( $apt_contact['phones'] as $i => $ph ) : ?>
-													<?php echo $i ? '<br>' : ''; ?><a href="tel:<?php echo esc_attr( $ph[1] ); ?>"><?php echo esc_html( $ph[0] ); ?></a>, <a href="tel:<?php echo esc_attr( $ph[3] ); ?>"><?php echo esc_html( $ph[2] ); ?></a>
+													<?php echo $i ? '<br>' : ''; ?><a href="tel:<?php echo esc_attr( $ph[1] ); ?>"><?php echo esc_html( $ph[0] ); ?></a><?php if ( '' !== $ph[2] ) : ?>, <a href="tel:<?php echo esc_attr( $ph[3] ); ?>"><?php echo esc_html( $ph[2] ); ?></a><?php endif; ?>
 												<?php endforeach; ?>
 											</div>
 										</li>
@@ -51,7 +51,7 @@ $apt_icon    = function ( $path ) {
 								</div>
 								<div class="apt-contact-map">
 									<div class="apt-contact-frame">
-										<iframe src="<?php echo esc_url( $apt_contact['map'] ); ?>" title="<?php esc_attr_e( 'Map: the ASEAN Secretariat, 70A Jalan Sisingamangaraja, Jakarta', 'akseki-vi' ); ?>" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+										<iframe src="<?php echo esc_url( $apt_contact['map'] ); ?>" title="<?php echo esc_attr( sprintf( /* translators: 1: name, 2: first line of the address */ __( 'Map: %1$s, %2$s', 'akseki-vi' ), $apt_contact['name'], isset( $apt_contact['address'][0] ) ? $apt_contact['address'][0] : '' ) ); ?>" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 									</div>
 									<a class="apt-pill apt-ext apt-contact-route" href="<?php echo esc_url( $apt_contact['route'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get directions', 'akseki-vi' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens Google Maps in a new tab)', 'akseki-vi' ); ?></span></a>
 								</div>

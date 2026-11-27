@@ -110,18 +110,8 @@ add_filter( 'wp_nav_menu_objects', function ( $items, $args ) {
  * page (page-contact.php), so a change is made in one place.
  */
 function apt_secretariat_contact() {
-	return array(
-		'name'    => 'The ASEAN Secretariat',
-		'address' => array( '70A Jalan Sisingamangaraja', 'Jakarta 12110, Indonesia' ),
-		// Each line: the area code and two numbers, as printed by the Secretariat.
-		'phones'  => array(
-			array( '(+6221) 7262991', '+62217262991', '7243372', '+62217243372' ),
-			array( '(+6221) 7398234', '+62217398234', '7243504', '+62217243504' ),
-		),
-		'email'   => 'public@asean.org',
-		'map'     => 'https://maps.google.com/maps?q=asean%20secretariat%20jakarta&t=m&z=15&output=embed',
-		'route'   => 'https://www.google.com/maps/dir/?api=1&destination=ASEAN+Secretariat%2C+70A+Jalan+Sisingamangaraja%2C+Jakarta',
-	);
+	// Edited under Appearance → Home page content → Contact (inc/home-content.php).
+	return apt_home_contact();
 }
 
 /**
@@ -1798,6 +1788,8 @@ require_once get_template_directory() . '/inc/content-check.php';
 // No emoji script; admin area for editors only (were plugins).
 require_once get_template_directory() . '/inc/site-tweaks.php';
 require_once get_template_directory() . '/inc/news-page.php';
+// Appearance → Home page content: About text, figures, cooperation cards, contact.
+require_once get_template_directory() . '/inc/home-content.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );

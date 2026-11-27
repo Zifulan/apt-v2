@@ -366,6 +366,9 @@ function apt_content_check_page() {
 	$sc_unused = array_filter( $sc_unused, function ( $tags ) { return ! in_array( true, $tags, true ); } );
 	ksort( $sc_unused );
 
+	// 8. Home page content (Appearance → Home page content).
+	$home_due = function_exists( 'apt_home_content_due' ) ? apt_home_content_due() : array();
+
 	$summary = array(
 		array( '#apt-cc-ids', __( 'Site structure', 'akseki-vi' ), 0 === $ids_bad, $ids_bad ),
 		array( '#apt-cc-meetings', __( 'Meeting categories', 'akseki-vi' ), ! $meetings, count( $meetings ) ),
@@ -374,6 +377,7 @@ function apt_content_check_page() {
 		array( '#apt-cc-tags', __( 'Mistyped special tags', 'akseki-vi' ), ! $bad_tags, count( $bad_tags ) ),
 		array( '#apt-cc-limited', __( 'Limited Access links outside the protected folder', 'akseki-vi' ), ! $la_links, (int) $la_links ),
 		array( '#apt-cc-shortcodes', __( 'Shortcodes showing as raw text', 'akseki-vi' ), ! $sc['raw'], count( $sc['raw'] ) ),
+		array( '#apt-cc-home', __( 'Home page figures and cards due for a check', 'akseki-vi' ), ! $home_due, count( $home_due ) ),
 	);
 	?>
 	<div class="wrap">
@@ -533,6 +537,21 @@ function apt_content_check_page() {
 				<li><strong><?php echo esc_html( $who ); ?></strong>: <?php echo esc_html( implode( ', ', array_map( function ( $t ) { return '[' . $t . ']'; }, array_keys( $tags ) ) ) ); ?></li>
 			<?php endforeach; ?>
 			</ul>
+		<?php endif; ?>
+
+		<h2 id="apt-cc-home"><?php esc_html_e( '8. Home page figures and cards', 'akseki-vi' ); ?></h2>
+		<?php if ( ! $home_due ) : ?>
+			<p><?php echo apt_content_check_badge( true, __( 'Every figure and card was checked in the last 12 months.', 'akseki-vi' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
+		<?php else : ?>
+			<p><?php esc_html_e( 'These are older than 12 months or have no date. Compare them with the latest edition of their source, update them if needed, and set the date.', 'akseki-vi' ); ?></p>
+			<table class="widefat striped" style="max-width:1000px">
+				<thead><tr><th><?php esc_html_e( 'Item', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Why', 'akseki-vi' ); ?></th></tr></thead>
+				<tbody>
+				<?php foreach ( $home_due as $d ) : ?>
+					<tr><td><a href="<?php echo esc_url( admin_url( 'themes.php?page=apt-home-content&tab=' . $d[0] ) ); ?>"><?php echo esc_html( wp_html_excerpt( $d[1], 100, '…' ) ); ?></a></td><td><?php echo esc_html( $d[2] ); ?></td></tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
 		<?php endif; ?>
 	</div>
 	<?php

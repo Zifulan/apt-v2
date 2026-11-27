@@ -159,6 +159,27 @@ visitors (`inc/limited-access-files.php`):
   and the title without "Private:". A new heading and list appear in the
   same style; nothing else is needed.
 
+## Home page content (Appearance → Home page content)
+
+`inc/home-content.php`: the parts of the home page, the Contact page and the
+footer that are not taken from posts, edited on one screen by Editors and
+Administrators, in four tabs:
+
+- **About:** the intro paragraph.
+- **Figures:** the facts-and-figures cards (value, text, year, source, link,
+  "As of" date, icon). Add, remove and drag to reorder.
+- **Cooperation cards:** the section intro, the cards (name, text, links,
+  where the text is quoted from, "Last checked" date) and the source line.
+- **Contact:** the ASEAN Secretariat's address, phones, email and map
+  (Contact page and footer).
+
+A tab that was never saved, or whose data is empty or broken, shows the
+original text (`apt_home_content_defaults()`); **Restore original text**
+puts it back. Figures older than 12 months (by "As of"), cards not checked
+for 12 months, and anything without a date are listed at the top of the
+screen and under Tools → Content check (section 8). Saving clears WP Super
+Cache so the change shows at once.
+
 ## News page
 
 `page-news-2.php` with `inc/news-page.php`: statements and news, newest
