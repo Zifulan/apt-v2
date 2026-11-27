@@ -100,6 +100,11 @@ appears only in a statement's PDF isn't found. The plugin fixes that:
   Details, the broken links and uninstall notes are in
   `extras/apt-pdf-search/README.md`.
 
+**Sort:** chips above the results switch between Relevance (default:
+WordPress's order, refined by the PDF search add-on), Newest first and
+Oldest first (`?sort=newest|oldest`). The keywords, category and the chosen
+order are kept when paging or searching again.
+
 ## Content check
 
 **Tools → Content check** (`inc/content-check.php`) lists what needs an

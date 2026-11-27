@@ -1831,6 +1831,43 @@ require_once get_template_directory() . '/inc/redirects.php';
 // Posts → Import agenda: the notional calendar (Excel) into pending agenda entries; Locations get a Country field.
 require_once get_template_directory() . '/inc/agenda-import.php';
 
+/*
+ * Search results: sort by relevance (default), newest or oldest (?sort=).
+ * Relevance is WordPress's order, refined by the PDF search add-on; the
+ * date orders replace it.
+ */
+function apt_search_sort() {
+	$sort = isset( $_GET['sort'] ) ? sanitize_key( wp_unslash( $_GET['sort'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- read-only
+	return in_array( $sort, array( 'newest', 'oldest' ), true ) ? $sort : 'relevance';
+}
+add_action( 'pre_get_posts', function ( $q ) {
+	if ( is_admin() || ! $q->is_main_query() || ! $q->is_search() ) {
+		return;
+	}
+	$sort = apt_search_sort();
+	if ( 'relevance' !== $sort ) {
+		$q->set( 'orderby', 'date' );
+		$q->set( 'order', 'newest' === $sort ? 'DESC' : 'ASC' );
+	}
+} );
+/** The "Sort:" chips above the search results. */
+function apt_search_sort_html() {
+	$current = apt_search_sort();
+	$labels  = array(
+		'relevance' => __( 'Relevance', 'akseki-vi' ),
+		'newest'    => __( 'Newest first', 'akseki-vi' ),
+		'oldest'    => __( 'Oldest first', 'akseki-vi' ),
+	);
+	$out = '<nav class="apt-search-sort" aria-label="' . esc_attr__( 'Sort results', 'akseki-vi' ) . '"><span class="nw-label">' . esc_html__( 'Sort', 'akseki-vi' ) . '</span>';
+	foreach ( $labels as $k => $l ) {
+		$url  = remove_query_arg( 'paged', add_query_arg( 'sort', 'relevance' === $k ? false : $k ) );
+		$url  = preg_replace( '#/page/\d+/?#', '/', $url );
+		$on   = $k === $current;
+		$out .= '<a class="nw-chip' . ( $on ? ' is-on' : '' ) . '" href="' . esc_url( $url ) . '"' . ( $on ? ' aria-current="true"' : '' ) . ' rel="nofollow">' . esc_html( $l ) . '</a>';
+	}
+	return $out . '</nav>';
+}
+
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
 function meta_limit_increase( $limit ) {

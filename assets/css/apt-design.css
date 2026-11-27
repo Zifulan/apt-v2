@@ -668,6 +668,9 @@ html:has(.apt-menu[open]) { overflow: hidden; }
 	background: var(--paper-2);
 }
 .apt-results { margin-top: 20px; }
+/* Sort chips (same chips as the News filters) */
+.apt-search-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 20px 0 0; }
+.apt-search-sort + .apt-results { margin-top: 12px; }
 .apt-result {
 	display: grid;
 	grid-template-columns: 140px minmax(0, 1fr);

@@ -33,5 +33,8 @@ $apt_sf_lazy      = ! empty( $args['lazy_cats'] );
 		?>
 		<?php if ( $apt_sf_lazy ) : ?></template><?php endif; ?>
 	</div>
+	<?php if ( is_search() && function_exists( 'apt_search_sort' ) && 'relevance' !== apt_search_sort() ) : ?>
+		<input type="hidden" name="sort" value="<?php echo esc_attr( apt_search_sort() ); ?>">
+	<?php endif; ?>
 	<button type="submit" class="apt-search-submit"><?php esc_html_e( 'Search', 'akseki-vi' ); ?></button>
 </form>

@@ -18,6 +18,7 @@
 		<?php get_template_part( 'template-parts/search-form', null, array( 'id' => 'apt-search-page', 'class' => 'apt-search-form--page' ) ); ?>
 
 		<?php if ( have_posts() ) : ?>
+		<?php if ( $wp_query->found_posts > 1 ) { echo apt_search_sort_html(); } // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside ?>
 		<div class="apt-results">
 			<?php
 			while ( have_posts() ) {
