@@ -228,9 +228,9 @@ function apt_ai_city_known( $city ) {
  */
 function apt_location_countries() {
 	return array(
-		'Brunei Darussalam' => 'br', 'Cambodia' => 'kh', 'Indonesia' => 'id', 'Laos' => 'la', 'Malaysia' => 'ml',
+		'Brunei Darussalam' => 'br', 'Cambodia' => 'kh', 'Indonesia' => 'id', 'Lao PDR' => 'la', 'Malaysia' => 'ml',
 		'Myanmar' => 'mm', 'Philippines' => 'ph', 'Singapore' => 'sg', 'Thailand' => 'th', 'Timor-Leste' => 'tl',
-		'Vietnam' => 'vn', 'China' => 'ch', 'Japan' => 'jp', 'Korea' => 'kr',
+		'Viet Nam' => 'vn', 'China' => 'ch', 'Japan' => 'jp', 'South Korea' => 'kr',
 		'Azerbaijan' => 'az', 'Fiji' => 'fj', 'Georgia' => 'ge', 'Germany' => 'de', 'India' => 'in', 'Italy' => 'it',
 		'Kazakhstan' => 'kz', 'Spain' => 'es', 'Sri Lanka' => 'sl', 'Sweden' => 'sw', 'Turkey' => 'tr',
 		'USA' => 'us', 'Uzbekistan' => 'uz',
@@ -241,8 +241,8 @@ function apt_location_countries() {
 function apt_location_country_name( $text ) {
 	$t       = trim( preg_replace( '/\(.*?\)|^the\s+/i', '', (string) $text ) );
 	$aliases = array(
-		'republic of korea' => 'Korea', 'rok' => 'Korea', 'south korea' => 'Korea', 'korea' => 'Korea',
-		'viet nam' => 'Vietnam', 'lao pdr' => 'Laos', "lao people's democratic republic" => 'Laos',
+		'republic of korea' => 'South Korea', 'rok' => 'South Korea', 'korea' => 'South Korea',
+		'vietnam' => 'Viet Nam', 'laos' => 'Lao PDR', "lao people's democratic republic" => 'Lao PDR',
 		'brunei' => 'Brunei Darussalam', "people's republic of china" => 'China', 'prc' => 'China',
 		'united states' => 'USA', 'united states of america' => 'USA', 'us' => 'USA', 'timor leste' => 'Timor-Leste',
 	);

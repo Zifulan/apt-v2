@@ -770,7 +770,8 @@ function get_the_country($city){
 	case "Vang Vieng":
 	case "Luang Prabang":
 	case "Laos":
-        $country="Laos";
+	case "Lao PDR":
+        $country="Lao PDR";
 		$flag="la";
         break;	
     case "Kuala Lumpur":
@@ -844,7 +845,8 @@ function get_the_country($city){
     case "Hue City":
     case "Nha Trang":
 	case "Vietnam":
-        $country="Vietnam";
+	case "Viet Nam":
+        $country="Viet Nam";
 		$flag="vn";
         break;
 	case "Shanghai":
@@ -882,7 +884,7 @@ function get_the_country($city){
         break;
 	case "Seoul":
 	case "Republic of Korea":
-	case "ROK":
+	case "South Korea":
 	case "Korea":
 	case "Busan":
 	case "Changwon":
@@ -892,7 +894,7 @@ function get_the_country($city){
 	case "Daejeon":
 	case "ROK":
 	case "Incheon":
-        $country="Korea";
+        $country="South Korea";
 		$flag="kr";
         break;
 	case "Honolulu":
@@ -970,6 +972,17 @@ function get_the_country($city){
 	$return = ['country'=>$country, 'flag'=>$flag];
 	return ($return);
 }
+/**
+ * Whether a location name is just its country (Laos, Viet Nam, ROK…), so
+ * the city isn't shown before the country ("Laos, Lao PDR").
+ */
+function apt_location_is_country( $city, $country ) {
+	if ( '' === (string) $country ) {
+		return false;
+	}
+	$c = get_the_country( $country );
+	return $city === $country || ( '' !== $c['country'] && get_the_country( $city ) === $c && in_array( strtolower( $city ), array( 'laos', 'lao pdr', 'vietnam', 'viet nam', 'korea', 'south korea', 'republic of korea', 'rok', 'brunei darussalam', 'cambodia', 'indonesia', 'malaysia', 'myanmar', 'philippines', 'singapore', 'thailand', 'timor-leste', 'china', 'japan', 'uzbekistan' ), true ) );
+}
 function akseki_get_mec_location($postID){
 
 	if(!empty(get_the_terms( $postID, 'mec_location' ))){
@@ -996,7 +1009,7 @@ function akseki_get_the_meta($postID){
 		}
 		//if the city is the country no need to display both		
 		$mec_country = get_the_country($mec_city);		
-		if($mec_country['country'] !== $mec_city){
+		if ( ! apt_location_is_country( $mec_city, $mec_country['country'] ) ) {
 			$return .= '<span class="meta-city">'.$mec_city.'</span>, ';
 		}		
 		$return .= '<span class="meta-country">'.$mec_country['country'].'</span>&ensp;';
@@ -2060,7 +2073,7 @@ function apt_seo_place_and_date( $post_id ) {
 	if ( $location ) {
 		$city    = is_numeric( $location ) ? get_term( (int) $location )->name : $location;
 		$country = get_the_country( $city );
-		if ( ! empty( $country['country'] ) && $country['country'] !== $city ) {
+		if ( ! empty( $country['country'] ) && ! apt_location_is_country( $city, $country['country'] ) ) {
 			$parts[] = $city;
 		}
 		$parts[] = ! empty( $country['country'] ) ? $country['country'] : $city;
