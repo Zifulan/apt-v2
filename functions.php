@@ -1000,6 +1000,9 @@ function akseki_get_mec_location($postID){
 function akseki_get_the_meta($postID){
 
 	$mec_location = akseki_get_mec_location($postID);
+	if ( is_string( $mec_location ) && in_array( strtolower( trim( $mec_location ) ), array( 'tbd', 'tbc', 'tba' ), true ) ) {
+		$mec_location = ''; // "to be decided" is not a place
+	}
 	$return = '<span class="meta-location">';
 	if($mec_location){
 		if(is_numeric($mec_location)){
@@ -1037,6 +1040,9 @@ function akseki_get_the_meta($postID){
 function akseki_get_the_flag($postID){
 
 	$mec_location = akseki_get_mec_location($postID);
+	if ( is_string( $mec_location ) && in_array( strtolower( trim( $mec_location ) ), array( 'tbd', 'tbc', 'tba' ), true ) ) {
+		$mec_location = '';
+	}
 	if($mec_location){
 		if(is_numeric($mec_location)){
 			$mec_city = get_term($mec_location)->name;
@@ -1967,7 +1973,9 @@ function akseki_get_level_resources( $level_id ) {
 					$out .= '<ul class="apt-meeting-latest">';
 					foreach ( $latest as $p ) {
 						$title = get_the_title( $p );
-						$item  = has_tag( 'hasnocontent', $p ) ? $title : '<a href="' . esc_url( get_permalink( $p ) ) . '">' . $title . '</a>';
+						// One piece, linked or not: the line is a flex column, so loose text
+						// and <sup> ("22<sup>nd</sup> …") would each go on their own line.
+						$item  = has_tag( 'hasnocontent', $p ) ? '<span class="apt-meeting-title">' . $title . '</span>' : '<a href="' . esc_url( get_permalink( $p ) ) . '">' . $title . '</a>';
 						$out  .= '<li>' . $item . '<span class="akseki-meta">' . akseki_get_the_meta( $p->ID ) . '</span></li>';
 					}
 					$out .= '</ul>';
