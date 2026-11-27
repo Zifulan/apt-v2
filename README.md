@@ -270,8 +270,17 @@ rather than duplicating it (`functions.php`, section "SEO"):
   isn't installed, the theme prints Open Graph and Twitter tags itself. Pages
   without a featured image use `img/share/apt-share-1200x630.jpg`, generated
   from the site's colours and the flag line-up.
-- **Not in the theme:** the theme sets no robots rules and adds no structured
-  data of its own; both come from Yoast.
+- **Thin pages kept out of Google** (`inc/indexing.php`, from the Search
+  Console exports of 27 November 2026):
+  - tag archives (the special SM_/SC_ tags), author archives and the
+    `/category-descriptors/` pages: `noindex, follow`, and left out of the
+    sitemap;
+  - Locations (`mec_location`) have no public pages any more (their old
+    addresses return 404);
+  - tag, category, author and comment feeds are no longer advertised in the
+    page head, and shortlinks (`?p=123`) are removed.
+- **Not in the theme:** the theme adds no structured data of its own; it
+  comes from Yoast.
 
 ## ASEAN emblem
 

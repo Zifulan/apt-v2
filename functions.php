@@ -675,6 +675,12 @@ function add_custom_taxonomies() {
     // Hierarchical taxonomy (like categories)
     'hierarchical' => true,
 	'public'       => true,
+	// No public page per location (/mec_location/pattaya/): they listed one
+	// or two statements each and Google rejected them as thin. The place
+	// still shows on statements and cards (akseki_get_mec_location()).
+	'publicly_queryable' => false,
+	'show_in_nav_menus'  => false,
+	'show_tagcloud'      => false,
     'show_in_rest' => true,
     // This array of options controls the labels displayed in the WordPress Admin UI
     'labels' => array(
@@ -690,12 +696,8 @@ function add_custom_taxonomies() {
       'new_item_name' => __( 'New Location Name' ),
       'menu_name' => __( 'Locations' ),
     ),
-    // Control the slugs used for this taxonomy
-    'rewrite' => array(
-      'slug' => 'mec_location', // This controls the base slug that will display before each term
-      'with_front' => false, // Don't display the category base before "/locations/"
-      'hierarchical' => true // This will allow URL's like "/locations/boston/cambridge/"
-    ),
+    // No URL rule: old /mec_location/… addresses return 404 (see above).
+    'rewrite' => false,
   ));
 }
 
@@ -1792,6 +1794,8 @@ require_once get_template_directory() . '/inc/news-page.php';
 require_once get_template_directory() . '/inc/home-content.php';
 // Posts → Source watch: new ASEAN Plus Three items on asean.org and other feeds.
 require_once get_template_directory() . '/inc/source-watch.php';
+// Keep thin automatic pages (tags, feeds, shortlinks…) out of Google.
+require_once get_template_directory() . '/inc/indexing.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
