@@ -1796,6 +1796,8 @@ require_once get_template_directory() . '/inc/home-content.php';
 require_once get_template_directory() . '/inc/source-watch.php';
 // Keep thin automatic pages (tags, feeds, shortlinks…) out of Google.
 require_once get_template_directory() . '/inc/indexing.php';
+// Tools → Redirects: old and duplicate addresses, and a log of 404s.
+require_once get_template_directory() . '/inc/redirects.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );

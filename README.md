@@ -201,6 +201,24 @@ a Google Alert set to "Deliver to: RSS feed".
 
 Options: `apt_sw_settings`, `apt_sw_items`, `apt_sw_feeds`, `apt_sw_last`.
 
+## Redirects (Tools → Redirects)
+
+`inc/redirects.php`: send old or duplicate addresses to the right page.
+
+- **Types:** 301 (moved for good; Google moves the page's standing to the new
+  address), 302 (temporary), 410 (gone for good, no replacement).
+- Runs before WordPress shows the page, so it also works for pages that still
+  exist (duplicates such as /gallery2/). Capitals and the trailing slash
+  don't matter; the query string (?page=2) is kept.
+- When a published **page's** address changes (slug or parent), a 301 from
+  the old address is added automatically (WordPress does this for posts only).
+- **Not found (404) log:** the most requested missing addresses (no files,
+  admin or scanner noise), with "Add redirect" and "Forget".
+- Chains and loops are flagged; the admin area and the home page can't be
+  redirected. Saving clears WP Super Cache.
+
+Options: `apt_redirects`, `apt_404_log`.
+
 ## News page
 
 `page-news-2.php` with `inc/news-page.php`: statements and news, newest
