@@ -40,6 +40,7 @@ function apt_mem_settings() {
 			'privacy'     => 'We keep your name, email and organisation only to manage your access, and delete them when the account is closed.',
 			'shared'      => 'on',  // the shared Limited Access account: on / off
 			'shared_user' => '',    // its username; empty = read from the login page
+			'docs_page'   => 0,     // the Limited Access documents page; 0 = /limited-access-documents-2/
 		),
 		is_array( $s ) ? $s : array()
 	);
@@ -227,6 +228,25 @@ add_action( 'apt_mem_daily', function () {
 	}
 } );
 
+/** The Limited Access documents page: as set, else the page the old login sent people to. */
+function apt_mem_docs_page() {
+	$id = (int) apt_mem_settings()['docs_page'];
+	$p  = $id ? get_post( $id ) : get_page_by_path( 'limited-access-documents-2' );
+	return ( $p && 'page' === $p->post_type && 'trash' !== $p->post_status ) ? $p : null;
+}
+
+// Members (and editors) don't need an old page password on Limited Access pages:
+// their account is the key.
+add_filter( 'post_password_required', function ( $required, $post ) {
+	if ( $required && $post && function_exists( 'apt_limited_is_limited_post' ) && apt_limited_is_limited_post( $post ) && current_user_can( 'apt_read_limited' ) ) {
+		return false;
+	}
+	return $required;
+}, 10, 2 );
+add_filter( 'protected_title_format', function ( $format, $post ) {
+	return ( $post && function_exists( 'apt_limited_is_limited_post' ) && apt_limited_is_limited_post( $post ) ) ? '%s' : $format;
+}, 10, 2 );
+
 /* ---------- The Members page ---------- */
 
 /** The Members page (the page with [apt_members]), or 0. */
@@ -323,14 +343,11 @@ add_shortcode( 'apt_members', function () {
 			. esc_html( sprintf( /* translators: %s: date */ __( 'Your access ends on %s. Do you still need it?', 'akseki-vi' ), wp_date( 'j F Y', $exp ) ) ) . ' <button class="apt-mem-btn is-small">' . esc_html__( 'Confirm', 'akseki-vi' ) . '</button></form>';
 	}
 
-	// The Limited Access documents: the content of the Limited Access documents page(s).
-	$docs = '';
-	foreach ( get_pages( array( 'post_status' => array( 'publish', 'private' ) ) ) as $p ) {
-		if ( (int) $p->ID !== apt_mem_page_id() && 4452 !== (int) $p->ID && function_exists( 'apt_is_limited_docs_page' ) && apt_limited_is_limited_post( $p ) && ! has_shortcode( $p->post_content, 'wp_login_form' ) ) {
-			$docs .= '<li><a href="' . esc_url( get_permalink( $p ) ) . '">' . esc_html( get_the_title( $p ) ) . '</a></li>';
-		}
-	}
-	$docs = $docs ? '<ul class="apt-mem-docs">' . $docs . '</ul>' : '<p>' . esc_html__( 'No Limited Access pages yet.', 'akseki-vi' ) . '</p>';
+	// The Limited Access documents page (Users → Members → Settings).
+	$dp   = apt_mem_docs_page();
+	$docs = $dp
+		? '<p><a class="apt-mem-btn" href="' . esc_url( get_permalink( $dp ) ) . '">' . esc_html( get_post_field( 'post_title', $dp ) ) . '</a></p>'
+		: '<p>' . esc_html__( 'The documents page has not been set yet (Users → Members → Settings).', 'akseki-vi' ) . '</p>';
 
 	$account = '<section class="apt-mem-card" id="apt-mem-account"><h2>' . esc_html__( 'My account', 'akseki-vi' ) . '</h2>'
 		. '<p>' . esc_html__( 'Email:', 'akseki-vi' ) . ' ' . esc_html( $u->user_email ) . '</p>'
@@ -535,6 +552,7 @@ function apt_mem_admin_actions() {
 			'privacy'     => sanitize_textarea_field( $p( 'privacy' ) ) ? sanitize_textarea_field( $p( 'privacy' ) ) : $s['privacy'],
 			'shared'      => 'off' === $p( 'shared' ) ? 'off' : 'on',
 			'shared_user' => sanitize_user( $p( 'shared_user' ) ),
+			'docs_page'   => absint( $p( 'docs_page' ) ),
 		), false );
 		if ( 'off' === $p( 'shared' ) && 'off' !== $s['shared'] ) {
 			$shared = get_user_by( 'login', apt_mem_shared_username() );
@@ -707,6 +725,18 @@ function apt_mem_admin_page() {
 					<tr><th><?php esc_html_e( 'Yearly re-confirmation', 'akseki-vi' ); ?></th><td><label><input type="checkbox" name="reconfirm" value="1" <?php checked( $s['reconfirm'] ); ?>> <?php esc_html_e( 'Members confirm once a year that they still need access (reminder 30 days before; otherwise access ends until renewed here).', 'akseki-vi' ); ?></label></td></tr>
 					<tr><th><label for="m-elig"><?php esc_html_e( 'Who is eligible (shown on the request form)', 'akseki-vi' ); ?></label></th><td><textarea id="m-elig" name="eligibility" rows="3" class="large-text"><?php echo esc_textarea( $s['eligibility'] ); ?></textarea></td></tr>
 					<tr><th><label for="m-priv"><?php esc_html_e( 'Privacy note (shown on the request form)', 'akseki-vi' ); ?></label></th><td><textarea id="m-priv" name="privacy" rows="2" class="large-text"><?php echo esc_textarea( $s['privacy'] ); ?></textarea></td></tr>
+					<tr><th><label for="m-docs"><?php esc_html_e( 'Documents page', 'akseki-vi' ); ?></label></th><td>
+						<?php
+						wp_dropdown_pages( array(
+							'name'              => 'docs_page',
+							'id'                => 'm-docs',
+							'selected'          => (int) $s['docs_page'],
+							'post_status'       => array( 'publish', 'private' ),
+							'show_option_none'  => __( 'Default: /limited-access-documents-2/', 'akseki-vi' ),
+							'option_none_value' => 0,
+						) );
+						?>
+						<p class="description"><?php esc_html_e( 'The page with the list of Limited Access documents; members reach it from the Members page.', 'akseki-vi' ); ?></p></td></tr>
 					<tr><th><?php esc_html_e( 'Shared Limited Access account', 'akseki-vi' ); ?></th><td>
 						<p><label><input type="radio" name="shared" value="on" <?php checked( 'on', $s['shared'] ); ?>> <?php esc_html_e( 'Still works (during the move to individual accounts)', 'akseki-vi' ); ?></label><br>
 						<label><input type="radio" name="shared" value="off" <?php checked( 'off', $s['shared'] ); ?>> <?php esc_html_e( 'Switched off: it can no longer sign in, and the old login page leads to the Members page', 'akseki-vi' ); ?></label></p>

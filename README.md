@@ -284,6 +284,10 @@ replacing the one shared password, with an access log.
   re-confirmation (reminder 30 days before), the eligibility and privacy
   texts on the form, and the **shared account** switch: once off, it can't
   sign in and the old login page leads to the Members page.
+- **Documents page:** the member home links to the page chosen in Settings
+  (default `/limited-access-documents-2/`). Members skip any old page
+  password on Limited Access pages, and those titles show without
+  "Protected:".
 - The file gate (`inc/limited-access-files.php`) now checks the permission,
   not just "signed in", and writes the log; signed-out visitors are sent to
   the Members page.
