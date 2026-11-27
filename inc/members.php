@@ -569,11 +569,12 @@ function apt_mem_admin_actions() {
 		}
 		$args['msg'] = 'page';
 	} elseif ( 'alf_run' === $a && function_exists( 'apt_alf_run' ) ) {
-		$left             = apt_alf_run( 20 );
+		$left             = apt_alf_run( 8 );
 		$args['continue'] = $left ? 1 : 0; // pause a few seconds between steps (firewall)
 	} elseif ( 'alf_rebuild' === $a && function_exists( 'apt_alf_enqueue' ) ) {
 		update_option( 'apt_alf_queue', array( 'all' ), false );
-		$left             = apt_alf_run( 20 );
+		delete_option( 'apt_alf_skipped' );
+		$left             = apt_alf_run( 8 );
 		$args['continue'] = $left ? 1 : 0;
 	} elseif ( 'export' === $a ) {
 		global $wpdb;

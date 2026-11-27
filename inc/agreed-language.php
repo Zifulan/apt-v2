@@ -81,7 +81,12 @@ function apt_alf_pdf_reader_ready() {
 
 /** The text of each page of a PDF: [ page number => text ], or [] if unreadable. */
 function apt_alf_pdf_pages( $file ) {
-	if ( ! apt_alf_pdf_reader_ready() || ! is_readable( $file ) || filesize( $file ) > 25 * MB_IN_BYTES ) {
+	if ( ! apt_alf_pdf_reader_ready() || ! is_readable( $file ) || filesize( $file ) > 8 * MB_IN_BYTES ) {
+		return array(); // very large PDFs (usually scans or photo-heavy) are skipped
+	}
+	// Not when memory is already more than half used: reading could run out of it.
+	$limit = wp_convert_hr_to_bytes( (string) ini_get( 'memory_limit' ) );
+	if ( $limit > 0 && memory_get_usage( true ) > 0.5 * $limit ) {
 		return array();
 	}
 	$head = (string) file_get_contents( $file, false, null, 0, 1024 ); // phpcs:ignore WordPress.WP.AlternativeFunctions
@@ -90,7 +95,18 @@ function apt_alf_pdf_pages( $file ) {
 	}
 	wp_raise_memory_limit( 'admin' );
 	try {
-		$pdf   = ( new \Smalot\PdfParser\Parser() )->parseFile( $file );
+		$config = null;
+		if ( class_exists( '\Smalot\PdfParser\Config' ) ) {
+			$config = new \Smalot\PdfParser\Config();
+			if ( method_exists( $config, 'setRetainImageContent' ) ) {
+				$config->setRetainImageContent( false ); // text only: much less memory
+			}
+			if ( method_exists( $config, 'setDecodeMemoryLimit' ) ) {
+				$config->setDecodeMemoryLimit( 64 * MB_IN_BYTES );
+			}
+		}
+		$parser = $config ? new \Smalot\PdfParser\Parser( array(), $config ) : new \Smalot\PdfParser\Parser();
+		$pdf    = $parser->parseFile( $file );
 		$pages = array();
 		foreach ( $pdf->getPages() as $i => $page ) {
 			$pages[ $i + 1 ] = (string) $page->getText();
@@ -388,34 +404,72 @@ add_action( 'deleted_post', function ( $post_id ) {
 	$wpdb->delete( apt_alf_table(), array( 'post_id' => (int) $post_id, 'limited' => 0 ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 } );
 
+/** A queue item as words, for the "could not be read" list. */
+function apt_alf_item_label( $item ) {
+	if ( is_array( $item ) && 'L' === $item[0] ) {
+		return 'Limited Access: ' . $item[1];
+	}
+	if ( is_numeric( $item ) ) {
+		return get_the_title( (int) $item ) . ' (post ' . (int) $item . ')';
+	}
+	return (string) $item;
+}
+
+/** Note an item that could not be read; it is skipped, not retried. */
+function apt_alf_skip( $item, $why ) {
+	$s   = (array) get_option( 'apt_alf_skipped', array() );
+	$s[] = array( 'item' => apt_alf_item_label( $item ), 'why' => $why, 'time' => time() );
+	update_option( 'apt_alf_skipped', array_slice( $s, -50 ), false );
+}
+
 /**
- * Work through the queue for up to $seconds. 'all' expands to every
+ * Work through the queue for about $seconds. 'all' expands to every
  * published post plus 'limited'; 'limited' expands to each Limited Access PDF.
+ * Crash-proof: the queue is saved without an item before the item is read,
+ * and a marker remembers the item; if the request dies while reading it
+ * (time or memory limit, which can't be caught), the next run finds the
+ * marker and skips that item instead of crashing on it again.
  * Returns the number of items left.
  */
-function apt_alf_run( $seconds = 15 ) {
+function apt_alf_run( $seconds = 8 ) {
 	global $wpdb;
+	if ( function_exists( 'set_time_limit' ) ) {
+		@set_time_limit( 60 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors -- not allowed on every host
+	}
 	$start = microtime( true );
-	$q     = (array) get_option( 'apt_alf_queue', array() );
+	$died  = get_option( 'apt_alf_current' );
+	if ( $died ) {
+		apt_alf_skip( $died, 'the server stopped while reading it (too long or too much memory)' );
+		delete_option( 'apt_alf_current' );
+	}
+	$q = (array) get_option( 'apt_alf_queue', array() );
 	while ( $q && microtime( true ) - $start < $seconds ) {
 		$item = array_shift( $q );
+		update_option( 'apt_alf_queue', array_values( $q ), false ); // saved first
 		if ( 'all' === $item ) {
 			$ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post' AND post_status = 'publish' ORDER BY post_date DESC" ); // phpcs:ignore WordPress.DB
 			$q   = array_merge( array_map( 'intval', $ids ), array( 'limited' ), $q );
 		} elseif ( 'limited' === $item ) {
 			$files = apt_alf_limited_files();
-			// Drop Limited Access files no longer linked.
 			$known = $wpdb->get_col( 'SELECT DISTINCT file FROM ' . apt_alf_table() . ' WHERE limited = 1' ); // phpcs:ignore WordPress.DB
-			foreach ( array_diff( $known, array_keys( $files ) ) as $gone ) {
+			foreach ( array_diff( $known, array_keys( $files ) ) as $gone ) { // no longer linked
 				$wpdb->delete( apt_alf_table(), array( 'file' => $gone, 'limited' => 1 ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			}
 			foreach ( $files as $rel => $info ) {
 				$q[] = array( 'L', $rel, $info );
 			}
-		} elseif ( is_array( $item ) && 'L' === $item[0] ) {
-			apt_alf_index_limited( $item[1], $item[2] );
 		} else {
-			apt_alf_index_post( (int) $item );
+			update_option( 'apt_alf_current', $item, false );
+			try {
+				if ( is_array( $item ) && 'L' === $item[0] ) {
+					apt_alf_index_limited( $item[1], $item[2] );
+				} else {
+					apt_alf_index_post( (int) $item );
+				}
+			} catch ( \Throwable $e ) {
+				apt_alf_skip( $item, $e->getMessage() );
+			}
+			delete_option( 'apt_alf_current' );
 		}
 		update_option( 'apt_alf_queue', array_values( $q ), false );
 	}
@@ -434,8 +488,8 @@ add_action( 'init', function () {
 	}
 } );
 add_action( 'apt_alf_cron', function () {
-	if ( get_option( 'apt_alf_queue' ) ) {
-		apt_alf_run( 20 );
+	if ( get_option( 'apt_alf_queue' ) || get_option( 'apt_alf_current' ) ) {
+		apt_alf_run( 8 );
 	}
 } );
 
@@ -742,6 +796,14 @@ function apt_alf_admin_box() {
 	}
 	$out .= '<p>' . esc_html( sprintf( /* translators: 1: paragraphs, 2: posts, 3: files */ __( '%1$d paragraphs from %2$d statements and %3$d Limited Access documents.', 'akseki-vi' ), $paras, $docs, $lim ) )
 		. ( $last ? ' ' . esc_html( sprintf( /* translators: %s: date */ __( 'Last worked on %s.', 'akseki-vi' ), wp_date( 'j M Y, H:i', $last ) ) ) : '' ) . '</p>';
+	$skipped = (array) get_option( 'apt_alf_skipped', array() );
+	if ( $skipped ) {
+		$out .= '<details><summary>' . esc_html( sprintf( /* translators: %d: count */ _n( '%d document could not be read (skipped)', '%d documents could not be read (skipped)', count( $skipped ), 'akseki-vi' ), count( $skipped ) ) ) . '</summary><ul style="list-style:disc;margin-left:20px">';
+		foreach ( array_reverse( $skipped ) as $sk ) {
+			$out .= '<li>' . esc_html( $sk['item'] ) . ': ' . esc_html( $sk['why'] ) . '</li>';
+		}
+		$out .= '</ul><p class="description">' . esc_html__( 'Usually very large or scanned PDFs. The rest of the index is not affected.', 'akseki-vi' ) . '</p></details>';
+	}
 	if ( $q ) {
 		$out .= '<p><strong>' . esc_html( sprintf( /* translators: %d: count */ __( '%d items waiting.', 'akseki-vi' ), count( $q ) ) ) . '</strong> '
 			. esc_html__( 'It continues in the background every 10 minutes, or here now:', 'akseki-vi' ) . ' <a class="button button-primary" href="' . esc_url( apt_mem_admin_url( 'alf_run', array( 'tab' => 'alf' ) ) ) . '">' . esc_html__( 'Build now', 'akseki-vi' ) . '</a></p>';
