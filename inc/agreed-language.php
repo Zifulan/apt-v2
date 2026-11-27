@@ -744,7 +744,7 @@ function apt_alf_finder_html() {
 		$cite  = apt_alf_citation( $r );
 		$date  = $r->day ? wp_date( 'j F Y', strtotime( $r->day ) ) : ( $r->year ? (string) $r->year : '' );
 		$where = apt_alf_where( $r );
-		$out  .= '<article class="apt-alf-hit' . ( $r->limited ? ' is-limited' : '' ) . '" data-quote="' . esc_attr( $r->text ) . '" data-cite="' . esc_attr( $cite ) . '" data-limited="' . (int) $r->limited . '">'
+		$out  .= '<article class="apt-alf-hit' . ( $r->limited ? ' is-limited' : '' ) . '" data-quote="' . esc_attr( $r->text ) . '" data-cite="' . esc_attr( $cite ) . '" data-limited="' . (int) $r->limited . '" data-terms="' . esc_attr( wp_json_encode( $res['terms'] ) ) . '">'
 			. apt_alf_quote_html( $r->text, $res['terms'] )
 			. '<p class="apt-alf-src">' . ( $r->level ? '<span class="apt-alf-level">' . ( $r->limited ? '🔒 ' : '' ) . esc_html( $r->level ) . '</span> ' : '' )
 			. ( $r->short && $r->short !== $r->title ? '<strong>' . esc_html( $r->short ) . '</strong> · ' : '' ) . esc_html( $r->title ) . ( $date ? ' · ' . esc_html( $date ) : '' ) . ( $where ? ' · ' . esc_html( $where ) : '' ) . '</p>'
@@ -789,6 +789,14 @@ function apt_alf_script() {
 		function load() { try { return JSON.parse( localStorage.getItem( KEY ) || '[]' ); } catch ( e ) { return []; } }
 		function save( b ) { try { localStorage.setItem( KEY, JSON.stringify( b ) ); } catch ( e ) {} draw(); }
 		function esc( s ) { var d = document.createElement( 'div' ); d.textContent = s; return d.innerHTML; }
+		// The searched words, highlighted the way Word does (yellow highlighter), in an escaped quote.
+		function mark( html, terms ) {
+			( terms || [] ).forEach( function ( t ) {
+				var e = esc( t ).replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+				html = html.replace( new RegExp( '(^|[^\\p{L}\\p{N}])(' + e + ')', 'giu' ), '$1<span style="background:yellow;mso-highlight:yellow">$2</span>' );
+			} );
+			return html;
+		}
 		function draw() {
 			var b = load();
 			if ( ! box ) { return; }
@@ -803,7 +811,8 @@ function apt_alf_script() {
 				( navigator.clipboard ? navigator.clipboard.writeText( text ) : Promise.reject() ).then( function () { t.textContent = 'Copied ✓'; setTimeout( function () { t.textContent = 'Copy with citation'; }, 1500 ); } ).catch( function () { window.prompt( 'Copy:', text ); } );
 			} else if ( act === 'add' && hit ) {
 				var b = load();
-				if ( ! b.some( function ( it ) { return it.quote === hit.dataset.quote; } ) ) { b.push( { quote: hit.dataset.quote, cite: hit.dataset.cite, limited: hit.dataset.limited === '1' } ); save( b ); }
+				if ( ! b.some( function ( it ) { return it.quote === hit.dataset.quote; } ) ) { var terms = []; try { terms = JSON.parse( hit.dataset.terms || '[]' ); } catch ( e2 ) {}
+				b.push( { quote: hit.dataset.quote, cite: hit.dataset.cite, limited: hit.dataset.limited === '1', terms: terms } ); save( b ); }
 				t.textContent = 'In the basket ✓';
 			} else if ( t.hasAttribute( 'data-rm' ) ) {
 				var b2 = load(); b2.splice( +t.getAttribute( 'data-rm' ), 1 ); save( b2 );
@@ -814,7 +823,7 @@ function apt_alf_script() {
 				var html = '<html><head><meta charset="utf-8"><title>Agreed language</title></head><body style="font-family:Calibri,Arial,sans-serif;font-size:11pt">'
 					+ '<h1 style="font-size:14pt">Agreed language</h1><p style="color:#666">Collected from the ASEAN Plus Three website on ' + new Date().toLocaleDateString( 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' } ) + '.</p>'
 					+ ( lim ? '<p style="color:#98294b;font-weight:bold">Contains Limited Access material: for official use only.</p>' : '' )
-					+ items.map( function ( it, i ) { return '<p style="margin:14pt 0 2pt">' + ( i + 1 ) + '. “' + esc( it.quote ) + '”</p><p style="margin:0 0 0 18pt;color:#555;font-size:9pt">' + esc( it.cite ) + '</p>'; } ).join( '' )
+					+ items.map( function ( it, i ) { return '<p style="margin:14pt 0 2pt">' + ( i + 1 ) + '. “' + mark( esc( it.quote ), it.terms ) + '”</p><p style="margin:0 0 0 18pt;color:#555;font-size:9pt">' + esc( it.cite ) + '</p>'; } ).join( '' )
 					+ '</body></html>';
 				var a = document.createElement( 'a' );
 				a.href = URL.createObjectURL( new Blob( [ '﻿', html ], { type: 'application/msword' } ) );
