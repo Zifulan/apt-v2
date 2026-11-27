@@ -219,6 +219,32 @@ Options: `apt_sw_settings`, `apt_sw_items`, `apt_sw_feeds`, `apt_sw_last`.
 
 Options: `apt_redirects`, `apt_404_log`.
 
+## Import agenda (Posts → Import agenda)
+
+`inc/agenda-import.php`: turns the ASEAN notional calendar (Excel) into
+agenda entries.
+
+- Upload the .xlsx (or a CSV). The visible sheet is read (older revisions are
+  hidden sheets); the heading row is found by its "Meeting" and "Date" columns.
+- Only ASEAN Plus Three meetings are kept ("ASEAN+3", "ASEAN Plus Three",
+  "Plus 3", "APT", "…+3").
+- Dates: Excel dates and "5-9 October 2026" → that day; "March 2026" →
+  month only (SC_month); "Q4" → year only (SC_year); "TBC" or empty → to be
+  decided (SC_nodate, dated 31 December).
+- The meeting series (category) is guessed from the categories' names,
+  descriptions and slugs; a corrected series is remembered (`apt_ai_map`).
+- Statuses: New, Date changed (importing updates the existing entry), Already
+  in the agenda, Already published, Past, Cancelled (from Remarks).
+- Ticked rows become **Pending Review** posts: meeting date as the post date,
+  series as the category, city as the Location, SC_ tag when needed.
+
+**Locations and flags:** a city's country and flag come from
+`get_the_country()` in functions.php (Dili/Timor-Leste, Hokkaido, Hakone,
+Boracay, Laoag, Republic of Korea/ROK and Uzbekistan were added; the
+Timor-Leste flag is `img/flags/tl.svg`). For any other city, Posts →
+Locations has a **Country** field; the importer fills it from the calendar's
+venue ("Hakone, Japan") when it creates a new city.
+
 ## News page
 
 `page-news-2.php` with `inc/news-page.php`: statements and news, newest

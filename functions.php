@@ -797,6 +797,8 @@ function get_the_country($city){
 		$flag="mm";
         break;
 	case "Manila":
+	case "Boracay":
+	case "Laoag":
 	case "Metro Manila":
 	case "Makati":
 	case "Lapu-lapu City":
@@ -863,6 +865,8 @@ function get_the_country($city){
 		$flag="ch";
         break;
 	case "Tokyo":
+	case "Hokkaido":
+	case "Hakone":
 	case "Yokohama":
 	case "Kyoto":
     case "Kanazawa":
@@ -877,6 +881,9 @@ function get_the_country($city){
 		$flag="jp";
         break;
 	case "Seoul":
+	case "Republic of Korea":
+	case "ROK":
+	case "Korea":
 	case "Busan":
 	case "Changwon":
 	case "Gyeongnam":
@@ -902,6 +909,7 @@ function get_the_country($city){
         break;
 	case "Tashkent":
 	case "Samarkand":
+	case "Uzbekistan":
         $country="Uzbekistan";
 		$flag="uz";
         break;
@@ -946,9 +954,18 @@ function get_the_country($city){
         $country="Online Conference";
 		$flag="asean";
         break;
+	case "Dili":
+	case "Timor-Leste":
+        $country="Timor-Leste";
+		$flag="tl";
+        break;
     default:
-        $country="";
-		$flag="";
+		// A city not listed here: the country set for it under Posts →
+		// Locations (inc/agenda-import.php), if any.
+		$known = function_exists( 'apt_location_country' ) ? apt_location_country( $city ) : '';
+		$all   = function_exists( 'apt_location_countries' ) ? apt_location_countries() : array();
+		$country = isset( $all[ $known ] ) ? $known : "";
+		$flag    = isset( $all[ $known ] ) ? $all[ $known ] : "";
 	}
 	$return = ['country'=>$country, 'flag'=>$flag];
 	return ($return);
@@ -1798,6 +1815,8 @@ require_once get_template_directory() . '/inc/source-watch.php';
 require_once get_template_directory() . '/inc/indexing.php';
 // Tools → Redirects: old and duplicate addresses, and a log of 404s.
 require_once get_template_directory() . '/inc/redirects.php';
+// Posts → Import agenda: the notional calendar (Excel) into pending agenda entries; Locations get a Country field.
+require_once get_template_directory() . '/inc/agenda-import.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );
