@@ -2155,8 +2155,15 @@ main.site-single {
 .apt-year-nav a:hover { border-color: var(--ink); }
 .apt-year-nav a[aria-current] { background: var(--ink); border-color: var(--ink); color: var(--paper); font-weight: 700; }
 .apt-archive-year { margin: 0 0 8px; font-size: clamp(1.8rem, 1.5rem + 1.2vw, 2.6rem); font-weight: 700; }
-.apt-archive-month { margin-top: 20px; }
-.apt-archive-month-name { margin: 0 0 4px; font-size: 1.1rem; font-weight: 700; color: var(--ink-2); text-transform: none; }
+/* Month headings: like the News page's, with a firm line so each month reads as a block */
+.apt-archive-month { margin-top: clamp(28px, 3vw, 40px); }
+.apt-archive-month:first-of-type { margin-top: 12px; }
+.apt-archive-month-name {
+	display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
+	margin: 0; padding: 0 0 8px; border-bottom: 2px solid var(--ink);
+	font-size: 1.05rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink);
+}
+.apt-archive-month-count { font-size: 0.8rem; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink-3); }
 @media (max-width: 575.98px) {
 	/* many years: one scrollable line instead of a tall block */
 	.apt-year-nav ul { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 6px; scrollbar-width: thin; }
