@@ -260,6 +260,34 @@ Timor-Leste flag is `img/flags/tl.svg`). For any other city, Posts →
 Locations has a **Country** field; the importer fills it from the calendar's
 venue ("Hakone, Japan") when it creates a new city.
 
+## Members (Users → Members)
+
+`inc/members.php`: individual accounts for the Limited Access documents,
+replacing the one shared password, with an access log.
+
+- **Role "APT Member":** can read the Limited Access pages and files, nothing
+  else (no admin area). Permission `apt_read_limited`: members, Editors,
+  Administrators, and the shared account until it is switched off.
+- **Members page** (`[apt_members]`; created with one click in Users →
+  Members): signed out, "Sign in" and "Request access"; signed in, the
+  Limited Access documents and "My account" (change password).
+- **Requests** are emailed to the approver and listed in Users → Members →
+  Requests, flagged when the email isn't on the official-domain list.
+  Approve creates the account and emails a one-time "set your password" link;
+  Decline can tell the person by email. Spam trap and a 2-minute limit per
+  address.
+- **Members tab:** approved by/when, last sign-in, Close (signs them out
+  everywhere), Reopen, Delete; with yearly re-confirmation on, "Extend".
+- **Access log:** every Limited Access file sent (member, file, time, IP with
+  the last part removed), own table `wp_apt_access_log`, kept 2 years, CSV.
+- **Settings:** where requests are emailed, official domains, yearly
+  re-confirmation (reminder 30 days before), the eligibility and privacy
+  texts on the form, and the **shared account** switch: once off, it can't
+  sign in and the old login page leads to the Members page.
+- The file gate (`inc/limited-access-files.php`) now checks the permission,
+  not just "signed in", and writes the log; signed-out visitors are sent to
+  the Members page.
+
 ## News page
 
 `page-news-2.php` with `inc/news-page.php`: statements and news, newest

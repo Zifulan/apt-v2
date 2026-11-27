@@ -1836,6 +1836,8 @@ require_once get_template_directory() . '/inc/indexing.php';
 require_once get_template_directory() . '/inc/redirects.php';
 // Posts → Import agenda: the notional calendar (Excel) into pending agenda entries; Locations get a Country field.
 require_once get_template_directory() . '/inc/agenda-import.php';
+// Members: individual Limited Access accounts, requests and approval, access log.
+require_once get_template_directory() . '/inc/members.php';
 
 /*
  * Search results: sort by relevance (default), newest or oldest (?sort=).

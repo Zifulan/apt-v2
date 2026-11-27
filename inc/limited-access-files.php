@@ -65,8 +65,11 @@ function apt_limited_gate_url( $relative ) {
 	return home_url( '/?apt_file=' . str_replace( '%2F', '/', rawurlencode( rawurldecode( $relative ) ) ) );
 }
 
-/** Where visitors who are not logged in are sent: the login page (4452). */
+/** Where visitors who are not logged in are sent: the Members page, else the old login page (4452). */
 function apt_limited_login_url() {
+	if ( function_exists( 'apt_mem_page_id' ) && apt_mem_page_id() ) {
+		return apt_mem_page_url();
+	}
 	return 'publish' === get_post_status( 4452 ) ? get_permalink( 4452 ) : wp_login_url();
 }
 
@@ -151,10 +154,19 @@ add_action( 'init', function () {
 		wp_safe_redirect( apt_limited_login_url() );
 		exit;
 	}
+	// Signed in, but is the account allowed? (Members, editors, administrators;
+	// the shared account until it is switched off: inc/members.php.)
+	if ( ! current_user_can( 'apt_read_limited' ) ) {
+		status_header( 403 );
+		wp_die( esc_html__( 'This account does not have access to the Limited Access documents.', 'akseki-vi' ), '', array( 'response' => 403 ) );
+	}
 	$file = apt_limited_resolve( wp_unslash( $_GET['apt_file'] ) ); // phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput -- checked by apt_limited_resolve()
 	if ( ! $file ) {
 		status_header( 404 );
 		wp_die( esc_html__( 'This document could not be found.', 'akseki-vi' ), '', array( 'response' => 404 ) );
+	}
+	if ( function_exists( 'apt_mem_log' ) ) {
+		apt_mem_log( substr( $file, strlen( apt_limited_dir() ) + 1 ) ); // access log
 	}
 	$ext = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
 	while ( ob_get_level() ) {
