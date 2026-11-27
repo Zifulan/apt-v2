@@ -313,8 +313,15 @@ texts, paragraph by paragraph, for signed-in members.
 - **Wording over time:** how the first search word continues across the
   results ("unnecessary barriers to trade" ×4, 2020–2022), and paragraphs per
   year.
-- **Copy with citation** (title, meeting, date, para or page, link with
-  `#page=`), **Open at page N**, and a **drafting basket** kept in the member's
+- **Citations per paragraph:** numbered paragraphs as numbered ("para 10",
+  "para 1.1"); lettered items with the nearest number above ("para 2.1(g)");
+  unnumbered ones by position ("p. 5, para 3"; "para 7" on a web page).
+  Headings don't count.
+- **Paragraph links on statement pages:** numbered paragraphs get
+  `id="para-14"` (1.1 → `para-1-1`), a ¶ link on hover, and are highlighted
+  when opened by that link; citations of web-page paragraphs link there.
+- **Copy with citation** (title, meeting, date, paragraph, link with
+  `#page=` for PDFs), **Open at page N**, and a **drafting basket** kept in the member's
   browser that downloads as a Word document; Limited Access material is
   marked in both.
 - Searches that return Limited Access paragraphs are written to the access log.

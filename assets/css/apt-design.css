@@ -2366,3 +2366,10 @@ main.site-single {
 .apt-alf-whole summary { cursor: pointer; color: var(--apt-blue); }
 .apt-alf-whole blockquote { margin-top: 8px; color: var(--ink-2); }
 .apt-alf-blist button { border: 0; background: none; color: var(--apt-red); cursor: pointer; font-size: 1rem; }
+
+/* Numbered paragraphs on statement pages: link and highlight (inc/agreed-language.php) */
+.apt-para { position: relative; scroll-margin-top: calc(var(--header-offset) + 16px); }
+.apt-para-link { position: absolute; left: -1.4em; top: 0; padding: 0 4px; color: var(--ink-3) !important; text-decoration: none !important; opacity: 0; transition: opacity 150ms ease-out; }
+.apt-para:hover .apt-para-link, .apt-para-link:focus { opacity: 1; }
+.apt-para:target { background: rgba(251, 243, 21, 0.22); box-shadow: -10px 0 0 rgba(251, 243, 21, 0.22), 10px 0 0 rgba(251, 243, 21, 0.22); border-radius: 4px; }
+@media (max-width: 767.98px) { .apt-para-link { position: static; opacity: 1; margin-right: 4px; } }

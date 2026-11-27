@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const APT_ALF_VERSION = 1;
+const APT_ALF_VERSION = 2; // 2: paragraph numbers ('3(g)') and position on the page
 
 function apt_alf_table() {
 	global $wpdb;
@@ -43,7 +43,8 @@ add_action( 'init', function () {
 			file varchar(255) NOT NULL DEFAULT '',
 			page smallint(5) unsigned NOT NULL DEFAULT 0,
 			pos int(10) unsigned NOT NULL DEFAULT 0,
-			para varchar(12) NOT NULL DEFAULT '',
+			para varchar(16) NOT NULL DEFAULT '',
+			ppos smallint(5) unsigned NOT NULL DEFAULT 0,
 			text mediumtext NOT NULL,
 			year smallint(5) unsigned NOT NULL DEFAULT 0,
 			day date DEFAULT NULL,
@@ -218,6 +219,40 @@ function apt_alf_html_paragraphs( $html ) {
 	return $out;
 }
 
+/**
+ * Paragraph numbers for citing: [ [ page, text, label, ppos ], … ].
+ * - "12. …" → 12; "1.1 …" → 1.1; a lettered item takes the nearest number
+ *   above it: "(g) …" under 3 → 3(g), under 2.1 → 2.1(g).
+ * - ppos: the paragraph's position on its page (or in the web page),
+ *   for "p. 5, para 3" when the text has no numbers. Short headings don't count.
+ */
+function apt_alf_number( $paras ) {
+	$top   = '';
+	$count = array();
+	$out   = array();
+	foreach ( $paras as $p ) {
+		list( $page, $text ) = $p;
+		$heading = mb_strlen( $text ) < 90 && ! preg_match( '/[.!?:;]["”’)]?$/u', $text ) && ! apt_alf_is_numbered( $text );
+		if ( $heading ) {
+			$out[] = array( $page, $text, '', 0 );
+			continue;
+		}
+		$count[ $page ] = ( isset( $count[ $page ] ) ? $count[ $page ] : 0 ) + 1;
+		$label = '';
+		if ( preg_match( '/^\s*(\d{1,3})\.(\d{1,2})\.?\s/u', $text, $m ) ) {
+			$label = $m[1] . '.' . $m[2];
+			$top   = $label; // lettered items below belong to 2.1, not 2: "2.1(g)"
+		} elseif ( preg_match( '/^\s*(\d{1,3})\.\s/u', $text, $m ) ) {
+			$label = $m[1];
+			$top   = $m[1];
+		} elseif ( preg_match( '/^\s*\(?([a-z]|i{1,3}|iv|v|vi{1,3}|ix|x)\)\s/u', $text, $m ) ) {
+			$label = ( '' !== $top ? $top : '' ) . '(' . $m[1] . ')';
+		}
+		$out[] = array( $page, $text, $label, $count[ $page ] );
+	}
+	return $out;
+}
+
 /** Long paragraphs are cut at sentence ends into pieces of about 1,500 characters. */
 function apt_alf_cut( $text ) {
 	if ( mb_strlen( $text ) <= 2500 ) {
@@ -284,7 +319,7 @@ function apt_alf_index_post( $post_id ) {
 	$rows = array();
 	$seen = array();
 	$pos  = 0;
-	$add  = function ( $source, $file, $page, $text ) use ( &$rows, &$seen, &$pos, $base ) {
+	$add  = function ( $source, $file, $page, $text, $label = '', $ppos = 0 ) use ( &$rows, &$seen, &$pos, $base ) {
 		foreach ( apt_alf_cut( $text ) as $piece ) {
 			if ( mb_strlen( $piece ) < 40 ) {
 				continue;
@@ -294,8 +329,7 @@ function apt_alf_index_post( $post_id ) {
 				continue; // the same paragraph in the page and its PDF: keep one
 			}
 			$seen[ $hash ] = 1;
-			preg_match( '/^\s*(\d{1,3}(\.\d{1,2})*|\(?[a-z]\))[.)]?\s/u', $piece, $m );
-			$rows[] = $base + array( 'source' => $source, 'file' => $file, 'page' => (int) $page, 'pos' => $pos++, 'para' => isset( $m[1] ) ? trim( $m[1], '()' ) : '', 'text' => $piece, 'hash' => $hash );
+			$rows[] = $base + array( 'source' => $source, 'file' => $file, 'page' => (int) $page, 'pos' => $pos++, 'para' => $label, 'ppos' => (int) $ppos, 'text' => $piece, 'hash' => $hash );
 		}
 	};
 	// PDFs first: their paragraphs come with a page number.
@@ -303,13 +337,13 @@ function apt_alf_index_post( $post_id ) {
 		$up = wp_upload_dir( null, false );
 		foreach ( apt_pdf_search_find_pdfs( $post ) as $url => $file ) {
 			$rel = ltrim( substr( $file, strlen( realpath( $up['basedir'] ) ) ), '/\\' );
-			foreach ( apt_alf_pdf_paragraphs( apt_alf_pdf_pages( $file ) ) as $p ) {
-				$add( 'pdf', $rel, $p[0], $p[1] );
+			foreach ( apt_alf_number( apt_alf_pdf_paragraphs( apt_alf_pdf_pages( $file ) ) ) as $p ) {
+				$add( 'pdf', $rel, $p[0], $p[1], $p[2], $p[3] );
 			}
 		}
 	}
-	foreach ( apt_alf_html_paragraphs( $post->post_content ) as $p ) {
-		$add( 'html', '', 0, $p[1] );
+	foreach ( apt_alf_number( apt_alf_html_paragraphs( $post->post_content ) ) as $p ) {
+		$add( 'html', '', 0, $p[1], $p[2], $p[3] );
 	}
 	apt_alf_store( array( 'post_id' => (int) $post->ID, 'limited' => 0 ), $rows );
 }
@@ -363,17 +397,16 @@ function apt_alf_index_limited( $rel, $info ) {
 	$rows = array();
 	$seen = array();
 	$pos  = 0;
-	foreach ( apt_alf_pdf_paragraphs( apt_alf_pdf_pages( $file ) ) as $p ) {
+	foreach ( apt_alf_number( apt_alf_pdf_paragraphs( apt_alf_pdf_pages( $file ) ) ) as $p ) {
 		foreach ( apt_alf_cut( $p[1] ) as $piece ) {
 			$hash = md5( mb_strtolower( preg_replace( '/[^\p{L}\p{N}]+/u', '', $piece ) ) );
 			if ( mb_strlen( $piece ) < 40 || isset( $seen[ $hash ] ) ) {
 				continue;
 			}
 			$seen[ $hash ] = 1;
-			preg_match( '/^\s*(\d{1,3}(\.\d{1,2})*|\(?[a-z]\))[.)]?\s/u', $piece, $m );
 			$rows[] = array(
 				'post_id' => 0, 'source' => 'limited', 'file' => mb_substr( $rel, 0, 255 ), 'page' => (int) $p[0], 'pos' => $pos++,
-				'para' => isset( $m[1] ) ? trim( $m[1], '()' ) : '', 'text' => $piece, 'year' => (int) $info[2],
+				'para' => $p[2], 'ppos' => (int) $p[3], 'text' => $piece, 'year' => (int) $info[2],
 				'day' => preg_match( '/\b(\d{4}-\d{2}-\d{2})\b/', $info[0], $d ) ? $d[1] : null,
 				'level' => 'Limited Access', 'title' => mb_substr( $info[0], 0, 255 ), 'short' => mb_substr( $info[1], 0, 120 ), 'limited' => 1, 'hash' => $hash,
 			);
@@ -618,8 +651,26 @@ function apt_alf_link( $r ) {
 		$url = trailingslashit( $up['baseurl'] ) . implode( '/', array_map( 'rawurlencode', explode( '/', str_replace( '\\', '/', $r->file ) ) ) );
 	} else {
 		$url = get_permalink( $r->post_id );
+		if ( preg_match( '/^(\d{1,3})(\.\d{1,2})?/', (string) $r->para, $m ) ) {
+			return $url . '#para-' . $m[1] . ( isset( $m[2] ) ? '-' . substr( $m[2], 1 ) : '' ); // see apt_alf_paragraph_ids()
+		}
 	}
 	return $url && $r->page ? $url . '#page=' . (int) $r->page : $url;
+}
+
+/** Where in the document: "para 3(g)", "p. 5, para 3", "para 7" (web page), or "p. 5". */
+function apt_alf_where( $r ) {
+	if ( '' !== (string) $r->para ) {
+		return 'para ' . $r->para;
+	}
+	$ppos = isset( $r->ppos ) ? (int) $r->ppos : 0;
+	if ( $r->page && $ppos ) {
+		return 'p. ' . (int) $r->page . ', para ' . $ppos;
+	}
+	if ( $r->page ) {
+		return 'p. ' . (int) $r->page;
+	}
+	return $ppos ? 'para ' . $ppos : '';
 }
 
 /** The citation of a row, as plain text. */
@@ -632,10 +683,8 @@ function apt_alf_citation( $r ) {
 	if ( $date ) {
 		$bits[] = $date;
 	}
-	if ( '' !== $r->para ) {
-		$bits[] = 'para ' . $r->para;
-	} elseif ( $r->page ) {
-		$bits[] = 'p. ' . $r->page;
+	if ( '' !== apt_alf_where( $r ) ) {
+		$bits[] = apt_alf_where( $r );
 	}
 	return implode( ', ', $bits ) . '. ' . apt_alf_link( $r ) . ( $r->limited ? ' [Limited Access]' : '' );
 }
@@ -694,7 +743,7 @@ function apt_alf_finder_html() {
 	foreach ( array_slice( $res['rows'], 0, 60 ) as $r ) {
 		$cite  = apt_alf_citation( $r );
 		$date  = $r->day ? wp_date( 'j F Y', strtotime( $r->day ) ) : ( $r->year ? (string) $r->year : '' );
-		$where = '' !== $r->para ? sprintf( /* translators: %s: paragraph number */ __( 'para %s', 'akseki-vi' ), $r->para ) : ( $r->page ? sprintf( /* translators: %d: page */ __( 'page %d', 'akseki-vi' ), $r->page ) : '' );
+		$where = apt_alf_where( $r );
 		$out  .= '<article class="apt-alf-hit' . ( $r->limited ? ' is-limited' : '' ) . '" data-quote="' . esc_attr( $r->text ) . '" data-cite="' . esc_attr( $cite ) . '" data-limited="' . (int) $r->limited . '">'
 			. apt_alf_quote_html( $r->text, $res['terms'] )
 			. '<p class="apt-alf-src">' . ( $r->level ? '<span class="apt-alf-level">' . ( $r->limited ? '🔒 ' : '' ) . esc_html( $r->level ) . '</span> ' : '' )
@@ -812,3 +861,38 @@ function apt_alf_admin_box() {
 	}
 	return $out;
 }
+
+/* ---------- Links to a paragraph on statement pages ---------- */
+
+/**
+ * Numbered paragraphs on a statement page get an address of their own:
+ * "14. We noted…" → id="para-14" (1.1 → para-1-1), so a citation can link
+ * straight to it; the paragraph is highlighted when opened that way, and a
+ * small ¶ link (shown on hover or focus) copies its address.
+ */
+function apt_alf_paragraph_ids( $content ) {
+	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	$used = array();
+	return preg_replace_callback(
+		// "14." or "1.1" / "1.1." at the start of a paragraph (a whole number needs its dot).
+		'#<(p|li)((?:\s[^>]*)?)>(\s*(?:<(?:strong|b|span|em)[^>]*>\s*)*)((\d{1,3})(?:\.(\d{1,2})\.?|\.))(?=\s|&nbsp;|<)#u',
+		function ( $m ) use ( &$used ) {
+			if ( preg_match( '/\sid\s*=/i', $m[2] ) ) {
+				return $m[0];
+			}
+			$num = $m[5] . ( isset( $m[6] ) && '' !== $m[6] ? '.' . $m[6] : '' );
+			$id  = 'para-' . str_replace( '.', '-', $num );
+			if ( isset( $used[ $id ] ) ) {
+				return $m[0]; // the same number twice (e.g. an annex): keep the first
+			}
+			$used[ $id ] = true;
+			$link = '<a class="apt-para-link" href="#' . $id . '" aria-label="' . esc_attr( sprintf( /* translators: %s: number */ __( 'Link to paragraph %s', 'akseki-vi' ), $num ) ) . '">¶</a>';
+			$attr = preg_match( '/\sclass\s*=\s*(["\'])/i', $m[2] ) ? preg_replace( '/(\sclass\s*=\s*["\'])/i', '$1apt-para ', $m[2], 1 ) : $m[2] . ' class="apt-para"';
+			return '<' . $m[1] . $attr . ' id="' . $id . '">' . $link . $m[3] . $m[4]; // the text itself unchanged
+		},
+		$content
+	);
+}
+add_filter( 'the_content', 'apt_alf_paragraph_ids', 30 );
