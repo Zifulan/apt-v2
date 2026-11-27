@@ -1790,6 +1790,8 @@ require_once get_template_directory() . '/inc/site-tweaks.php';
 require_once get_template_directory() . '/inc/news-page.php';
 // Appearance → Home page content: About text, figures, cooperation cards, contact.
 require_once get_template_directory() . '/inc/home-content.php';
+// Posts → Source watch: new ASEAN Plus Three items on asean.org and other feeds.
+require_once get_template_directory() . '/inc/source-watch.php';
 
 //custom field dropdown display limit
 add_filter( 'postmeta_form_limit', 'meta_limit_increase' );

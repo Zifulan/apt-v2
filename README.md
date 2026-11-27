@@ -180,6 +180,27 @@ for 12 months, and anything without a date are listed at the top of the
 screen and under Tools → Content check (section 8). Saving clears WP Super
 Cache so the change shows at once.
 
+## Source watch (Posts → Source watch)
+
+`inc/source-watch.php`: finds new ASEAN Plus Three items on other sites,
+twice a day (WP-Cron), from RSS feeds. Default feed: asean.org's search for
+"ASEAN Plus Three", newest first. Add any other feed; for sites without one,
+a Google Alert set to "Deliver to: RSS feed".
+
+- **In title / Mention:** one of the words (default "ASEAN Plus Three,
+  ASEAN+3, APT") is in the title, or only in the text.
+- **Already on site:** same title (ignoring capitals and punctuation) or the
+  same address in a post's `source` field.
+- **Words to edit out** (default "Secretary-General"): such items get a tag;
+  their drafts show a "Before publishing" box listing the title and every
+  sentence that still contains the words. Nothing is deleted automatically.
+- **Email:** one per check that finds new items, through `wp_mail` (APT Mail).
+- **Create draft:** title, date, the item's text (no photos or galleries, no
+  "appeared first on" line) and the source address in the `source` field.
+  Links lose their tracking parameters; Google Alerts links are unwrapped.
+
+Options: `apt_sw_settings`, `apt_sw_items`, `apt_sw_feeds`, `apt_sw_last`.
+
 ## News page
 
 `page-news-2.php` with `inc/news-page.php`: statements and news, newest
