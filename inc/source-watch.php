@@ -20,8 +20,8 @@
  *   feed and the source address (the "source" custom field, shown in the
  *   public "Source:" line).
  *
- * Data: options apt_sw_settings, apt_sw_items (not autoloaded) and
- * apt_sw_feeds (status of each feed).
+ * Data: options apt_sw_settings, apt_sw_items (not autoloaded),
+ * apt_sw_feeds (status of each feed) and apt_sw_new_count (for the menu).
  *
  * @package apt-v2
  */
@@ -124,6 +124,19 @@ function apt_sw_site_index() {
 	return array( 'titles' => $titles, 'urls' => $urls );
 }
 
+/**
+ * Save the items, and the number of new ones in a small separate setting:
+ * the admin menu shows that number on every admin page, without loading
+ * the whole list.
+ */
+function apt_sw_save_items( $items ) {
+	update_option( 'apt_sw_items', $items, false );
+	$new = count( array_filter( $items, function ( $i ) { return 'new' === $i['status']; } ) );
+	if ( (int) get_option( 'apt_sw_new_count', -1 ) !== $new ) {
+		update_option( 'apt_sw_new_count', $new, true );
+	}
+}
+
 /** The stored items: key => item. */
 function apt_sw_items() {
 	$items = get_option( 'apt_sw_items', array() );
@@ -204,7 +217,7 @@ function apt_sw_check( $send_email = true ) {
 			unset( $items[ $k ] );
 		}
 	}
-	update_option( 'apt_sw_items', $items, false );
+	apt_sw_save_items( $items );
 	update_option( 'apt_sw_feeds', $status, false );
 	update_option( 'apt_sw_last', time(), false );
 
@@ -310,7 +323,7 @@ function apt_sw_create_draft( $key ) {
 	add_post_meta( $id, '_apt_sw_draft', 1 ); // shows the "Before publishing" box
 	$items[ $key ]['status']  = 'drafted';
 	$items[ $key ]['post_id'] = (int) $id;
-	update_option( 'apt_sw_items', $items, false );
+	apt_sw_save_items( $items );
 	return (int) $id;
 }
 
@@ -329,7 +342,7 @@ function apt_sw_views() {
 }
 
 add_action( 'admin_menu', function () {
-	$new  = count( array_filter( apt_sw_items(), function ( $i ) { return 'new' === $i['status']; } ) );
+	$new  = (int) get_option( 'apt_sw_new_count', 0 ); // kept up to date by apt_sw_save_items()
 	$menu = __( 'Source watch', 'akseki-vi' ) . ( $new ? ' <span class="awaiting-mod count-' . $new . '"><span class="pending-count">' . $new . '</span></span>' : '' );
 	$hook = add_posts_page( __( 'Source watch', 'akseki-vi' ), $menu, 'edit_others_posts', 'apt-source-watch', 'apt_sw_page' );
 	add_action( 'load-' . $hook, 'apt_sw_actions' );
@@ -360,7 +373,7 @@ function apt_sw_actions() {
 		$args['post'] = $id;
 	} elseif ( in_array( $do, array( 'ignore', 'restore' ), true ) && isset( $items[ $key ] ) ) {
 		$items[ $key ]['status'] = 'ignore' === $do ? 'ignored' : ( 'title' === $items[ $key ]['match'] ? 'new' : 'mention' );
-		update_option( 'apt_sw_items', $items, false );
+		apt_sw_save_items( $items );
 	} elseif ( 'save' === $do ) {
 		$s     = apt_sw_settings();
 		$feeds = array();

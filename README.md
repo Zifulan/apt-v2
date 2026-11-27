@@ -199,7 +199,8 @@ a Google Alert set to "Deliver to: RSS feed".
   "appeared first on" line) and the source address in the `source` field.
   Links lose their tracking parameters; Google Alerts links are unwrapped.
 
-Options: `apt_sw_settings`, `apt_sw_items`, `apt_sw_feeds`, `apt_sw_last`.
+Options: `apt_sw_settings`, `apt_sw_items`, `apt_sw_feeds`, `apt_sw_last`,
+`apt_sw_new_count` (the menu badge, so admin pages don't load the whole list).
 
 ## Redirects (Tools → Redirects)
 
@@ -216,6 +217,9 @@ Options: `apt_sw_settings`, `apt_sw_items`, `apt_sw_feeds`, `apt_sw_last`.
   admin or scanner noise), with "Add redirect" and "Forget".
 - Chains and loops are flagged; the admin area and the home page can't be
   redirected. Saving clears WP Super Cache.
+- Counters are written at most once a minute per address, and the 404 log at
+  most every 15 seconds overall, so bots can't cause a database write per
+  request (counts are "minutes with requests").
 
 Options: `apt_redirects`, `apt_404_log`.
 

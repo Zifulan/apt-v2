@@ -105,6 +105,21 @@ function apt_rd_add( $from, $to, $code, $note = '' ) {
 
 /* ---------- Doing the redirects ---------- */
 
+/**
+ * Counters are written at most once a minute per address (and the 404 log
+ * at most every 15 seconds in all), so a bot hammering addresses can't
+ * cause a database write on every request. Counts are therefore "minutes
+ * with requests", which is enough to see what is used most.
+ */
+function apt_rd_may_write( $key, $seconds ) {
+	$t = 'apt_rd_t_' . substr( md5( $key ), 0, 16 );
+	if ( get_transient( $t ) ) {
+		return false;
+	}
+	set_transient( $t, 1, $seconds );
+	return true;
+}
+
 add_action( 'template_redirect', function () {
 	if ( is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
 		return;
@@ -116,9 +131,11 @@ add_action( 'template_redirect', function () {
 		if ( apt_rd_norm( $r['from'] ) !== $key ) {
 			continue;
 		}
-		$list[ $i ]['hits'] = (int) $r['hits'] + 1;
-		$list[ $i ]['last'] = time();
-		update_option( 'apt_redirects', $list, true );
+		if ( apt_rd_may_write( 'hit' . $key, MINUTE_IN_SECONDS ) ) {
+			$list[ $i ]['hits'] = (int) $r['hits'] + 1;
+			$list[ $i ]['last'] = time();
+			update_option( 'apt_redirects', $list, true );
+		}
 		if ( 410 === (int) $r['code'] ) {
 			global $wp_query;
 			$wp_query->set_404();
@@ -139,7 +156,9 @@ add_action( 'template_redirect', function () {
 	if ( is_404() ) {
 		if ( preg_match( '#\.(php|asp|aspx|env|ini|sql|bak|zip|tar|gz|xml|txt|js|css|map|ico|png|jpe?g|gif|webp|svg|woff2?)$#i', $key )
 			|| preg_match( '#^/(wp-|xmlrpc|cgi-bin|\.well-known|\.git|vendor|admin|phpmyadmin)#i', $key )
-			|| strlen( $key ) > 200 ) {
+			|| strlen( $key ) > 200
+			|| ! apt_rd_may_write( '404-all', 15 )
+			|| ! apt_rd_may_write( '404' . $key, MINUTE_IN_SECONDS ) ) {
 			return;
 		}
 		$log = get_option( 'apt_404_log', array() );
@@ -286,7 +305,7 @@ function apt_rd_page() {
 
 		<h2><?php echo esc_html( sprintf( /* translators: %d: count */ __( 'Redirects (%d)', 'akseki-vi' ), count( $list ) ) ); ?></h2>
 		<table class="widefat striped">
-			<thead><tr><th><?php esc_html_e( 'From', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'To', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Type', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Used', 'akseki-vi' ); ?></th><th></th></tr></thead>
+			<thead><tr><th><?php esc_html_e( 'From', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'To', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Type', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Used', 'akseki-vi' ); ?> <span class="description">(<?php esc_html_e( 'minutes with use', 'akseki-vi' ); ?>)</span></th><th></th></tr></thead>
 			<tbody>
 			<?php if ( ! $list ) : ?>
 				<tr><td colspan="5"><?php esc_html_e( 'No redirects yet.', 'akseki-vi' ); ?></td></tr>
@@ -307,7 +326,7 @@ function apt_rd_page() {
 		<h2><?php esc_html_e( 'Not found (404)', 'akseki-vi' ); ?></h2>
 		<p><?php esc_html_e( 'Addresses visitors or search engines asked for that do not exist, most requested first. If one should lead somewhere, add a redirect; if it is junk, forget it.', 'akseki-vi' ); ?></p>
 		<table class="widefat striped">
-			<thead><tr><th><?php esc_html_e( 'Address', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Requests', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Linked from', 'akseki-vi' ); ?></th><th></th></tr></thead>
+			<thead><tr><th><?php esc_html_e( 'Address', 'akseki-vi' ); ?></th><th><?php esc_html_e( 'Requests', 'akseki-vi' ); ?> <span class="description">(<?php esc_html_e( 'minutes with requests', 'akseki-vi' ); ?>)</span></th><th><?php esc_html_e( 'Linked from', 'akseki-vi' ); ?></th><th></th></tr></thead>
 			<tbody>
 			<?php if ( ! $log ) : ?>
 				<tr><td colspan="4"><?php esc_html_e( 'Nothing yet.', 'akseki-vi' ); ?></td></tr>
