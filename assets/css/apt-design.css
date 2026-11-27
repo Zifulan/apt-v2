@@ -2325,3 +2325,44 @@ main.site-single {
 .apt-mem-head p { margin: 0; }
 .apt-mem-docs { margin: 0; padding-left: 1.2em; }
 .apt-mem-docs li { margin: 6px 0; }
+
+/* ---------- Agreed Language finder (inc/agreed-language.php) ---------- */
+.apt-alf-lead { color: var(--ink-2); margin: 0 0 14px; }
+.site-main:not(.front-main) .entry-content form.apt-alf-form { max-width: none; margin: 0; } /* not the 28rem login-form width */
+.apt-alf-form { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) auto; gap: 10px 12px; align-items: end; padding: 16px; border-radius: var(--radius-tile); background: var(--paper-2); }
+.apt-alf-form p { margin: 0; }
+.apt-alf-form select { width: 100%; min-height: 46px; padding: 0 10px; border: 1px solid #767676; border-radius: 10px; background: var(--paper); font: inherit; }
+.apt-alf-form .apt-mem-btn { margin-top: 0; }
+.apt-alf-lim { grid-column: 1 / -1; }
+.apt-alf-lim label { display: flex !important; align-items: center; gap: 8px; margin: 0 !important; font-weight: 500 !important; color: var(--ink) !important; }
+@media (max-width: 899.98px) { .apt-alf-form { grid-template-columns: 1fr 1fr; } .apt-alf-q { grid-column: 1 / -1; } }
+.apt-alf-cols { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; margin-top: 18px; }
+@media (max-width: 899.98px) { .apt-alf-cols { grid-template-columns: 1fr; } }
+.apt-alf-count { color: var(--ink-2); margin: 0 0 8px; }
+.apt-alf-hit { padding: 16px 0; border-top: 1px solid var(--rule-soft); }
+.apt-alf-hit blockquote { margin: 0 0 8px; padding: 0 0 0 14px; border-left: 3px solid var(--apt-blue); line-height: 1.65; color: var(--ink); }
+.apt-alf-hit.is-limited blockquote { border-left-color: var(--apt-maroon); }
+.apt-alf-hit mark { background: rgba(251, 243, 21, 0.6); padding: 0 2px; border-radius: 2px; color: inherit; }
+.apt-alf-src { margin: 0; font-size: 0.85rem; color: var(--ink-2); }
+.apt-alf-src strong { color: var(--ink); }
+.apt-alf-level { display: inline-block; padding: 1px 8px; border-radius: 999px; background: rgba(11, 61, 145, 0.08); color: var(--apt-blue); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.apt-alf-hit.is-limited .apt-alf-level { background: rgba(152, 41, 75, 0.1); color: var(--apt-maroon); }
+.apt-alf-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.site-main .apt-alf-btn { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 999px; background: var(--ink); color: var(--paper); font: inherit; font-size: 0.85rem; font-weight: 600; text-decoration: none; cursor: pointer; }
+.site-main .apt-alf-btn.is-ghost { background: var(--paper); color: var(--ink); border-color: var(--rule-soft); }
+.apt-alf-box { padding: 16px 18px; margin-bottom: 16px; border-radius: var(--radius-tile); background: var(--paper-2); }
+.apt-alf-box h3 { margin: 0 0 10px; font-size: 1rem; }
+.apt-alf-variants { list-style: none; margin: 0 0 12px; padding: 0; }
+.apt-alf-variants li { display: grid; grid-template-columns: 1fr auto; padding: 7px 0; border-top: 1px solid var(--rule-soft); font-size: 0.88rem; }
+.apt-alf-n { font-weight: 700; }
+.apt-alf-yrs { grid-column: 1 / -1; color: var(--ink-3); font-size: 0.78rem; }
+.apt-alf-bars { display: flex; align-items: flex-end; gap: 3px; height: 86px; border-bottom: 1px solid var(--rule-soft); }
+.apt-alf-bars div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%; }
+.apt-alf-bars i { display: block; width: 100%; border-radius: 3px 3px 0 0; background: var(--apt-blue); }
+.apt-alf-bars small { font-size: 0.6rem; color: var(--ink-3); }
+.apt-alf-note { margin: 6px 0 0; font-size: 0.78rem; color: var(--ink-3); }
+.apt-alf-blist { margin: 0 0 10px; padding-left: 1.2em; font-size: 0.85rem; }
+.apt-alf-whole { margin: 0 0 8px; font-size: 0.85rem; }
+.apt-alf-whole summary { cursor: pointer; color: var(--apt-blue); }
+.apt-alf-whole blockquote { margin-top: 8px; color: var(--ink-2); }
+.apt-alf-blist button { border: 0; background: none; color: var(--apt-red); cursor: pointer; font-size: 1rem; }

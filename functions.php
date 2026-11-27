@@ -1838,6 +1838,8 @@ require_once get_template_directory() . '/inc/redirects.php';
 require_once get_template_directory() . '/inc/agenda-import.php';
 // Members: individual Limited Access accounts, requests and approval, access log.
 require_once get_template_directory() . '/inc/members.php';
+// Agreed Language finder (in the Members page) and its paragraph index.
+require_once get_template_directory() . '/inc/agreed-language.php';
 
 /*
  * Search results: sort by relevance (default), newest or oldest (?sort=).

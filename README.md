@@ -292,6 +292,33 @@ replacing the one shared password, with an access log.
   not just "signed in", and writes the log; signed-out visitors are sent to
   the Members page.
 
+## Agreed Language finder (Members page)
+
+`inc/agreed-language.php`: finds wording already agreed in ASEAN Plus Three
+texts, paragraph by paragraph, for signed-in members.
+
+- **Index** (own table `wp_apt_paragraphs`): every published post's text and
+  the PDFs it links to (read page by page with the PDF reader bundled in the
+  APT PDF Search plugin, so results open at the right page), plus the Limited
+  Access PDFs linked from the Limited Access pages (marked, members only).
+  PDF lines are joined back into paragraphs; numbered/lettered paragraphs
+  ("10.", "(g)") give the citation's "para"; repeated headers and footers are
+  dropped; a paragraph cut by a page break is joined. Built in short steps
+  (Users → Members → Agreed Language → Build now, or every 10 minutes in the
+  background); saved posts are re-indexed automatically. Scanned PDFs (images)
+  have no text and are skipped.
+- **Search:** all words, or an exact phrase in quotes; whole words only;
+  filters by level and years; newest first. Long paragraphs show the matching
+  sentences, with the whole paragraph one click away.
+- **Wording over time:** how the first search word continues across the
+  results ("unnecessary barriers to trade" ×4, 2020–2022), and paragraphs per
+  year.
+- **Copy with citation** (title, meeting, date, para or page, link with
+  `#page=`), **Open at page N**, and a **drafting basket** kept in the member's
+  browser that downloads as a Word document; Limited Access material is
+  marked in both.
+- Searches that return Limited Access paragraphs are written to the access log.
+
 ## News page
 
 `page-news-2.php` with `inc/news-page.php`: statements and news, newest

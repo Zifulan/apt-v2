@@ -358,6 +358,7 @@ add_shortcode( 'apt_members', function () {
 		. '<p><button class="apt-mem-btn">' . esc_html__( 'Change password', 'akseki-vi' ) . '</button></p></form></section>';
 
 	return $out . $head
+		. ( function_exists( 'apt_alf_finder_html' ) ? apt_alf_finder_html() : '' )
 		. '<section class="apt-mem-card"><h2>' . esc_html__( 'Limited Access documents', 'akseki-vi' ) . '</h2>' . $docs
 		. '<p class="apt-mem-privacy">' . esc_html__( 'These documents are for your official work only. Please don\'t share them outside official channels. Downloads are recorded.', 'akseki-vi' ) . '</p></section>'
 		. $account;
@@ -567,6 +568,13 @@ function apt_mem_admin_actions() {
 			update_option( 'apt_mem_page', (int) $id );
 		}
 		$args['msg'] = 'page';
+	} elseif ( 'alf_run' === $a && function_exists( 'apt_alf_run' ) ) {
+		$left             = apt_alf_run( 20 );
+		$args['continue'] = $left ? 1 : 0; // pause a few seconds between steps (firewall)
+	} elseif ( 'alf_rebuild' === $a && function_exists( 'apt_alf_enqueue' ) ) {
+		update_option( 'apt_alf_queue', array( 'all' ), false );
+		$left             = apt_alf_run( 20 );
+		$args['continue'] = $left ? 1 : 0;
 	} elseif ( 'export' === $a ) {
 		global $wpdb;
 		$rows = $wpdb->get_results( 'SELECT time, user_id, file, ip FROM ' . apt_mem_table() . ' ORDER BY id DESC LIMIT 50000' ); // phpcs:ignore WordPress.DB
@@ -595,6 +603,7 @@ function apt_mem_admin_page() {
 		'requests' => __( 'Requests', 'akseki-vi' ),
 		'members'  => __( 'Members', 'akseki-vi' ),
 		'log'      => __( 'Access log', 'akseki-vi' ),
+		'alf'      => __( 'Agreed Language', 'akseki-vi' ),
 		'settings' => __( 'Settings', 'akseki-vi' ),
 	);
 	$tab  = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'requests'; // phpcs:ignore WordPress.Security.NonceVerification
@@ -714,6 +723,13 @@ function apt_mem_admin_page() {
 				</tr>
 			<?php endforeach; ?>
 			</tbody></table>
+
+		<?php elseif ( 'alf' === $tab ) : ?>
+			<?php echo function_exists( 'apt_alf_admin_box' ) ? apt_alf_admin_box() : ''; // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside ?>
+			<?php if ( ! empty( $_GET['continue'] ) && get_option( 'apt_alf_queue' ) ) : // phpcs:ignore WordPress.Security.NonceVerification ?>
+				<p class="description"><?php esc_html_e( 'Building… this page continues by itself every few seconds; keep it open, or close it and it carries on in the background.', 'akseki-vi' ); ?></p>
+				<meta http-equiv="refresh" content="3;url=<?php echo esc_url( apt_mem_admin_url( 'alf_run', array( 'tab' => 'alf' ) ) ); ?>">
+			<?php endif; ?>
 
 		<?php else : ?>
 			<form method="post" class="apt-mem-settings">
